@@ -6,11 +6,19 @@
         <artifactId>modules</artifactId>
         <groupId>org.wso2.carbon</groupId>
         <version>1.0.0</version>
-        <relativePath>../modules/pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>cleanser</artifactId>
+
+    <dependencies>
+    <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>1.1</version>
+    </dependency>
+    </dependencies>
 
 
 </project>
