@@ -6,8 +6,11 @@ import org.wso2.carbon.ml.algorithms.SoundexMatch;
 
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by tharik on 11/17/14.
@@ -18,60 +21,26 @@ public class Cleanser {
     {
         try {
             String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
-            String csvReadFile = "backup/Activity behaviou_Tier2_20141015.csv";
+            String csvReadFile = "Activity behaviou_Tier2_20141015.csv";
             String csvWriteTransfomedFile = "transformed.csv";
             String csvWriteNotTransformedFile = "notTransformed.csv";
-            String columnName = "Company";
-            int columnIndex;
+            String [] columnsIncluded = {"Title","Company","Country","Activity Type","Activity","Activity date/time","IpAddress"};
+
             long startTime = System.currentTimeMillis();
 
             //CSVReader reader = new CSVReader(new FileReader(csvPath + csvReadFile), ',');
 
             CSVReader reader=new CSVReader(
-                    new InputStreamReader(new FileInputStream(csvPath + csvReadFile), "UTF-8"), ',');
+                    new InputStreamReader(new FileInputStream(csvPath + csvReadFile), "UTF-8"), ',',CSVReader.DEFAULT_QUOTE_CHARACTER,CSVReader.DEFAULT_QUOTE_CHARACTER);
 
 
-            CSVWriter writerTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteTransfomedFile), ',');
-            CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteNotTransformedFile), ',');
+
+            CSVWriter writerTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteTransfomedFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
+            CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteNotTransformedFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
 
             System.out.println("Processing started....");
 
-            //Writing Header row for output files
-            String [] nextLine = reader.readNext();
-            writerTransformed.writeNext(nextLine);
-            writerNotTransformed.writeNext(nextLine);
-
-
-            int counter = 0;
-
-            //Get the column index of given column name
-            columnIndex = Arrays.asList(nextLine).indexOf(columnName);
-
-            while ((nextLine = reader.readNext()) != null) {
-
-
-                if(nextLine.length > columnIndex) {
-
-                    String [] outputLine = {String.valueOf(counter++), SoundexMatch.Convert(nextLine[columnIndex]), nextLine[columnIndex] };
-                    writerTransformed.writeNext(outputLine);
-                }
-                else{
-
-                    if (nextLine[0].equals("Scuthheft")) {
-
-                        String cont = "";
-
-                        for (int i = 0; i < nextLine.length; i++) {
-                            cont += nextLine[i] + " ";
-                        }
-
-                        System.out.println(cont);
-                    }
-
-
-                    writerNotTransformed.writeNext(nextLine);
-                }
-            }
+            Cleanse(reader, writerTransformed, writerNotTransformed, "Company", columnsIncluded);
 
             long estimatedTime = System.currentTimeMillis() - startTime;
             System.out.println("Time taken : "+ estimatedTime/1000 + " seconds");
@@ -80,10 +49,69 @@ public class Cleanser {
             writerNotTransformed.close();
             reader.close();
 
+
+
         }
         catch(Exception ex)
         {
             System.out.println("Error Occured " +ex);
         }
+    }
+
+    private static void Cleanse(CSVReader reader, CSVWriter writerTransformed,  CSVWriter writerNotTransformed, String indexColumnName, String [] columnsIncluded ) throws IOException
+    {
+        int columnIndex ;
+        int []columnIncludedIndexes = new int[columnsIncluded.length];
+
+        //Writing Header row for output files
+        String [] nextLine = reader.readNext();
+
+        writerNotTransformed.writeNext(nextLine);
+
+
+        //Add one more column for algorithm index to specified column array and write as header
+        List<String> list = new LinkedList<String>(Arrays.asList(columnsIncluded));
+        list.add(0, "Index");
+        writerTransformed.writeNext(list.toArray(new String[indexColumnName.length()+1]));
+
+        //Get the column index of given column name
+        columnIndex = Arrays.asList(nextLine).indexOf(indexColumnName);
+
+        for(int i =0; i < nextLine.length; i++)
+        {
+            nextLine[i] = nextLine[i].trim();
+        }
+
+        for(int i = 0; i < columnsIncluded.length; i++)
+        {
+            columnIncludedIndexes[i] = Arrays.asList(nextLine).indexOf(columnsIncluded[i]);
+        }
+
+        while ((nextLine = reader.readNext()) != null) {
+
+
+            if(nextLine.length > columnIndex && !nextLine[columnIndex].equals("")) {
+
+                //Initialize output with specified columns plus one more column for algorithm index
+                String [] outputLine = new String[columnIncludedIndexes.length + 1];
+
+                //Set  algorithm Index for first column
+                outputLine[0]  = SoundexMatch.Convert(nextLine[columnIndex]);
+
+                //Set specified columns for rest
+                for (int i =1; i < columnIncludedIndexes.length; i++)
+                {
+                    outputLine[i] = nextLine[columnIncludedIndexes[i-1]];
+                }
+
+                writerTransformed.writeNext(outputLine);
+            }
+            else{
+
+                writerNotTransformed.writeNext(nextLine);
+            }
+        }
+
+
     }
 }
