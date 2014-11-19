@@ -33,3 +33,5 @@ modules/cleanser/target/maven-archiver/pom.properties
 modules/cleanser/target/classes/Soundex.class
 
 modules/cleanser/target/classes/Soundex.class
+
+modules/cleanser/target/classes/Cleanser.class

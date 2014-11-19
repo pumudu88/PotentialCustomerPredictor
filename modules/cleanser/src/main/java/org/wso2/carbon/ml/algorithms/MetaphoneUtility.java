@@ -1,4 +1,4 @@
-package doublemetaphone;
+package org.wso2.carbon.ml.algorithms;
 
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.language.Metaphone;

@@ -1,6 +1,8 @@
-package doublemetaphone;
+package org.wso2.carbon.ml.predictor;
 
+import org.wso2.carbon.ml.algorithms.MetaphoneUtility;
 import org.apache.commons.codec.EncoderException;
+import org.wso2.carbon.ml.algorithms.DoubleMetaphoneUtility;
 
 /**
  * Created by pumudu on 11/18/14.
