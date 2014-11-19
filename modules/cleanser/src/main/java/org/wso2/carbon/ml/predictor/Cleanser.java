@@ -1,8 +1,10 @@
+package org.wso2.carbon.ml.predictor;
+
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
+import org.wso2.carbon.ml.algorithms.SoundexMatch;
 
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.util.Arrays;

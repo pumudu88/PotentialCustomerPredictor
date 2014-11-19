@@ -1,3 +1,5 @@
+package org.wso2.carbon.ml.algorithms;
+
 import java.text.Normalizer;
 import java.util.regex.Pattern;
 import org.apache.commons.codec.language.Soundex;
