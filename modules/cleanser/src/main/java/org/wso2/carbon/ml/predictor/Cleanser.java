@@ -4,6 +4,8 @@ import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.ml.algorithms.DoubleMetaphoneUtility;
+import org.wso2.carbon.ml.algorithms.MetaphoneUtility;
 import org.wso2.carbon.ml.algorithms.SoundexMatchUtility;
 
 
@@ -21,6 +23,12 @@ import java.util.List;
 public class Cleanser {
 
     private static final Log logger = LogFactory.getLog(Cleanser.class);
+
+    public static final int INDEX_ALGO_SOUNDEX = 1;
+    public static final int INDEX_ALGO_META_PHONE = 2;
+    public static final int INDEX_ALGO_DOUBLE_META_PHONE = 3;
+    public static final String INDEX_COLUMN_NAME = "Index";
+
 
     public static void main(String[] args)
     {
@@ -40,7 +48,7 @@ public class Cleanser {
             CSVWriter writerTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteTransfomedFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
             CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteNotTransformedFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
 
-            Cleanse(reader, writerTransformed, writerNotTransformed, "Company", columnsIncluded);
+            Cleanse(reader, writerTransformed, writerNotTransformed, "Company", columnsIncluded, Cleanser.INDEX_ALGO_SOUNDEX);
 
             long estimatedTime = System.currentTimeMillis() - startTime;
             logger.info("Time taken : "+ estimatedTime/1000 + " seconds");
@@ -54,11 +62,23 @@ public class Cleanser {
         }
         catch(Exception ex)
         {
-            logger.error("Error Occured " +ex);
+            logger.error(ex);
         }
     }
 
-    private static void Cleanse(CSVReader reader, CSVWriter writerTransformed,  CSVWriter writerNotTransformed, String indexColumnName, String [] columnsIncluded ) throws IOException
+    /**
+     *
+     * Data Cleansing will be done on specified input csv and transform into specified csv files
+     *
+     * @param reader input csv file
+     * @param writerTransformed output transform csv file
+     * @param writerNotTransformed output not transformed/ignored csv file
+     * @param indexColumnName indexing column name by algorithm
+     * @param columnsIncluded Including column names for transformation
+     * @param indexAlgorithm Specified algorithm for indexing
+     * @throws IOException
+     */
+    private static void Cleanse(CSVReader reader, CSVWriter writerTransformed,  CSVWriter writerNotTransformed, String indexColumnName, String [] columnsIncluded, int indexAlgorithm ) throws Exception
     {
         int totalCounter = 0;
         int transformedCounter = 0;
@@ -71,7 +91,7 @@ public class Cleanser {
 
         //Add one more column for algorithm index to specified column array and write as header
         List<String> list = new LinkedList<String>(Arrays.asList(columnsIncluded));
-        list.add(0, "Index");
+        list.add(0, Cleanser.INDEX_COLUMN_NAME);
         writerTransformed.writeNext(list.toArray(new String[indexColumnName.length()+1]));
 
         //Get the column index of given column name
@@ -96,9 +116,22 @@ public class Cleanser {
                 //Initialize output with specified columns plus one more column for algorithm index
                 String [] outputLine = new String[columnIncludedIndexes.length + 1];
 
-                //Set  algorithm Index for first column
 
                 try {
+
+                    //Set  algorithm Index for first column
+                    switch (indexAlgorithm) {
+                        case Cleanser.INDEX_ALGO_DOUBLE_META_PHONE:
+                            outputLine[0]  = DoubleMetaphoneUtility.Convert(nextLine[columnIndex]);
+                            break;
+                        case Cleanser.INDEX_ALGO_META_PHONE:
+                            outputLine[0]  = MetaphoneUtility.Convert(nextLine[columnIndex]);
+                            break;
+                        default:
+                            outputLine[0]  = SoundexMatchUtility.Convert(nextLine[columnIndex]);
+                            break;
+                    }
+
                     outputLine[0]  = SoundexMatchUtility.Convert(nextLine[columnIndex]);
                     //Set specified columns for rest
                     for (int i = 1; i < columnIncludedIndexes.length; i++) {
@@ -115,7 +148,7 @@ public class Cleanser {
                 }
                 catch (IllegalArgumentException ex)
                 {
-                    //handles soundex econding exception and return empty index
+                    //handles algorithm encode exceptions and return empty index
                     writerNotTransformed.writeNext(nextLine);
                 }
 
