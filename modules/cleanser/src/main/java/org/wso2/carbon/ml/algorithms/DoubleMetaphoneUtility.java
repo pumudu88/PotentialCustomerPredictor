@@ -9,12 +9,27 @@ import org.apache.commons.codec.language.DoubleMetaphone;
  */
 public class DoubleMetaphoneUtility {
 
-
+    private static DoubleMetaphone doubleMetaphone = new DoubleMetaphone();
 
     public static String DoubleMetaphoneConvert(String input) throws EncoderException
     {
-        DoubleMetaphone doubleMetaphone = new DoubleMetaphone();
+
         return doubleMetaphone.encode(input);
+    }
+
+    public static String DoubleMetaphoneString(String input) throws EncoderException
+    {
+        return doubleMetaphone.doubleMetaphone(input);
+    }
+
+    public static int getMaxCodeLen() throws EncoderException
+    {
+        return doubleMetaphone.getMaxCodeLen();
+    }
+
+    public static void setMaxCodeLen(int length) throws EncoderException
+    {
+        doubleMetaphone.setMaxCodeLen(length);
     }
 
 

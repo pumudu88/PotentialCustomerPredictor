@@ -35,3 +35,13 @@ modules/cleanser/target/classes/Soundex.class
 modules/cleanser/target/classes/Soundex.class
 
 modules/cleanser/target/classes/Cleanser.class
+
+modules/cleanser/target/classes/org/wso2/carbon/ml/algorithms/DoubleMetaphoneUtility.class
+
+modules/cleanser/target/classes/org/wso2/carbon/ml/algorithms/MetaphoneUtility.class
+
+modules/cleanser/target/classes/org/wso2/carbon/ml/algorithms/SoundexMatch.class
+
+modules/cleanser/target/classes/org/wso2/carbon/ml/predictor/Cleanser.class
+
+*.class

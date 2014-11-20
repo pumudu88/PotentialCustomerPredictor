@@ -8,13 +8,29 @@ import org.apache.commons.codec.language.Metaphone;
  */
 public class MetaphoneUtility {
 
+   private static Metaphone metaphone = new Metaphone();
 
     public static String MetaphoneConvert(String input) throws EncoderException
     {
-        Metaphone metaphone = new Metaphone();
         return metaphone.encode(input);
-
     }
+
+    public static String MetaphoneString(String input) throws EncoderException
+    {
+        return metaphone.metaphone(input);
+    }
+
+    public static int getMaxCodeLen() throws EncoderException
+    {
+        return metaphone.getMaxCodeLen();
+    }
+
+    public static void setMaxCodeLen(int length) throws EncoderException
+    {
+        metaphone.setMaxCodeLen(length);
+    }
+
+
 
 
 

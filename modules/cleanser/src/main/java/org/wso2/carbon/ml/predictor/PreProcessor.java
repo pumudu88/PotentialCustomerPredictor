@@ -17,9 +17,23 @@ public class PreProcessor {
             String metaphoneValueForMicrosft  = MetaphoneUtility.MetaphoneConvert("microsof");
 
 
+            String metaphoneForMicrosoft      = MetaphoneUtility.MetaphoneString("microsoft");
+            int codeLengthMetaphone           = MetaphoneUtility.getMaxCodeLen();
+
+
             System.out.println("------ metaphone encode value ------------");
             System.out.println("metaphone value for microsoft : " + metaphoneValueForMicrosft);
             System.out.println("metaphone value for microsft : " + metaphoneValueForMicrosoft);
+            System.out.println("code length metaphone : " + codeLengthMetaphone );
+
+            MetaphoneUtility.setMaxCodeLen(5);
+            codeLengthMetaphone           = MetaphoneUtility.getMaxCodeLen();
+            System.out.println("code length metaphone : " + codeLengthMetaphone );
+            metaphoneValueForMicrosft  = MetaphoneUtility.MetaphoneConvert("microsof");
+            System.out.println("metaphone value for microsoft : " + metaphoneValueForMicrosft);
+
+
+
 
             String doubleMetaphoneForMicrosoft = DoubleMetaphoneUtility.DoubleMetaphoneConvert("microsoft");
             String doubleMetaphoneForMicosoft  = DoubleMetaphoneUtility.DoubleMetaphoneConvert("micrsoft");
