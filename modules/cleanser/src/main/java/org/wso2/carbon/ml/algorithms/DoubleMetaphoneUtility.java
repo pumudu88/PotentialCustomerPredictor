@@ -11,13 +11,13 @@ public class DoubleMetaphoneUtility {
 
     private static DoubleMetaphone doubleMetaphone = new DoubleMetaphone();
 
-    public static String DoubleMetaphoneConvert(String input) throws EncoderException
+    public static String Convert(String input) throws EncoderException
     {
 
         return doubleMetaphone.encode(input);
     }
 
-    public static String DoubleMetaphoneString(String input) throws EncoderException
+    public static String StringConvert(String input) throws EncoderException
     {
         return doubleMetaphone.doubleMetaphone(input);
     }
