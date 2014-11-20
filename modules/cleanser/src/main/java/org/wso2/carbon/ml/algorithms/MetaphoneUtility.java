@@ -10,12 +10,12 @@ public class MetaphoneUtility {
 
    private static Metaphone metaphone = new Metaphone();
 
-    public static String MetaphoneConvert(String input) throws EncoderException
+    public static String Convert(String input) throws EncoderException
     {
         return metaphone.encode(input);
     }
 
-    public static String MetaphoneString(String input) throws EncoderException
+    public static String StringConvert(String input) throws EncoderException
     {
         return metaphone.metaphone(input);
     }
