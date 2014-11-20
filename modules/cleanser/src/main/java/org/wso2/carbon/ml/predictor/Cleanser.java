@@ -2,7 +2,10 @@ package org.wso2.carbon.ml.predictor;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
-import org.wso2.carbon.ml.algorithms.SoundexMatch;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.ml.algorithms.SoundexMatchUtility;
+
 
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -16,6 +19,8 @@ import java.util.List;
  * Created by tharik on 11/17/14.
  */
 public class Cleanser {
+
+    private static final Log logger = LogFactory.getLog(Cleanser.class);
 
     public static void main(String[] args)
     {
@@ -35,12 +40,10 @@ public class Cleanser {
             CSVWriter writerTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteTransfomedFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
             CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteNotTransformedFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
 
-            System.out.println("Processing started....");
-
             Cleanse(reader, writerTransformed, writerNotTransformed, "Company", columnsIncluded);
 
             long estimatedTime = System.currentTimeMillis() - startTime;
-            System.out.println("Time taken : "+ estimatedTime/1000 + " seconds");
+            logger.info("Time taken : "+ estimatedTime/1000 + " seconds");
 
             writerTransformed.close();
             writerNotTransformed.close();
@@ -51,7 +54,7 @@ public class Cleanser {
         }
         catch(Exception ex)
         {
-            System.out.println("Error Occured " +ex);
+            logger.error("Error Occured " +ex);
         }
     }
 
@@ -94,24 +97,28 @@ public class Cleanser {
                 String [] outputLine = new String[columnIncludedIndexes.length + 1];
 
                 //Set  algorithm Index for first column
-                outputLine[0]  = SoundexMatch.Convert(nextLine[columnIndex]);
 
-                //Set specified columns for rest
-                for (int i =1; i < columnIncludedIndexes.length; i++)
+                try {
+                    outputLine[0]  = SoundexMatchUtility.Convert(nextLine[columnIndex]);
+                    //Set specified columns for rest
+                    for (int i = 1; i < columnIncludedIndexes.length; i++) {
+                        //Check include index is available on readLine
+                        if (nextLine.length > columnIncludedIndexes[i - 1]) {
+                            outputLine[i] = nextLine[columnIncludedIndexes[i - 1]];
+                        } else {
+                            outputLine[i] = "";
+                        }
+                    }
+
+                    transformedCounter++;
+                    writerTransformed.writeNext(outputLine);
+                }
+                catch (IllegalArgumentException ex)
                 {
-                    //Check include index is available on readLine
-                    if (nextLine.length > columnIncludedIndexes[i-1])
-                    {
-                        outputLine[i] = nextLine[columnIncludedIndexes[i-1]];
-                    }
-                    else
-                    {
-                        outputLine[i] = "";
-                    }
+                    //handles soundex econding exception and return empty index
+                    writerNotTransformed.writeNext(nextLine);
                 }
 
-                transformedCounter++;
-                writerTransformed.writeNext(outputLine);
             }
             else{
                 writerNotTransformed.writeNext(nextLine);
@@ -119,6 +126,6 @@ public class Cleanser {
             totalCounter++;
         }
 
-        System.out.println(totalCounter + " rows processed.  " + transformedCounter + " rows transformed. " + (totalCounter - transformedCounter) + " rows not transformed");
+        logger.info(totalCounter + " rows processed.  " + transformedCounter + " rows transformed. " + (totalCounter - transformedCounter) + " rows not transformed");
     }
 }
