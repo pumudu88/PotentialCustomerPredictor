@@ -28,11 +28,8 @@ public class Cleanser {
 
             long startTime = System.currentTimeMillis();
 
-            //CSVReader reader = new CSVReader(new FileReader(csvPath + csvReadFile), ',');
-
             CSVReader reader=new CSVReader(
                     new InputStreamReader(new FileInputStream(csvPath + csvReadFile), "UTF-8"), ',',CSVReader.DEFAULT_QUOTE_CHARACTER,CSVReader.DEFAULT_QUOTE_CHARACTER);
-
 
 
             CSVWriter writerTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteTransfomedFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
@@ -60,14 +57,14 @@ public class Cleanser {
 
     private static void Cleanse(CSVReader reader, CSVWriter writerTransformed,  CSVWriter writerNotTransformed, String indexColumnName, String [] columnsIncluded ) throws IOException
     {
+        int totalCounter = 0;
+        int transformedCounter = 0;
         int columnIndex ;
         int []columnIncludedIndexes = new int[columnsIncluded.length];
 
         //Writing Header row for output files
         String [] nextLine = reader.readNext();
-
         writerNotTransformed.writeNext(nextLine);
-
 
         //Add one more column for algorithm index to specified column array and write as header
         List<String> list = new LinkedList<String>(Arrays.asList(columnsIncluded));
@@ -90,7 +87,8 @@ public class Cleanser {
         while ((nextLine = reader.readNext()) != null) {
 
 
-            if(nextLine.length > columnIndex && !nextLine[columnIndex].equals("")) {
+            //Check read line is number of required columns and indexing column value is not empty
+            if(nextLine.length >= columnIncludedIndexes.length && !(nextLine[columnIndex].equals(""))) {
 
                 //Initialize output with specified columns plus one more column for algorithm index
                 String [] outputLine = new String[columnIncludedIndexes.length + 1];
@@ -101,17 +99,26 @@ public class Cleanser {
                 //Set specified columns for rest
                 for (int i =1; i < columnIncludedIndexes.length; i++)
                 {
-                    outputLine[i] = nextLine[columnIncludedIndexes[i-1]];
+                    //Check include index is available on readLine
+                    if (nextLine.length > columnIncludedIndexes[i-1])
+                    {
+                        outputLine[i] = nextLine[columnIncludedIndexes[i-1]];
+                    }
+                    else
+                    {
+                        outputLine[i] = "";
+                    }
                 }
 
+                transformedCounter++;
                 writerTransformed.writeNext(outputLine);
             }
             else{
-
                 writerNotTransformed.writeNext(nextLine);
             }
+            totalCounter++;
         }
 
-
+        System.out.println(totalCounter + " rows processed.  " + transformedCounter + " rows transformed. " + (totalCounter - transformedCounter) + " rows not transformed");
     }
 }
