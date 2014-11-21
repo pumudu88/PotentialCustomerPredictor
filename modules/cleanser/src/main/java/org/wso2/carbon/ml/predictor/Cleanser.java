@@ -2,7 +2,10 @@ package org.wso2.carbon.ml.predictor;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
-import org.wso2.carbon.ml.algorithms.SoundexMatch;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.ml.algorithms.SoundexMatchUtility;
+
 
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -17,6 +20,8 @@ import java.util.List;
  */
 public class Cleanser {
 
+    private static final Log logger = LogFactory.getLog(Cleanser.class);
+
     public static void main(String[] args)
     {
         try {
@@ -28,22 +33,17 @@ public class Cleanser {
 
             long startTime = System.currentTimeMillis();
 
-            //CSVReader reader = new CSVReader(new FileReader(csvPath + csvReadFile), ',');
-
             CSVReader reader=new CSVReader(
                     new InputStreamReader(new FileInputStream(csvPath + csvReadFile), "UTF-8"), ',',CSVReader.DEFAULT_QUOTE_CHARACTER,CSVReader.DEFAULT_QUOTE_CHARACTER);
-
 
 
             CSVWriter writerTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteTransfomedFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
             CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteNotTransformedFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
 
-            System.out.println("Processing started....");
-
             Cleanse(reader, writerTransformed, writerNotTransformed, "Company", columnsIncluded);
 
             long estimatedTime = System.currentTimeMillis() - startTime;
-            System.out.println("Time taken : "+ estimatedTime/1000 + " seconds");
+            logger.info("Time taken : "+ estimatedTime/1000 + " seconds");
 
             writerTransformed.close();
             writerNotTransformed.close();
@@ -54,20 +54,20 @@ public class Cleanser {
         }
         catch(Exception ex)
         {
-            System.out.println("Error Occured " +ex);
+            logger.error("Error Occured " +ex);
         }
     }
 
     private static void Cleanse(CSVReader reader, CSVWriter writerTransformed,  CSVWriter writerNotTransformed, String indexColumnName, String [] columnsIncluded ) throws IOException
     {
+        int totalCounter = 0;
+        int transformedCounter = 0;
         int columnIndex ;
         int []columnIncludedIndexes = new int[columnsIncluded.length];
 
         //Writing Header row for output files
         String [] nextLine = reader.readNext();
-
         writerNotTransformed.writeNext(nextLine);
-
 
         //Add one more column for algorithm index to specified column array and write as header
         List<String> list = new LinkedList<String>(Arrays.asList(columnsIncluded));
@@ -90,28 +90,42 @@ public class Cleanser {
         while ((nextLine = reader.readNext()) != null) {
 
 
-            if(nextLine.length > columnIndex && !nextLine[columnIndex].equals("")) {
+            //Check read line is number of required columns and indexing column value is not empty
+            if(nextLine.length >= columnIncludedIndexes.length && !(nextLine[columnIndex].equals(""))) {
 
                 //Initialize output with specified columns plus one more column for algorithm index
                 String [] outputLine = new String[columnIncludedIndexes.length + 1];
 
                 //Set  algorithm Index for first column
-                outputLine[0]  = SoundexMatch.Convert(nextLine[columnIndex]);
 
-                //Set specified columns for rest
-                for (int i =1; i < columnIncludedIndexes.length; i++)
+                try {
+                    outputLine[0]  = SoundexMatchUtility.Convert(nextLine[columnIndex]);
+                    //Set specified columns for rest
+                    for (int i = 1; i < columnIncludedIndexes.length; i++) {
+                        //Check include index is available on readLine
+                        if (nextLine.length > columnIncludedIndexes[i - 1]) {
+                            outputLine[i] = nextLine[columnIncludedIndexes[i - 1]];
+                        } else {
+                            outputLine[i] = "";
+                        }
+                    }
+
+                    transformedCounter++;
+                    writerTransformed.writeNext(outputLine);
+                }
+                catch (IllegalArgumentException ex)
                 {
-                    outputLine[i] = nextLine[columnIncludedIndexes[i-1]];
+                    //handles soundex econding exception and return empty index
+                    writerNotTransformed.writeNext(nextLine);
                 }
 
-                writerTransformed.writeNext(outputLine);
             }
             else{
-
                 writerNotTransformed.writeNext(nextLine);
             }
+            totalCounter++;
         }
 
-
+        logger.info(totalCounter + " rows processed.  " + transformedCounter + " rows transformed. " + (totalCounter - transformedCounter) + " rows not transformed");
     }
 }
