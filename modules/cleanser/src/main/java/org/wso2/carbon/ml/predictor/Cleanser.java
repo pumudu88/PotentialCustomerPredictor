@@ -79,6 +79,12 @@ public class Cleanser {
         }
     }
 
+    /**
+     * Specifies weather current value is an existing customer
+     * @param currentCustomers string array of customer indexes
+     * @param currentValue current index value
+     * @return
+     */
     private static boolean isCustomer(String [] currentCustomers, String currentValue)
     {
         for (int i = 0; i < currentCustomers.length; i++)
@@ -93,6 +99,14 @@ public class Cleanser {
 
     }
 
+    /**
+     * Load all the current customers from specified CSV read file and convert to indexes into a string array
+     * @param readerCustomers input CSV file of existing customers
+     * @param indexAlgorithm indexing algorithm
+     * @param indexColumn indexing column index
+     * @return
+     * @throws Exception
+     */
     private static String[] LoadCurrentCustomers(CSVReader readerCustomers, int indexAlgorithm, int indexColumn) throws  Exception
     {
         ArrayList<String> Customers = new ArrayList<String>();
@@ -100,18 +114,24 @@ public class Cleanser {
 
 
         while ((nextLine = readerCustomers.readNext()) != null) {
-
-            //Set  algorithm Index for first column
-            switch (indexAlgorithm) {
-                case Cleanser.INDEX_ALGO_DOUBLE_META_PHONE:
-                    Customers.add(Customers.size(), DoubleMetaphoneUtility.Convert(nextLine[indexColumn]));
-                    break;
-                case Cleanser.INDEX_ALGO_META_PHONE:
-                    Customers.add(Customers.size(), MetaphoneUtility.Convert(nextLine[indexColumn]));
-                    break;
-                default:
-                    Customers.add(Customers.size(), SoundexMatchUtility.Convert(nextLine[indexColumn]));
-                    break;
+            try {
+                //Set  algorithm Index for first column
+                switch (indexAlgorithm) {
+                    case Cleanser.INDEX_ALGO_DOUBLE_META_PHONE:
+                        Customers.add(Customers.size(), DoubleMetaphoneUtility.Convert(nextLine[indexColumn]));
+                        break;
+                    case Cleanser.INDEX_ALGO_META_PHONE:
+                        Customers.add(Customers.size(), MetaphoneUtility.Convert(nextLine[indexColumn]));
+                        break;
+                    default:
+                        Customers.add(Customers.size(), SoundexMatchUtility.Convert(nextLine[indexColumn]));
+                        break;
+                }
+            }
+            catch (IllegalArgumentException ex)
+            {
+                //handles algorithm encode exceptions
+                logger.error(ex);
             }
 
         }
@@ -207,7 +227,7 @@ public class Cleanser {
                 }
                 catch (IllegalArgumentException ex)
                 {
-                    //handles algorithm encode exceptions and return empty index
+                    //handles algorithm encode exceptions
                     writerNotTransformed.writeNext(nextLine);
                 }
 
