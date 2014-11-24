@@ -157,6 +157,9 @@ public class Cleanser {
     {
         int totalCounter = 0;
         int transformedCounter = 0;
+        int currentCustomerActionCounter = 0;
+
+
         int columnIndex ;
         int []columnIncludedIndexes = new int[columnsIncluded.length];
 
@@ -210,7 +213,16 @@ public class Cleanser {
                     }
 
                     outputLine[0]  = SoundexMatchUtility.Convert(nextLine[columnIndex]);
-                    outputLine[1]  = String.valueOf(isCustomer(currentCustomer, outputLine[0]));
+
+
+                    boolean isExistingCustomer = isCustomer(currentCustomer, outputLine[0]);
+
+                    if(isExistingCustomer)
+                    {
+                        currentCustomerActionCounter++;
+                    }
+
+                    outputLine[1]  = String.valueOf(isExistingCustomer);
 
                     //Set specified columns for rest
                     for (int i = 2; i < columnIncludedIndexes.length; i++) {
@@ -238,6 +250,6 @@ public class Cleanser {
             totalCounter++;
         }
 
-        logger.info(totalCounter + " rows processed.  " + transformedCounter + " rows transformed. " + (totalCounter - transformedCounter) + " rows not transformed");
+        logger.info(totalCounter + " rows processed.  " + transformedCounter + " rows transformed. " + (totalCounter - transformedCounter) + " rows not transformed. Total current customer actions "+ currentCustomerActionCounter);
     }
 }
