@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +29,10 @@ public class Cleanser {
     public static final int INDEX_ALGO_META_PHONE = 2;
     public static final int INDEX_ALGO_DOUBLE_META_PHONE = 3;
     public static final String INDEX_COLUMN_NAME = "Index";
+    public static final String INDEX_COLUMN_INPUT = "Company";
+    public static final String IS_CUSTOMER_COLUMN_NAME = "Is Customer";
+
+
 
 
     public static void main(String[] args)
@@ -35,20 +40,28 @@ public class Cleanser {
         try {
             String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
             String csvReadFile = "Activity behaviou_Tier2_20141015.csv";
+            String csvReadCustomerFile = "customers.csv";
             String csvWriteTransfomedFile = "transformed.csv";
             String csvWriteNotTransformedFile = "notTransformed.csv";
             String [] columnsIncluded = {"Title","Company","Country","Activity Type","Activity","Activity date/time","IpAddress"};
+            String [] currentCustomers;
 
             long startTime = System.currentTimeMillis();
 
             CSVReader reader=new CSVReader(
                     new InputStreamReader(new FileInputStream(csvPath + csvReadFile), "UTF-8"), ',',CSVReader.DEFAULT_QUOTE_CHARACTER,CSVReader.DEFAULT_QUOTE_CHARACTER);
 
+            CSVReader readerCustomers=new CSVReader(
+                    new InputStreamReader(new FileInputStream(csvPath + csvReadCustomerFile), "UTF-8"), ',',CSVReader.DEFAULT_QUOTE_CHARACTER,CSVReader.DEFAULT_QUOTE_CHARACTER);
+
 
             CSVWriter writerTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteTransfomedFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
             CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteNotTransformedFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
 
-            Cleanse(reader, writerTransformed, writerNotTransformed, "Company", columnsIncluded, Cleanser.INDEX_ALGO_SOUNDEX);
+
+            currentCustomers = LoadCurrentCustomers(readerCustomers, Cleanser.INDEX_ALGO_SOUNDEX, 0);
+
+            Cleanse(reader, writerTransformed, writerNotTransformed, INDEX_COLUMN_INPUT, Cleanser.INDEX_COLUMN_NAME, Cleanser.IS_CUSTOMER_COLUMN_NAME, currentCustomers, columnsIncluded, Cleanser.INDEX_ALGO_SOUNDEX);
 
             long estimatedTime = System.currentTimeMillis() - startTime;
             logger.info("Time taken : "+ estimatedTime/1000 + " seconds");
@@ -66,6 +79,48 @@ public class Cleanser {
         }
     }
 
+    private static boolean isCustomer(String [] currentCustomers, String currentValue)
+    {
+        for (int i = 0; i < currentCustomers.length; i++)
+        {
+            if ( currentValue.equals(currentCustomers[i]))
+            {
+                return  true;
+            }
+        }
+
+        return false;
+
+    }
+
+    private static String[] LoadCurrentCustomers(CSVReader readerCustomers, int indexAlgorithm, int indexColumn) throws  Exception
+    {
+        ArrayList<String> Customers = new ArrayList<String>();
+        String [] nextLine;
+
+
+        while ((nextLine = readerCustomers.readNext()) != null) {
+
+            //Set  algorithm Index for first column
+            switch (indexAlgorithm) {
+                case Cleanser.INDEX_ALGO_DOUBLE_META_PHONE:
+                    Customers.add(Customers.size(), DoubleMetaphoneUtility.Convert(nextLine[indexColumn]));
+                    break;
+                case Cleanser.INDEX_ALGO_META_PHONE:
+                    Customers.add(Customers.size(), MetaphoneUtility.Convert(nextLine[indexColumn]));
+                    break;
+                default:
+                    Customers.add(Customers.size(), SoundexMatchUtility.Convert(nextLine[indexColumn]));
+                    break;
+            }
+
+        }
+
+
+
+        return Customers.toArray(new String[Customers.size()]);
+    }
+
     /**
      *
      * Data Cleansing will be done on specified input csv and transform into specified csv files
@@ -78,7 +133,7 @@ public class Cleanser {
      * @param indexAlgorithm Specified algorithm for indexing
      * @throws IOException
      */
-    private static void Cleanse(CSVReader reader, CSVWriter writerTransformed,  CSVWriter writerNotTransformed, String indexColumnName, String [] columnsIncluded, int indexAlgorithm ) throws Exception
+    private static void Cleanse(CSVReader reader, CSVWriter writerTransformed,  CSVWriter writerNotTransformed, String indexColumnName, String indexOutputColumnName, String isCutomerColumnName, String[] currentCustomer, String [] columnsIncluded, int indexAlgorithm ) throws Exception
     {
         int totalCounter = 0;
         int transformedCounter = 0;
@@ -91,7 +146,9 @@ public class Cleanser {
 
         //Add one more column for algorithm index to specified column array and write as header
         List<String> list = new LinkedList<String>(Arrays.asList(columnsIncluded));
-        list.add(0, Cleanser.INDEX_COLUMN_NAME);
+        list.add(0, indexOutputColumnName);
+        list.add(1, isCutomerColumnName);
+
         writerTransformed.writeNext(list.toArray(new String[indexColumnName.length()+1]));
 
         //Get the column index of given column name
@@ -133,6 +190,8 @@ public class Cleanser {
                     }
 
                     outputLine[0]  = SoundexMatchUtility.Convert(nextLine[columnIndex]);
+                    outputLine[1]  = String.valueOf(isCustomer(currentCustomer, outputLine[0]));
+
                     //Set specified columns for rest
                     for (int i = 1; i < columnIncludedIndexes.length; i++) {
                         //Check include index is available on readLine
