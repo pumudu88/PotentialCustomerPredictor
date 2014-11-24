@@ -193,10 +193,10 @@ public class Cleanser {
                     outputLine[1]  = String.valueOf(isCustomer(currentCustomer, outputLine[0]));
 
                     //Set specified columns for rest
-                    for (int i = 1; i < columnIncludedIndexes.length; i++) {
+                    for (int i = 2; i < columnIncludedIndexes.length; i++) {
                         //Check include index is available on readLine
-                        if (nextLine.length > columnIncludedIndexes[i - 1]) {
-                            outputLine[i] = nextLine[columnIncludedIndexes[i - 1]];
+                        if (nextLine.length > columnIncludedIndexes[i - 2]) {
+                            outputLine[i] = nextLine[columnIncludedIndexes[i - 2]];
                         } else {
                             outputLine[i] = "";
                         }
