@@ -18,7 +18,7 @@ predictor.iml
 
 .idea/libraries/Maven__net_sf_opencsv_opencsv_2_0.xml
 
-modules/cleanser/target/classes/org.wso2.carbon.ml.predictor.Cleanser.class
+modules/cleanser/target/classes/org.wso2.carbon.ml.preprocessor.Cleanser.class
 
 modules/cleanser/target/classes/doublemetaphone/DoubleMetaphoneUtility.class
 
