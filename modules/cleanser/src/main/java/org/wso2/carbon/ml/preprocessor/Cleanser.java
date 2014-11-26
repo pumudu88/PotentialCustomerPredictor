@@ -46,7 +46,8 @@ public class Cleanser {
             String csvWriteTransfomedNewFile = "transformedNew.csv";
             String csvWriteTransfomedExistingFile = "transformedExisting.csv";
             String csvWriteNotTransformedFile = "notTransformed.csv";
-            String [] columnsIncluded = {"Title","Company","Country","Activity Type","Activity","Activity date/time","IpAddress"};
+            String [] columnsIncluded = {"Title","Company","Country","Activity Type",
+                                        "Activity","Activity date/time","IpAddress"};
             String [][] currentCustomers;
 
             DoubleMetaphoneUtility.setMaxCodeLen(DOUBLE_META_PHONE_THRESHOLD);
@@ -54,21 +55,31 @@ public class Cleanser {
             long startTime = System.currentTimeMillis();
 
             CSVReader reader=new CSVReader(
-                    new InputStreamReader(new FileInputStream(csvPath + csvReadFile), "UTF-8"), ',',CSVReader.DEFAULT_QUOTE_CHARACTER,CSVReader.DEFAULT_QUOTE_CHARACTER);
+                    new InputStreamReader(new FileInputStream(csvPath + csvReadFile), "UTF-8"), ',',
+                                          CSVReader.DEFAULT_QUOTE_CHARACTER,CSVReader.DEFAULT_QUOTE_CHARACTER);
 
             CSVReader readerCustomers=new CSVReader(
-                    new InputStreamReader(new FileInputStream(csvPath + csvReadCustomerFile), "UTF-8"), ',',CSVReader.DEFAULT_QUOTE_CHARACTER,CSVReader.DEFAULT_QUOTE_CHARACTER);
+                    new InputStreamReader(new FileInputStream(csvPath + csvReadCustomerFile), "UTF-8"), ',',
+                                          CSVReader.DEFAULT_QUOTE_CHARACTER,CSVReader.DEFAULT_QUOTE_CHARACTER);
 
 
-            CSVWriter writerCustomers = new CSVWriter(new FileWriter(csvPath + csvWriteCustomerFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
-            CSVWriter writerTransformedNew = new CSVWriter(new FileWriter(csvPath + csvWriteTransfomedNewFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
-            CSVWriter writerTransformedExisting = new CSVWriter(new FileWriter(csvPath + csvWriteTransfomedExistingFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
-            CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteNotTransformedFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
+            CSVWriter writerCustomers = new CSVWriter(new FileWriter(csvPath + csvWriteCustomerFile), ',',
+                                                      CSVWriter.NO_QUOTE_CHARACTER);
+            CSVWriter writerTransformedNew = new CSVWriter(new FileWriter(csvPath + csvWriteTransfomedNewFile), ',',
+                                                           CSVWriter.NO_QUOTE_CHARACTER);
+            CSVWriter writerTransformedExisting = new CSVWriter(new FileWriter(csvPath
+                                                                            + csvWriteTransfomedExistingFile),
+                                                                ',', CSVWriter.NO_QUOTE_CHARACTER);
+            CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteNotTransformedFile),
+                                                            ',', CSVWriter.NO_QUOTE_CHARACTER);
 
 
-            currentCustomers = LoadCurrentCustomers(readerCustomers, writerCustomers, Cleanser.INDEX_ALGO_DOUBLE_META_PHONE, 0);
+            currentCustomers = LoadCurrentCustomers(readerCustomers, writerCustomers,
+                    Cleanser.INDEX_ALGO_DOUBLE_META_PHONE, 0);
 
-            Cleanse(reader, writerTransformedNew, writerTransformedExisting, writerNotTransformed, INDEX_COLUMN_INPUT, Cleanser.INDEX_COLUMN_NAME, Cleanser.IS_CUSTOMER_COLUMN_NAME, currentCustomers, columnsIncluded, Cleanser.INDEX_ALGO_DOUBLE_META_PHONE);
+            Cleanse(reader, writerTransformedNew, writerTransformedExisting, writerNotTransformed, INDEX_COLUMN_INPUT,
+                    Cleanser.INDEX_COLUMN_NAME, Cleanser.IS_CUSTOMER_COLUMN_NAME, currentCustomers, columnsIncluded,
+                    Cleanser.INDEX_ALGO_DOUBLE_META_PHONE);
 
             long estimatedTime = System.currentTimeMillis() - startTime;
             logger.info("Time taken : "+ estimatedTime/1000 + " seconds");
@@ -127,7 +138,8 @@ public class Cleanser {
      * @return
      * @throws Exception
      */
-    private static String[][] LoadCurrentCustomers(CSVReader readerCustomers, CSVWriter writerCustomers, int indexAlgorithm, int indexColumn) throws  Exception
+    private static String[][] LoadCurrentCustomers(CSVReader readerCustomers, CSVWriter writerCustomers,
+                                                   int indexAlgorithm, int indexColumn) throws  Exception
     {
 
         Map<String,String> Customers = new HashMap<String,String>();
@@ -188,7 +200,10 @@ public class Cleanser {
      * @param indexAlgorithm Specified algorithm for indexing
      * @throws IOException
      */
-    private static void Cleanse(CSVReader reader, CSVWriter writerTransformedNew,CSVWriter writerTransformedExisting,  CSVWriter writerNotTransformed, String indexColumnName, String indexOutputColumnName, String isCutomerColumnName, String[][] currentCustomer, String [] columnsIncluded, int indexAlgorithm ) throws Exception
+    private static void Cleanse(CSVReader reader, CSVWriter writerTransformedNew,CSVWriter writerTransformedExisting,
+                                CSVWriter writerNotTransformed, String indexColumnName, String indexOutputColumnName,
+                                String isCutomerColumnName, String[][] currentCustomer, String [] columnsIncluded,
+                                int indexAlgorithm ) throws Exception
     {
         int totalCounter = 0;
         int transformedCounter = 0;
@@ -299,6 +314,11 @@ public class Cleanser {
             totalCounter++;
         }
 
-        logger.info(totalCounter + " rows processed.  " + transformedCounter + " rows transformed. " + (totalCounter - transformedCounter) + " rows not transformed. Total current customer actions "+ currentCustomerActionCounter+ ", Other actions " + (transformedCounter - currentCustomerActionCounter));
+        logger.info(totalCounter + " rows processed.  "
+                            + transformedCounter + " rows transformed. "
+                            + (totalCounter - transformedCounter)
+                            + " rows not transformed. Total current customer actions "
+                            + currentCustomerActionCounter+ ", Other actions "
+                            + (transformedCounter - currentCustomerActionCounter));
     }
 }
