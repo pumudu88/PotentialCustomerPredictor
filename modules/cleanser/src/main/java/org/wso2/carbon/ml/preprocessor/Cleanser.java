@@ -40,10 +40,15 @@ public class Cleanser {
             String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
             String csvReadFile = "Activity behaviou_Tier2_20141015.csv";
             String csvReadCustomerFile = "customers.csv";
-            String csvWriteTransfomedFile = "transformed.csv";
+            String csvWriteCustomerFile = "customersIndexed.csv";
+
+            String csvWriteTransfomedNewFile = "transformedNew.csv";
+            String csvWriteTransfomedExistingFile = "transformedExisting.csv";
             String csvWriteNotTransformedFile = "notTransformed.csv";
             String [] columnsIncluded = {"Title","Company","Country","Activity Type","Activity","Activity date/time","IpAddress"};
             String [][] currentCustomers;
+
+            MetaphoneUtility.setMaxCodeLen(7);
 
             long startTime = System.currentTimeMillis();
 
@@ -54,19 +59,23 @@ public class Cleanser {
                     new InputStreamReader(new FileInputStream(csvPath + csvReadCustomerFile), "UTF-8"), ',',CSVReader.DEFAULT_QUOTE_CHARACTER,CSVReader.DEFAULT_QUOTE_CHARACTER);
 
 
-            CSVWriter writerTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteTransfomedFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
+            CSVWriter writerCustomers = new CSVWriter(new FileWriter(csvPath + csvWriteCustomerFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
+            CSVWriter writerTransformedNew = new CSVWriter(new FileWriter(csvPath + csvWriteTransfomedNewFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
+            CSVWriter writerTransformedExisting = new CSVWriter(new FileWriter(csvPath + csvWriteTransfomedExistingFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
             CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteNotTransformedFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
 
 
-            currentCustomers = LoadCurrentCustomers(readerCustomers, Cleanser.INDEX_ALGO_SOUNDEX, 0);
+            currentCustomers = LoadCurrentCustomers(readerCustomers, writerCustomers, Cleanser.INDEX_ALGO_DOUBLE_META_PHONE, 0);
 
-            Cleanse(reader, writerTransformed, writerNotTransformed, INDEX_COLUMN_INPUT, Cleanser.INDEX_COLUMN_NAME, Cleanser.IS_CUSTOMER_COLUMN_NAME, currentCustomers, columnsIncluded, Cleanser.INDEX_ALGO_SOUNDEX);
+            Cleanse(reader, writerTransformedNew, writerTransformedExisting, writerNotTransformed, INDEX_COLUMN_INPUT, Cleanser.INDEX_COLUMN_NAME, Cleanser.IS_CUSTOMER_COLUMN_NAME, currentCustomers, columnsIncluded, Cleanser.INDEX_ALGO_DOUBLE_META_PHONE);
 
             long estimatedTime = System.currentTimeMillis() - startTime;
             logger.info("Time taken : "+ estimatedTime/1000 + " seconds");
 
-            writerTransformed.close();
+            writerTransformedNew.close();
+            writerTransformedExisting.close();
             writerNotTransformed.close();
+            writerCustomers.close();
             reader.close();
 
 
@@ -117,7 +126,7 @@ public class Cleanser {
      * @return
      * @throws Exception
      */
-    private static String[][] LoadCurrentCustomers(CSVReader readerCustomers, int indexAlgorithm, int indexColumn) throws  Exception
+    private static String[][] LoadCurrentCustomers(CSVReader readerCustomers, CSVWriter writerCustomers, int indexAlgorithm, int indexColumn) throws  Exception
     {
 
         Map<String,String> Customers = new HashMap<String,String>();
@@ -157,6 +166,8 @@ public class Cleanser {
             CustomersArray[counter][0] = mapping.getKey().toString();
             CustomersArray[counter][1] = mapping.getValue().toString();
 
+            String [] customers = {CustomersArray[counter][0], CustomersArray[counter][1]};
+            writerCustomers.writeNext(customers);
             counter++;
         }
 
@@ -168,14 +179,15 @@ public class Cleanser {
      * Data Cleansing will be done on specified input csv and transform into specified csv files
      *
      * @param reader input csv file
-     * @param writerTransformed output transform csv file
+     * @param writerTransformedNew  output transform csv file of new customer activities
+     * @param writerTransformedExisting  output transform csv file of new customer activities
      * @param writerNotTransformed output not transformed/ignored csv file
      * @param indexColumnName indexing column name by algorithm
      * @param columnsIncluded Including column names for transformation
      * @param indexAlgorithm Specified algorithm for indexing
      * @throws IOException
      */
-    private static void Cleanse(CSVReader reader, CSVWriter writerTransformed,  CSVWriter writerNotTransformed, String indexColumnName, String indexOutputColumnName, String isCutomerColumnName, String[][] currentCustomer, String [] columnsIncluded, int indexAlgorithm ) throws Exception
+    private static void Cleanse(CSVReader reader, CSVWriter writerTransformedNew,CSVWriter writerTransformedExisting,  CSVWriter writerNotTransformed, String indexColumnName, String indexOutputColumnName, String isCutomerColumnName, String[][] currentCustomer, String [] columnsIncluded, int indexAlgorithm ) throws Exception
     {
         int totalCounter = 0;
         int transformedCounter = 0;
@@ -192,9 +204,9 @@ public class Cleanser {
         //Add one more column for algorithm index to specified column array and write as header
         List<String> list = new LinkedList<String>(Arrays.asList(columnsIncluded));
         list.add(0, indexOutputColumnName);
-        list.add(1, isCutomerColumnName);
 
-        writerTransformed.writeNext(list.toArray(new String[indexColumnName.length()+1]));
+        writerTransformedNew.writeNext(list.toArray(new String[indexColumnName.length()+1]));
+        writerTransformedExisting.writeNext(list.toArray(new String[indexColumnName.length()+1]));
 
         //Get the column index of given column name
         columnIndex = Arrays.asList(nextLine).indexOf(indexColumnName);
@@ -245,25 +257,33 @@ public class Cleanser {
 
                     boolean isExistingCustomer = isCustomer(currentCustomer, outputLine[0]);
 
-                    if(isExistingCustomer)
-                    {
-                        currentCustomerActionCounter++;
-                    }
+
 
                     outputLine[1]  = String.valueOf(isExistingCustomer);
 
                     //Set specified columns for rest
-                    for (int i = 2; i < columnIncludedIndexes.length; i++) {
+                    for (int i = 1; i < columnIncludedIndexes.length; i++) {
                         //Check include index is available on readLine
-                        if (nextLine.length > columnIncludedIndexes[i - 2]) {
-                            outputLine[i] = nextLine[columnIncludedIndexes[i - 2]];
+                        if (nextLine.length > columnIncludedIndexes[i - 1]) {
+                            outputLine[i] = nextLine[columnIncludedIndexes[i - 1]];
                         } else {
                             outputLine[i] = "";
                         }
                     }
 
                     transformedCounter++;
-                    writerTransformed.writeNext(outputLine);
+
+                    if(isExistingCustomer)
+                    {
+                        currentCustomerActionCounter++;
+                        writerTransformedExisting.writeNext(outputLine);
+                    }
+                    else
+                    {
+                        writerTransformedNew.writeNext(outputLine);
+                    }
+
+
                 }
                 catch (IllegalArgumentException ex)
                 {
@@ -278,6 +298,6 @@ public class Cleanser {
             totalCounter++;
         }
 
-        logger.info(totalCounter + " rows processed.  " + transformedCounter + " rows transformed. " + (totalCounter - transformedCounter) + " rows not transformed. Total current customer actions "+ currentCustomerActionCounter);
+        logger.info(totalCounter + " rows processed.  " + transformedCounter + " rows transformed. " + (totalCounter - transformedCounter) + " rows not transformed. Total current customer actions "+ currentCustomerActionCounter+ ", Other actions " + (transformedCounter - currentCustomerActionCounter));
     }
 }
