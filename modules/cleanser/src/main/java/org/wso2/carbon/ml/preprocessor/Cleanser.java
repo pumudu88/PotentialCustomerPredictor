@@ -30,6 +30,7 @@ public class Cleanser {
     public static final String IS_CUSTOMER_COLUMN_NAME = "Is Customer";
     public static final int MIN_NAME_LENGTH = 2;
     public static final String MIN_INDEX_VAL = "-1";
+    public static final int DOUBLE_META_PHONE_THRESHOLD = 10;
 
 
 
@@ -48,7 +49,7 @@ public class Cleanser {
             String [] columnsIncluded = {"Title","Company","Country","Activity Type","Activity","Activity date/time","IpAddress"};
             String [][] currentCustomers;
 
-            MetaphoneUtility.setMaxCodeLen(7);
+            DoubleMetaphoneUtility.setMaxCodeLen(DOUBLE_META_PHONE_THRESHOLD);
 
             long startTime = System.currentTimeMillis();
 
