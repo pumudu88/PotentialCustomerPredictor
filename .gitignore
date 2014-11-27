@@ -45,3 +45,7 @@ modules/cleanser/target/classes/org/wso2/carbon/ml/algorithms/SoundexMatch.class
 modules/cleanser/target/classes/org/wso2/carbon/ml/predictor/Cleanser.class
 
 *.class
+
+.idea/libraries/Maven__commons_codec_commons_codec_1_8.xml
+
+.idea/libraries/Maven__commons_logging_commons_logging_1_1_1.xml
