@@ -2,13 +2,11 @@ package org.wso2.carbon.ml.preprocessor;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
+import org.apache.commons.codec.language.bm.BeiderMorseEncoder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.ml.algorithms.MatchRatingApproachUtility;
-import org.wso2.carbon.ml.algorithms.MetaphoneUtility;
+import org.wso2.carbon.ml.algorithms.*;
 import org.apache.commons.codec.EncoderException;
-import org.wso2.carbon.ml.algorithms.DoubleMetaphoneUtility;
-import org.wso2.carbon.ml.algorithms.SoundexMatchUtility;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -58,11 +56,33 @@ public class PreProcessor {
         nameList.add("Intel");
 
         try {
+
+            // set metaphone settings
+            System.out.println("------------metaphone and double metaphone settings-----------------");
             MetaphoneUtility.setMaxCodeLen(10);
             DoubleMetaphoneUtility.setMaxCodeLen(4);
 
             System.out.println("code length metaphone : " + MetaphoneUtility.getMaxCodeLen() );
             System.out.println("code length double metaphone : " + DoubleMetaphoneUtility.getMaxCodeLen());
+
+            //set beiderMorse settings
+            System.out.println("-------------------beider morse settings----------------------------");
+
+            System.out.println("----------old settings-----------");
+            System.out.println("concat status :" + BeiderMorseUtility.isConcat());
+            System.out.println("name type     :" + BeiderMorseUtility.getNameType().toString());
+            System.out.println("rule type     :" + BeiderMorseUtility.getRuleType().toString());
+            System.out.println("");
+
+            System.out.println("---------new settings-----------");
+            BeiderMorseUtility.setConcat(false);
+            BeiderMorseUtility.setMaxPhonemes(2);
+            BeiderMorseUtility.setRuleType(BeiderMorseUtility.ExactRuleType);
+
+            System.out.println("concat status :" + BeiderMorseUtility.isConcat());
+            System.out.println("name type     :" + BeiderMorseUtility.getNameType().toString());
+            System.out.println("rule type     :" + BeiderMorseUtility.getRuleType().toString());
+
 
             System.out.println("-------------test names-------------");
 
@@ -73,6 +93,7 @@ public class PreProcessor {
                 System.out.println("metaphone        :" + MetaphoneUtility.Convert(nameList.get(i)));
                 System.out.println("double metaphone :" + DoubleMetaphoneUtility.Convert(nameList.get(i)));
                 System.out.println("MRA              :" + MatchRatingApproachUtility.Convert(nameList.get(i)));
+                System.out.println("BeiderMorse      :" + BeiderMorseUtility.Convert(nameList.get(i)));
             }
 
             long estimatedTime = System.currentTimeMillis() - startTime;
