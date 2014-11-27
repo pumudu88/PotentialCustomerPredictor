@@ -32,22 +32,24 @@ public class Cleanser {
     public static final String MIN_INDEX_VAL = "-1";
     public static final int DOUBLE_META_PHONE_THRESHOLD = 10;
 
+    public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
+    public static String csvReadFile = "Activity behaviou_Tier2_20141015.csv";
+    public static String csvReadCustomerFile = "customers.csv";
+    public static String csvWriteCustomerFile = "customersIndexed.csv";
+
+    public static String csvWriteTransfomedNewFile = "transformedNew.csv";
+    public static String csvWriteTransfomedExistingFile = "transformedExisting.csv";
+    public static String csvWriteNotTransformedFile = "notTransformed.csv";
+    public static String [] columnsIncluded = {"Title","Company","Country","Activity Type",
+            "Activity","Activity date/time","IpAddress"};
+
 
 
 
     public static void main(String[] args)
     {
         try {
-            String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
-            String csvReadFile = "Activity behaviou_Tier2_20141015.csv";
-            String csvReadCustomerFile = "customers.csv";
-            String csvWriteCustomerFile = "customersIndexed.csv";
 
-            String csvWriteTransfomedNewFile = "transformedNew.csv";
-            String csvWriteTransfomedExistingFile = "transformedExisting.csv";
-            String csvWriteNotTransformedFile = "notTransformed.csv";
-            String [] columnsIncluded = {"Title","Company","Country","Activity Type",
-                                        "Activity","Activity date/time","IpAddress"};
             String [][] currentCustomers;
 
             DoubleMetaphoneUtility.setMaxCodeLen(DOUBLE_META_PHONE_THRESHOLD);
