@@ -85,7 +85,6 @@ public class PreProcessor {
             CustomMatchingUtility.LoadCompanySuffixFromCsv(csvCompanySuffixFile);
 
 
-
             System.out.println("-------------test names-------------");
 
             for (int i = 0; i < nameList.size(); i++) {
@@ -96,7 +95,7 @@ public class PreProcessor {
                 System.out.println("double metaphone :" + DoubleMetaphoneUtility.Convert(nameList.get(i)));
                 System.out.println("MRA              :" + MatchRatingApproachUtility.Convert(nameList.get(i)));
                 System.out.println("BeiderMorse      :" + BeiderMorseUtility.Convert(nameList.get(i)));
-                System.out.println("custom utility   :" + CustomMatchingUtility.Convert(nameList.get(i),CustomMatchingUtility.MatchRatingApproachAlgorithm));
+                System.out.println("custom utility   :" + CustomMatchingUtility.Convert(nameList.get(i), CustomMatchingUtility.MatchRatingApproachAlgorithm));
             }
 
             long estimatedTime = System.currentTimeMillis() - startTime;

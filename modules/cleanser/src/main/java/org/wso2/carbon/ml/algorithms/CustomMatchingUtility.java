@@ -14,11 +14,11 @@ public class CustomMatchingUtility {
 
     static List<String> companySuffixList = new ArrayList<String>();
 
-    public static final int BeiderMorseAlgorithm         = 1;
-    public static final int DoubleMetaphoneAlgorithm     = 2;
+    public static final int BeiderMorseAlgorithm = 1;
+    public static final int DoubleMetaphoneAlgorithm = 2;
     public static final int MatchRatingApproachAlgorithm = 3;
-    public static final int MetaphoneAlgorithm           = 4;
-    public static final int SoundexAlgorithm             = 5;
+    public static final int MetaphoneAlgorithm = 4;
+    public static final int SoundexAlgorithm = 5;
 
     public List<String> getCompanySuffixList() {
         return companySuffixList;
@@ -29,7 +29,7 @@ public class CustomMatchingUtility {
     }
 
 
-    public static String Convert(String input,int algorithmIndex) throws EncoderException {
+    public static String Convert(String input, int algorithmIndex) throws EncoderException {
 
         String encodedValue = "";
 
@@ -38,14 +38,19 @@ public class CustomMatchingUtility {
         switch (algorithmIndex) {
             case CustomMatchingUtility.BeiderMorseAlgorithm:
                 encodedValue = BeiderMorseUtility.Convert(input);
+                break;
             case CustomMatchingUtility.DoubleMetaphoneAlgorithm:
                 encodedValue = DoubleMetaphoneUtility.Convert(input);
+                break;
             case CustomMatchingUtility.MatchRatingApproachAlgorithm:
                 encodedValue = MatchRatingApproachUtility.Convert(input);
+                break;
             case CustomMatchingUtility.MetaphoneAlgorithm:
                 encodedValue = MetaphoneUtility.Convert(input);
+                break;
             case CustomMatchingUtility.SoundexAlgorithm:
-//                encodedValue = SoundexMatchUtility.Convert(input);
+//              encodedValue = SoundexMatchUtility.Convert(input);
+                break;
         }
 
         return encodedValue;
@@ -58,13 +63,13 @@ public class CustomMatchingUtility {
 
         for (int i = 0; i < splitedCompanyName.length; i++) {
 
-            for(int j=0;j<companySuffixList.size();j++) {
-                if(splitedCompanyName[i].equals(companySuffixList.get(j))) {
+            for (int j = 0; j < companySuffixList.size(); j++) {
+                if (splitedCompanyName[i].equals(companySuffixList.get(j))) {
                     splitedCompanyName[i] = "";
                 }
             }
 
-            result.append( splitedCompanyName[i] );
+            result.append(splitedCompanyName[i]);
             result.append(" ");
         }
 
@@ -76,16 +81,16 @@ public class CustomMatchingUtility {
 
     public static void LoadCompanySuffixFromCsv(String csvFilePath) {
 
-        String [] nextLine;
+        String[] nextLine;
 
         try {
 
             CSVReader reader = new CSVReader(
-                new InputStreamReader(new FileInputStream(csvFilePath), "UTF-8"), ',',CSVReader.DEFAULT_QUOTE_CHARACTER,CSVReader.DEFAULT_QUOTE_CHARACTER);
+                    new InputStreamReader(new FileInputStream(csvFilePath), "UTF-8"), ',', CSVReader.DEFAULT_QUOTE_CHARACTER, CSVReader.DEFAULT_QUOTE_CHARACTER);
 
-                while ((nextLine = reader.readNext()) != null) {
-                    setCompanySuffix(nextLine[0].toString());
-                }
+            while ((nextLine = reader.readNext()) != null) {
+                setCompanySuffix(nextLine[0].toString());
+            }
 
             reader.close();
 
@@ -98,7 +103,6 @@ public class CustomMatchingUtility {
         }
 
     }
-
 
 
 }
