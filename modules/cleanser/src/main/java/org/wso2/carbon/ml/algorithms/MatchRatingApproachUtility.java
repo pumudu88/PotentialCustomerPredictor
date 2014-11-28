@@ -16,7 +16,7 @@ public class MatchRatingApproachUtility {
 
     public static boolean isStringsEqual(String name1, String name2) {
 
-        return matchRatingApproach.isEncodeEquals(name1,name2);
+        return matchRatingApproach.isEncodeEquals(name1, name2);
     }
 
 }

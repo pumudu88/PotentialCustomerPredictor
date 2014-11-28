@@ -11,24 +11,20 @@ public class DoubleMetaphoneUtility {
 
     private static DoubleMetaphone doubleMetaphone = new DoubleMetaphone();
 
-    public static String Convert(String input) throws EncoderException
-    {
+    public static String Convert(String input) throws EncoderException {
 
         return doubleMetaphone.encode(input);
     }
 
-    public static String StringConvert(String input) throws EncoderException
-    {
+    public static String StringConvert(String input) throws EncoderException {
         return doubleMetaphone.doubleMetaphone(input);
     }
 
-    public static int getMaxCodeLen() throws EncoderException
-    {
+    public static int getMaxCodeLen() throws EncoderException {
         return doubleMetaphone.getMaxCodeLen();
     }
 
-    public static void setMaxCodeLen(int length) throws EncoderException
-    {
+    public static void setMaxCodeLen(int length) throws EncoderException {
         doubleMetaphone.setMaxCodeLen(length);
     }
 

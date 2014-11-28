@@ -1,14 +1,10 @@
 package org.wso2.carbon.ml.preprocessor;
 
-import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.CSVWriter;
-import org.apache.commons.codec.language.bm.BeiderMorseEncoder;
+import org.apache.commons.codec.EncoderException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.ml.algorithms.*;
-import org.apache.commons.codec.EncoderException;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +16,6 @@ public class PreProcessor {
     private static final Log logger = LogFactory.getLog(Cleanser.class);
 
     public static void main(String[] args) {
-
 
 
 //        String csvReadFile = "/Users/pumudu/Documents/Machine Lerning/transformed.csv";
@@ -55,14 +50,17 @@ public class PreProcessor {
         nameList.add("Intel Corp");
         nameList.add("Intel");
 
+        nameList.add("Corp");
+        nameList.add("Inc");
+
         try {
 
             // set metaphone settings
             System.out.println("------------metaphone and double metaphone settings-----------------");
             MetaphoneUtility.setMaxCodeLen(10);
-            DoubleMetaphoneUtility.setMaxCodeLen(4);
+            DoubleMetaphoneUtility.setMaxCodeLen(10);
 
-            System.out.println("code length metaphone : " + MetaphoneUtility.getMaxCodeLen() );
+            System.out.println("code length metaphone : " + MetaphoneUtility.getMaxCodeLen());
             System.out.println("code length double metaphone : " + DoubleMetaphoneUtility.getMaxCodeLen());
 
             //set beiderMorse settings
@@ -86,9 +84,9 @@ public class PreProcessor {
 
             System.out.println("-------------test names-------------");
 
-            for(int i = 0; i < nameList.size(); i++) {
+            for (int i = 0; i < nameList.size(); i++) {
 
-                System.out.println("----"+ nameList.get(i) +"---");
+                System.out.println("----" + nameList.get(i) + "---");
                 System.out.println("soundex          :" + SoundexMatchUtility.Convert(nameList.get(i)));
                 System.out.println("metaphone        :" + MetaphoneUtility.Convert(nameList.get(i)));
                 System.out.println("double metaphone :" + DoubleMetaphoneUtility.Convert(nameList.get(i)));
@@ -97,12 +95,12 @@ public class PreProcessor {
             }
 
             long estimatedTime = System.currentTimeMillis() - startTime;
-            logger.info("Time taken : "+ estimatedTime/1000 + " seconds");
+            logger.info("Time taken : " + estimatedTime / 1000 + " seconds");
 
 
         } catch (EncoderException e) {
             e.printStackTrace();
-        }  catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
