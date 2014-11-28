@@ -21,6 +21,7 @@ public class PreProcessor {
 //        String csvReadFile = "/Users/pumudu/Documents/Machine Lerning/transformed.csv";
 //        String csvWriteCustomerFile = "/Users/pumudu/Documents/Machine Lerning/output/currentCustomers.csv";
 //        String csvWriteNonCustomerFile = "/Users/pumudu/Documents/Machine Lerning/output/currentNonCustomers.csv";
+        String csvCompanySuffixFile = "/Users/pumudu/Documents/Machine Lerning/available data/company_suffix.csv";
 
         long startTime = System.currentTimeMillis();
 
@@ -70,7 +71,6 @@ public class PreProcessor {
             System.out.println("concat status :" + BeiderMorseUtility.isConcat());
             System.out.println("name type     :" + BeiderMorseUtility.getNameType().toString());
             System.out.println("rule type     :" + BeiderMorseUtility.getRuleType().toString());
-            System.out.println("");
 
             System.out.println("---------new settings-----------");
             BeiderMorseUtility.setConcat(false);
@@ -80,6 +80,10 @@ public class PreProcessor {
             System.out.println("concat status :" + BeiderMorseUtility.isConcat());
             System.out.println("name type     :" + BeiderMorseUtility.getNameType().toString());
             System.out.println("rule type     :" + BeiderMorseUtility.getRuleType().toString());
+
+            System.out.println("----custom matching settings----");
+            CustomMatchingUtility.LoadCompanySuffixFromCsv(csvCompanySuffixFile);
+
 
 
             System.out.println("-------------test names-------------");
@@ -92,6 +96,7 @@ public class PreProcessor {
                 System.out.println("double metaphone :" + DoubleMetaphoneUtility.Convert(nameList.get(i)));
                 System.out.println("MRA              :" + MatchRatingApproachUtility.Convert(nameList.get(i)));
                 System.out.println("BeiderMorse      :" + BeiderMorseUtility.Convert(nameList.get(i)));
+                System.out.println("custom utility   :" + CustomMatchingUtility.Convert(nameList.get(i),CustomMatchingUtility.MatchRatingApproachAlgorithm));
             }
 
             long estimatedTime = System.currentTimeMillis() - startTime;
