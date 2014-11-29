@@ -81,8 +81,10 @@ public class PreProcessor {
             System.out.println("name type     :" + BeiderMorseUtility.getNameType().toString());
             System.out.println("rule type     :" + BeiderMorseUtility.getRuleType().toString());
 
-            System.out.println("----custom matching settings----");
+            System.out.println("----custom matching settings--------");
             CustomMatchingUtility.LoadCompanySuffixFromCsv(csvCompanySuffixFile);
+
+            System.out.println("company suffix csv file path :" + csvCompanySuffixFile);
 
 
             System.out.println("-------------test names-------------");
@@ -90,12 +92,12 @@ public class PreProcessor {
             for (int i = 0; i < nameList.size(); i++) {
 
                 System.out.println("----" + nameList.get(i) + "---");
-                System.out.println("soundex          :" + SoundexMatchUtility.Convert(nameList.get(i)));
-                System.out.println("metaphone        :" + MetaphoneUtility.Convert(nameList.get(i)));
-                System.out.println("double metaphone :" + DoubleMetaphoneUtility.Convert(nameList.get(i)));
-                System.out.println("MRA              :" + MatchRatingApproachUtility.Convert(nameList.get(i)));
-                System.out.println("BeiderMorse      :" + BeiderMorseUtility.Convert(nameList.get(i)));
-                System.out.println("custom utility   :" + CustomMatchingUtility.Convert(nameList.get(i), CustomMatchingUtility.MatchRatingApproachAlgorithm));
+                System.out.println("soundex          : " + SoundexMatchUtility.Convert(nameList.get(i)));
+                System.out.println("metaphone        : " + MetaphoneUtility.Convert(nameList.get(i)));
+                System.out.println("double metaphone : " + DoubleMetaphoneUtility.Convert(nameList.get(i)));
+                System.out.println("MRA              : " + MatchRatingApproachUtility.Convert(nameList.get(i)));
+                System.out.println("BeiderMorse      : " + BeiderMorseUtility.Convert(nameList.get(i)));
+                System.out.println("custom utility   : " + CustomMatchingUtility.Convert(nameList.get(i), CustomMatchingUtility.MatchRatingApproachAlgorithm));
             }
 
             long estimatedTime = System.currentTimeMillis() - startTime;

@@ -14,11 +14,11 @@ public class CustomMatchingUtility {
 
     static List<String> companySuffixList = new ArrayList<String>();
 
-    public static final int BeiderMorseAlgorithm = 1;
-    public static final int DoubleMetaphoneAlgorithm = 2;
+    public static final int BeiderMorseAlgorithm         = 1;
+    public static final int DoubleMetaphoneAlgorithm     = 2;
     public static final int MatchRatingApproachAlgorithm = 3;
-    public static final int MetaphoneAlgorithm = 4;
-    public static final int SoundexAlgorithm = 5;
+    public static final int MetaphoneAlgorithm           = 4;
+    public static final int SoundexAlgorithm             = 5;
 
     public List<String> getCompanySuffixList() {
         return companySuffixList;
