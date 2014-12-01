@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>cleanser</module>
+        <module>preprocessor</module>
     </modules>
 
 

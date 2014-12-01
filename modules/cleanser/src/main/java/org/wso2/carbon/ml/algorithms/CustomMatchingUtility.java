@@ -12,22 +12,16 @@ import java.util.List;
  */
 public class CustomMatchingUtility {
 
-    static List<String> companySuffixList = new ArrayList<String>();
-
-    public static final int BeiderMorseAlgorithm         = 1;
-    public static final int DoubleMetaphoneAlgorithm     = 2;
+    public static final int BeiderMorseAlgorithm = 1;
+    public static final int DoubleMetaphoneAlgorithm = 2;
     public static final int MatchRatingApproachAlgorithm = 3;
-    public static final int MetaphoneAlgorithm           = 4;
-    public static final int SoundexAlgorithm             = 5;
-
-    public List<String> getCompanySuffixList() {
-        return companySuffixList;
-    }
+    public static final int MetaphoneAlgorithm = 4;
+    public static final int SoundexAlgorithm = 5;
+    static List<String> companySuffixList = new ArrayList<String>();
 
     public static void setCompanySuffix(String companySuffix) {
         companySuffixList.add(companySuffix);
     }
-
 
     public static String Convert(String input, int algorithmIndex) throws EncoderException {
 
@@ -102,6 +96,10 @@ public class CustomMatchingUtility {
             e.printStackTrace();
         }
 
+    }
+
+    public List<String> getCompanySuffixList() {
+        return companySuffixList;
     }
 
 

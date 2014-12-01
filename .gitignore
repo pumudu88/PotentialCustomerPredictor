@@ -49,3 +49,7 @@ modules/cleanser/target/classes/org/wso2/carbon/ml/predictor/Cleanser.class
 .idea/libraries/Maven__commons_codec_commons_codec_1_8.xml
 
 .idea/libraries/Maven__commons_logging_commons_logging_1_1_1.xml
+
+.idea/libraries/Maven__com_maxmind_geoip_geoip_api_1_2_14.xml
+
+modules/cleanser/target/classes/GeoLiteCity.dat
