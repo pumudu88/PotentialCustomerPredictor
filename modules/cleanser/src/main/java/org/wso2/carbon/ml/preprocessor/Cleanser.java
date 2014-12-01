@@ -2,8 +2,10 @@ package org.wso2.carbon.ml.preprocessor;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
+import com.typesafe.config.ConfigException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.ml.algorithms.CustomMatchingUtility;
 import org.wso2.carbon.ml.algorithms.DoubleMetaphoneUtility;
 import org.wso2.carbon.ml.algorithms.MetaphoneUtility;
 import org.wso2.carbon.ml.algorithms.SoundexMatchUtility;
@@ -52,6 +54,7 @@ public class Cleanser {
             String [][] currentCustomers;
 
             DoubleMetaphoneUtility.setMaxCodeLen(DOUBLE_META_PHONE_THRESHOLD);
+            CustomMatchingUtility.LoadCompanySuffixFromCsv(csvPath + "company_suffix.csv");
 
             long startTime = System.currentTimeMillis();
 
@@ -153,13 +156,13 @@ public class Cleanser {
                 //Set  algorithm Index for first column
                 switch (indexAlgorithm) {
                     case Cleanser.INDEX_ALGO_DOUBLE_META_PHONE:
-                        Customers.put(DoubleMetaphoneUtility.Convert(nextLine[indexColumn]), nextLine[indexColumn]);
+                        Customers.put(CustomMatchingUtility.Convert(nextLine[indexColumn], CustomMatchingUtility.DoubleMetaphoneAlgorithm), nextLine[indexColumn]);
                         break;
                     case Cleanser.INDEX_ALGO_META_PHONE:
-                        Customers.put(MetaphoneUtility.Convert(nextLine[indexColumn]), nextLine[indexColumn]);
+                        Customers.put(CustomMatchingUtility.Convert(nextLine[indexColumn], CustomMatchingUtility.MetaphoneAlgorithm), nextLine[indexColumn]);
                         break;
                     default:
-                        Customers.put(SoundexMatchUtility.Convert(nextLine[indexColumn]), nextLine[indexColumn]);
+                        Customers.put(CustomMatchingUtility.Convert(nextLine[indexColumn], CustomMatchingUtility.SoundexAlgorithm), nextLine[indexColumn]);
                         break;
                 }
             }
@@ -242,78 +245,79 @@ public class Cleanser {
         while ((nextLine = reader.readNext()) != null) {
 
 
-            //Check read line is number of required columns and indexing column value is not empty
-            if(nextLine.length >= columnIncludedIndexes.length && !(nextLine[columnIndex].equals(""))) {
 
-                //Initialize output with specified columns plus one more column for algorithm index
-                String [] outputLine = new String[columnIncludedIndexes.length + 1];
+                //Check read line is number of required columns and indexing column value is not empty
+                if (nextLine.length >= columnIncludedIndexes.length && !(nextLine[columnIndex].equals(""))) {
 
+                    //Initialize output with specified columns plus one more column for algorithm index
+                    String[] outputLine = new String[columnIncludedIndexes.length + 1];
 
-                try {
-
-
-                    //If column value length is greater than specified minimum length then index it
-                    if (nextLine[columnIndex].length() > Cleanser.MIN_NAME_LENGTH) {
-                        //Set  algorithm Index for first column
-                        switch (indexAlgorithm) {
-                            case Cleanser.INDEX_ALGO_DOUBLE_META_PHONE:
-                                outputLine[0] = DoubleMetaphoneUtility.Convert(nextLine[columnIndex]);
-                                break;
-                            case Cleanser.INDEX_ALGO_META_PHONE:
-                                outputLine[0] = MetaphoneUtility.Convert(nextLine[columnIndex]);
-                                break;
-                            default:
-                                outputLine[0] = SoundexMatchUtility.Convert(nextLine[columnIndex]);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        //Else Assign default index value
-                        outputLine[0] = Cleanser.MIN_INDEX_VAL;
-                    }
-
-                    boolean isExistingCustomer = isCustomer(currentCustomer, outputLine[0]);
+                    try {
 
 
-
-                    outputLine[1]  = String.valueOf(isExistingCustomer);
-
-                    //Set specified columns for rest
-                    for (int i = 1; i < columnIncludedIndexes.length; i++) {
-                        //Check include index is available on readLine
-                        if (nextLine.length > columnIncludedIndexes[i - 1]) {
-                            outputLine[i] = nextLine[columnIncludedIndexes[i - 1]];
+                        //If column value length is greater than specified minimum length then index it
+                        if (nextLine[columnIndex].length() > Cleanser.MIN_NAME_LENGTH) {
+                            //Set  algorithm Index for first column
+                                switch (indexAlgorithm) {
+                                    case Cleanser.INDEX_ALGO_DOUBLE_META_PHONE:
+                                        outputLine[0] = CustomMatchingUtility.Convert(nextLine[columnIndex], CustomMatchingUtility.DoubleMetaphoneAlgorithm);
+                                        break;
+                                    case Cleanser.INDEX_ALGO_META_PHONE:
+                                        outputLine[0] = CustomMatchingUtility.Convert(nextLine[columnIndex], CustomMatchingUtility.MetaphoneAlgorithm);
+                                        break;
+                                    default:
+                                        outputLine[0] = CustomMatchingUtility.Convert(nextLine[columnIndex], CustomMatchingUtility.SoundexAlgorithm);
+                                        break;
+                                }
                         } else {
-                            outputLine[i] = "";
+                            //Else Assign default index value
+                            outputLine[0] = Cleanser.MIN_INDEX_VAL;
                         }
+
+                        if (outputLine[0] != null) {
+
+                            boolean isExistingCustomer = isCustomer(currentCustomer, outputLine[0]);
+
+
+                            outputLine[1] = String.valueOf(isExistingCustomer);
+
+                            //Set specified columns for rest
+                            for (int i = 1; i < columnIncludedIndexes.length; i++) {
+                                //Check include index is available on readLine
+                                if (nextLine.length > columnIncludedIndexes[i - 1]) {
+                                    outputLine[i] = nextLine[columnIncludedIndexes[i - 1]];
+                                } else {
+                                    outputLine[i] = "";
+                                }
+                            }
+
+                            transformedCounter++;
+
+                            if (isExistingCustomer) {
+                                currentCustomerActionCounter++;
+                                writerTransformedExisting.writeNext(outputLine);
+                            } else {
+                                writerTransformedNew.writeNext(outputLine);
+                            }
+                        }
+                        else
+                        {
+                            writerNotTransformed.writeNext(nextLine);
+                        }
+
+
+
+                    } catch (IllegalArgumentException ex) {
+                        //handles algorithm encode exceptions
+                        writerNotTransformed.writeNext(nextLine);
                     }
 
-                    transformedCounter++;
-
-                    if(isExistingCustomer)
-                    {
-                        currentCustomerActionCounter++;
-                        writerTransformedExisting.writeNext(outputLine);
-                    }
-                    else
-                    {
-                        writerTransformedNew.writeNext(outputLine);
-                    }
-
-
-                }
-                catch (IllegalArgumentException ex)
-                {
-                    //handles algorithm encode exceptions
+                } else {
                     writerNotTransformed.writeNext(nextLine);
                 }
+                totalCounter++;
 
-            }
-            else{
-                writerNotTransformed.writeNext(nextLine);
-            }
-            totalCounter++;
+
         }
 
         logger.info(totalCounter + " rows processed.  "
