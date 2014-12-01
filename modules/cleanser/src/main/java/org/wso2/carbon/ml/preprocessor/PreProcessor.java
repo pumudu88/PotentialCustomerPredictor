@@ -4,6 +4,7 @@ import org.apache.commons.codec.EncoderException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.ml.algorithms.*;
+import org.wso2.carbon.ml.validations.ValidationUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,6 +96,10 @@ public class PreProcessor {
                 System.out.println("BeiderMorse      : " + BeiderMorseUtility.Convert(nameList.get(i)));
                 System.out.println("custom utility   : " + CustomMatchingUtility.Convert(nameList.get(i), CustomMatchingUtility.MatchRatingApproachAlgorithm));
             }
+
+            System.out.println("------country name validation test-------------");
+            ValidationUtility validation = new ValidationUtility();
+            System.out.println(validation.countryByIpAddressValidation("85.115.52.180", "United Kingdom").toString());
 
             long estimatedTime = System.currentTimeMillis() - startTime;
             logger.info("Time taken : " + estimatedTime / 1000 + " seconds");
