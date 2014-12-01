@@ -2,15 +2,10 @@ package org.wso2.carbon.ml.preprocessor;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
-import com.typesafe.config.ConfigException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.ml.algorithms.CustomMatchingUtility;
 import org.wso2.carbon.ml.algorithms.DoubleMetaphoneUtility;
-import org.wso2.carbon.ml.algorithms.MetaphoneUtility;
-import org.wso2.carbon.ml.algorithms.SoundexMatchUtility;
-
-
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -282,7 +277,7 @@ public class Cleanser {
                             outputLine[1] = String.valueOf(isExistingCustomer);
 
                             //Set specified columns for rest
-                            for (int i = 1; i < columnIncludedIndexes.length; i++) {
+                            for (int i = 1; i < columnIncludedIndexes.length +1; i++) {
                                 //Check include index is available on readLine
                                 if (nextLine.length > columnIncludedIndexes[i - 1]) {
                                     outputLine[i] = nextLine[columnIncludedIndexes[i - 1]];
