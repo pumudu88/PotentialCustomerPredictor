@@ -3,21 +3,34 @@ package org.wso2.carbon.ml.preprocessor;
 /**
  * Created by tharik on 11/28/14.
  */
+import au.com.bytecode.opencsv.CSVWriter;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CSVMapper {
+
+    public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
+    public static String csvAggregate = "Aggregate.csv";
+
+    public static void main (String[] args) throws IOException {
+
+
+        System.out.println( (new CSVMapper()).transformCsv("/Users/tharik/Desktop/machine learning/Archive/transformedExisting.csv") );
+    }
 
     public String transformCsv (String csvFile) throws IOException {
         return csvMapToString(getCsvMap(csvFile));
     }
 
-    private HashMap<String, Integer[]> getCsvMap (String csvFile) throws IOException {
-        // <K,V> := <Company, [Downloaded, Watched, Subscribed]>
-        HashMap<String, Integer[]> csvMap = new HashMap<String, Integer[]>();
+    private HashMap<String, String[]> getCsvMap (String csvFile) throws IOException {
+
+
+        HashMap<String, String[]> csvMap = new HashMap<String, String[]>();
         BufferedReader reader = new BufferedReader(new FileReader(csvFile));
         String csvLine;
 
@@ -31,41 +44,37 @@ public class CSVMapper {
 
 
                         String actionsType;
-                        Integer[] columnValues = csvMap.get(company);
+                        String[] columnValues = csvMap.get(company);
                         if(csvColumns.length < 7)
                         {
                             if (columnValues == null) {
-                                columnValues = new Integer[7];
-                                columnValues[0] = columnValues[1] = columnValues[2] = columnValues[3] = columnValues[4] = columnValues[5] = columnValues[6] = 0;
+                                columnValues = new String[7];
+                                columnValues[0] = columnValues[1] = columnValues[2] = columnValues[3] = columnValues[4] = columnValues[5] = columnValues[6] = "0";
                             }
                             else
                             {
-                                columnValues[6] = columnValues[6] + 1;
+                                columnValues[6] = String.valueOf(Integer.parseInt(columnValues[6]) + 1);
                             }
                         }
                         else {
 
                             actionsType = csvColumns[6].trim();
-
-
-
-
-
                             if (actionsType.equals("")) {
                                 columnValues[6] = columnValues[6] + 1;
                             } else {
 
 
                                 if (columnValues == null) {
-                                    columnValues = new Integer[7];
-                                    columnValues[0] = columnValues[1] = columnValues[2] = columnValues[3] = columnValues[4] = columnValues[5] = columnValues[6] = 0;
+                                    columnValues = new String[7];
+                                    columnValues[0] = columnValues[1] = columnValues[2] = columnValues[3] = columnValues[4] = columnValues[5] = columnValues[6] = "0";
                                 }
-                                columnValues[0] = columnValues[0] + (actionsType.contains("downloads") ? 1 : 0);
-                                columnValues[1] = columnValues[1] + (actionsType.contains("whitepapers") ? 1 : 0);
-                                columnValues[2] = columnValues[2] + (actionsType.contains("tutorials") ? 1 : 0);
-                                columnValues[3] = columnValues[3] + (actionsType.contains("workshops") ? 1 : 0);
-                                columnValues[4] = columnValues[4] + (actionsType.contains("casestudies") ? 1 : 0);
-                                columnValues[5] = columnValues[5] + (actionsType.contains("productpages") ? 1 : 0);
+
+                                columnValues[0] = String.valueOf (Integer.parseInt(columnValues[0]) + (actionsType.contains("downloads") ? 1 : 0));
+                                columnValues[1] =  String.valueOf (Integer.parseInt(columnValues[1]) + (actionsType.contains("whitepapers") ? 1 : 0));
+                                columnValues[2] =  String.valueOf (Integer.parseInt(columnValues[2]) + (actionsType.contains("tutorials") ? 1 : 0));
+                                columnValues[3] =  String.valueOf (Integer.parseInt(columnValues[3]) + (actionsType.contains("workshops") ? 1 : 0));
+                                columnValues[4] =  String.valueOf (Integer.parseInt(columnValues[4]) + (actionsType.contains("casestudies") ? 1 : 0));
+                                columnValues[5] =  String.valueOf (Integer.parseInt(columnValues[5]) + (actionsType.contains("productpages") ? 1 : 0));
 
 
                                 if (!company.equals("Company"))
@@ -87,26 +96,49 @@ public class CSVMapper {
         return csvMap;
     }
 
-    private String csvMapToString (HashMap<String, Integer[]> csvMap) {
-        StringBuilder newCsvFile = new StringBuilder();
-        newCsvFile.append("Company, downloads, whitepapers, tutorials, workshops, casestudies, productpages, other \n");
-        for (String company : csvMap.keySet()) {
-            Integer[] columnValues = csvMap.get(company);
-            newCsvFile.append(company +
-                    ", " + Integer.toString(columnValues[0]) +
-                    ", " + Integer.toString(columnValues[1]) +
-                    ", " + Integer.toString(columnValues[2]) +
-                    ", " + Integer.toString(columnValues[3]) +
-                    ", " + Integer.toString(columnValues[4]) +
-                    ", " + Integer.toString(columnValues[5]) +
-                    ", " + Integer.toString(columnValues[6]) + "\n");
+    private String csvMapToString (HashMap<String, String[]> csvMap) {
+
+        try {
+            CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvAggregate),
+                    ',', CSVWriter.NO_QUOTE_CHARACTER);
+
+            String [] headers  = {"Company", "downloads", "whitepapers", "tutorials", "workshops", "casestudies", "productpages", "other"};
+
+            writerNotTransformed.writeNext(headers);
+
+
+
+            StringBuilder newCsvFile = new StringBuilder();
+
+            for (String company : csvMap.keySet()) {
+                String[] columnValues = csvMap.get(company);
+
+
+               // writerNotTransformed.writeNext(headers);
+
+                String [] outputLine = new String[8];
+
+                outputLine[0] = company;
+                outputLine[1] = String.valueOf(columnValues[0]);
+                outputLine[2] = String.valueOf(columnValues[1]);
+                outputLine[3] = String.valueOf(columnValues[2]);
+                outputLine[4] = String.valueOf(columnValues[3]);
+                outputLine[5] = String.valueOf(columnValues[4]);
+                outputLine[6] = String.valueOf(columnValues[5]);
+                outputLine[7] = String.valueOf(columnValues[6]);
+
+                writerNotTransformed.writeNext(outputLine);
+
+            }
+
+            writerNotTransformed.close();
+            return newCsvFile.toString();
         }
-        return newCsvFile.toString();
+        catch(Exception ex)
+        {
+            return null;
+        }
     }
 
-    public static void main (String[] args) throws IOException {
 
-
-        System.out.println( (new CSVMapper()).transformCsv("/Users/tharik/Desktop/machine learning/Archive/transformedExisting.csv") );
-    }
 }
