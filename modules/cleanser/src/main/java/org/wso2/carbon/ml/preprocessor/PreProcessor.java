@@ -17,10 +17,6 @@ public class PreProcessor {
 
     public static void main(String[] args) {
 
-
-//        String csvReadFile = "/Users/pumudu/Documents/Machine Lerning/transformed.csv";
-//        String csvWriteCustomerFile = "/Users/pumudu/Documents/Machine Lerning/output/currentCustomers.csv";
-//        String csvWriteNonCustomerFile = "/Users/pumudu/Documents/Machine Lerning/output/currentNonCustomers.csv";
         String csvCompanySuffixFile = "/Users/pumudu/Documents/Machine Lerning/available data/company_suffix.csv";
 
         long startTime = System.currentTimeMillis();
@@ -109,78 +105,6 @@ public class PreProcessor {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-//        try{
-//          System.out.println("--------------------- csv transformed ---------------------------");
-//
-//          long startTime = System.currentTimeMillis();
-//
-//          CSVReader reader=new CSVReader(
-//                    new InputStreamReader(new FileInputStream(csvReadFile), "UTF-8"), ',',CSVReader.DEFAULT_QUOTE_CHARACTER,CSVReader.DEFAULT_QUOTE_CHARACTER);
-//
-//          CSVWriter writerCurrentCustomers = new CSVWriter(new FileWriter(csvWriteCustomerFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
-//          CSVWriter writerNonCustomers     = new CSVWriter(new FileWriter(csvWriteNonCustomerFile), ',', CSVWriter.NO_QUOTE_CHARACTER);
-//
-//            String [] headerLine = reader.readNext();
-//
-//            int isCustomerIndex = 0;
-//            int companyIndex = 0;
-//            int customerIndex = 0;
-//            int indexColumn = 0;
-//
-//            for(int i =0; i < headerLine.length; i++) {
-//                System.out.println("array : " + headerLine[i]);
-//
-//                if(headerLine[i].equals("Is Customer")) {
-//                    isCustomerIndex = i;
-//                }
-//
-//                if(headerLine[i].equals("Company")) {
-//                    companyIndex = i;
-//                }
-//
-//                if(headerLine[i].equals("Customer")) {
-//                    customerIndex = i;
-//                }
-//
-//                if(headerLine[i].equals("Index")) {
-//                    indexColumn = i;
-//                }
-//
-//            }
-//
-//            writerCurrentCustomers.writeNext(headerLine);
-//            writerNonCustomers.writeNext(headerLine);
-//
-//            String [] nextLine;
-//
-//            while ((nextLine = reader.readNext()) != null) {
-//
-//                if(nextLine[isCustomerIndex].equals("true")) {
-//                    writerCurrentCustomers.writeNext(nextLine);
-//                } else {
-//                    writerNonCustomers.writeNext(nextLine);
-//                }
-//
-//
-//            }
-//
-//
-//            long estimatedTime = System.currentTimeMillis() - startTime;
-//            logger.info("Time taken : "+ estimatedTime/1000 + " seconds");
-//
-//          writerNonCustomers.close();
-//          writerCurrentCustomers.close();
-//          reader.close();
-//
-//
-//    } catch (UnsupportedEncodingException e) {
-//        e.printStackTrace();
-//    }  catch (IOException e) {
-//        e.printStackTrace();
-//    }
-
 
     }
 
