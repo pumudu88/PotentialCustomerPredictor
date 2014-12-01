@@ -33,15 +33,14 @@ public class Cleanser {
     public static final int DOUBLE_META_PHONE_THRESHOLD = 10;
 
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
-    public static String csvReadFile = "Activity behaviou_Tier2_20141015.csv";
+    public static String csvReadFile = "ContactWebsiteBehaviour_tier1_20141014.csv";
     public static String csvReadCustomerFile = "customers.csv";
     public static String csvWriteCustomerFile = "customersIndexed.csv";
 
     public static String csvWriteTransfomedNewFile = "transformedNew.csv";
     public static String csvWriteTransfomedExistingFile = "transformedExisting.csv";
     public static String csvWriteNotTransformedFile = "notTransformed.csv";
-    public static String [] columnsIncluded = {"Title","Company","Country","Activity Type",
-            "Activity","Activity date/time","IpAddress"};
+    public static String [] columnsIncluded = {"Title","Company","Country", "IpAddress","Activity date/time","Link"};
 
 
 
@@ -91,6 +90,7 @@ public class Cleanser {
             writerNotTransformed.close();
             writerCustomers.close();
             reader.close();
+
 
 
 
