@@ -50,6 +50,8 @@ public class Cleanser {
     public static String [] columnsIncluded = { "Title", "Company", "Country", "IpAddress",
                                                 "Activity date/time", "Link"};
 
+    private static boolean enableIpValidate = false;
+
 
 
 
@@ -218,6 +220,7 @@ public class Cleanser {
         int columnIndex ;
         int countryColumnIndex;
         int ipColumnIndex;
+        int generatedColumnCount;
 
 
         int []columnIncludedIndexes = new int[columnsIncluded.length];
@@ -233,7 +236,12 @@ public class Cleanser {
 
         list.add(0, indexOutputColumnName);
         list.add(1, isCutomerColumnName);
-        list.add(2, isValidCountryColumnName);
+
+        if(enableIpValidate){
+            list.add(2, isValidCountryColumnName);
+        }
+
+        generatedColumnCount = list.size() - columnIncludedIndexes.length;
 
         writerTransformed.writeNext(list.toArray(new String[indexColumnName.length()+1]));
 
@@ -292,13 +300,16 @@ public class Cleanser {
                             boolean isExistingCustomer = isCustomer(currentCustomer, outputLine[0]);
 
                             outputLine[1] = String.valueOf(isExistingCustomer);
-                            outputLine[2] = String.valueOf(validator.countryByIpAddressValidation(nextLine[ipColumnIndex], nextLine[countryColumnIndex]));
+
+                            if(enableIpValidate){
+                                outputLine[2] = String.valueOf(validator.countryByIpAddressValidation(nextLine[ipColumnIndex], nextLine[countryColumnIndex]));
+                            }
 
                             //Set specified columns for rest
-                            for (int i = 3; i < columnIncludedIndexes.length +3; i++) {
+                            for (int i = generatedColumnCount; i < columnIncludedIndexes.length + generatedColumnCount; i++) {
                                 //Check include index is available on readLine
-                                if (nextLine.length > columnIncludedIndexes[i - 3]) {
-                                    outputLine[i] = nextLine[columnIncludedIndexes[i - 3]];
+                                if (nextLine.length > columnIncludedIndexes[i - generatedColumnCount]) {
+                                    outputLine[i] = nextLine[columnIncludedIndexes[i - generatedColumnCount]];
                                 } else {
                                     outputLine[i] = "";
                                 }
