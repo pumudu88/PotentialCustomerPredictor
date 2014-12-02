@@ -29,46 +29,50 @@ public class Cleanser {
     public static final String MIN_INDEX_VAL = "-1";
     public static final int DOUBLE_META_PHONE_THRESHOLD = 10;
 
+    public static final char CSV_SEPERATOR = ',';
+    public static final String CSV_CHARACTER_FORMAT = "UTF-8";
+
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvReadFile = "ContactWebsiteBehaviour_tier1_20141014.csv";
     public static String csvReadCustomerFile = "customers.csv";
     public static String csvWriteCustomerFile = "customersIndexed.csv";
+    public static String csvCompanySuffixFile =  "company_suffix.csv";
 
-    public static String csvWriteTransfomedNewFile = "transformedNew.csv";
-    public static String csvWriteTransfomedExistingFile = "transformedExisting.csv";
+    public static String csvWriteTransfomed = "transformed.csv";
     public static String csvWriteNotTransformedFile = "notTransformed.csv";
-    public static String [] columnsIncluded = {"Title","Company","Country", "IpAddress","Activity date/time","Link"};
+    public static String [] columnsIncluded = { "Title", "Company", "Country", "IpAddress",
+                                                "Activity date/time", "Link"};
 
 
 
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         try {
 
             String [][] currentCustomers;
 
             DoubleMetaphoneUtility.setMaxCodeLen(DOUBLE_META_PHONE_THRESHOLD);
-            CustomMatchingUtility.LoadCompanySuffixFromCsv(csvPath + "company_suffix.csv");
+            CustomMatchingUtility.LoadCompanySuffixFromCsv(csvPath + csvCompanySuffixFile);
 
             long startTime = System.currentTimeMillis();
 
             CSVReader reader=new CSVReader(
-                    new InputStreamReader(new FileInputStream(csvPath + csvReadFile), "UTF-8"), ',',
-                                          CSVReader.DEFAULT_QUOTE_CHARACTER,CSVReader.DEFAULT_QUOTE_CHARACTER);
+                    new InputStreamReader(new FileInputStream(csvPath + csvReadFile), CSV_CHARACTER_FORMAT),
+                                          CSV_SEPERATOR, CSVReader.DEFAULT_QUOTE_CHARACTER,
+                                          CSVReader.DEFAULT_QUOTE_CHARACTER);
 
             CSVReader readerCustomers=new CSVReader(
-                    new InputStreamReader(new FileInputStream(csvPath + csvReadCustomerFile), "UTF-8"), ',',
-                                          CSVReader.DEFAULT_QUOTE_CHARACTER,CSVReader.DEFAULT_QUOTE_CHARACTER);
+                    new InputStreamReader(new FileInputStream(csvPath + csvReadCustomerFile), CSV_CHARACTER_FORMAT),
+                                          CSV_SEPERATOR, CSVReader.DEFAULT_QUOTE_CHARACTER,
+                                          CSVReader.DEFAULT_QUOTE_CHARACTER);
 
 
-            CSVWriter writerCustomers = new CSVWriter(new FileWriter(csvPath + csvWriteCustomerFile), ',',
+            CSVWriter writerCustomers = new CSVWriter(new FileWriter(csvPath + csvWriteCustomerFile), CSV_SEPERATOR,
                                                       CSVWriter.NO_QUOTE_CHARACTER);
-            CSVWriter writerTransformedNew = new CSVWriter(new FileWriter(csvPath + csvWriteTransfomedNewFile), ',',
-                                                           CSVWriter.NO_QUOTE_CHARACTER);
-            CSVWriter writerTransformedExisting = new CSVWriter(new FileWriter(csvPath
-                                                                            + csvWriteTransfomedExistingFile),
+
+            CSVWriter writerTransformed= new CSVWriter(new FileWriter(csvPath + csvWriteTransfomed),
                                                                 ',', CSVWriter.NO_QUOTE_CHARACTER);
+
             CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteNotTransformedFile),
                                                             ',', CSVWriter.NO_QUOTE_CHARACTER);
 
@@ -76,15 +80,14 @@ public class Cleanser {
             currentCustomers = LoadCurrentCustomers(readerCustomers, writerCustomers,
                     Cleanser.INDEX_ALGO_DOUBLE_META_PHONE, 0);
 
-            Cleanse(reader, writerTransformedNew, writerTransformedExisting, writerNotTransformed, INDEX_COLUMN_INPUT,
+            Cleanse(reader, writerTransformed, writerNotTransformed, INDEX_COLUMN_INPUT,
                     Cleanser.INDEX_COLUMN_NAME, Cleanser.IS_CUSTOMER_COLUMN_NAME, currentCustomers, columnsIncluded,
                     Cleanser.INDEX_ALGO_DOUBLE_META_PHONE);
 
             long estimatedTime = System.currentTimeMillis() - startTime;
             logger.info("Time taken : "+ estimatedTime/1000 + " seconds");
 
-            writerTransformedNew.close();
-            writerTransformedExisting.close();
+            writerTransformed.close();
             writerNotTransformed.close();
             writerCustomers.close();
             reader.close();
@@ -105,23 +108,18 @@ public class Cleanser {
      * @param currentValue current index value
      * @return
      */
-    private static boolean isCustomer(String [][] currentCustomers, String currentValue)
-    {
-        for (int i = 0; i < currentCustomers.length; i++)
-        {
+    private static boolean isCustomer(String [][] currentCustomers, String currentValue) {
+        for (int i = 0; i < currentCustomers.length; i++) {
             String matchingVal;
 
-            if(currentValue.length() > Cleanser.MIN_NAME_LENGTH)
-            {
+            if(currentValue.length() > Cleanser.MIN_NAME_LENGTH) {
                 matchingVal = currentCustomers[i][0];
             }
-            else
-            {
+            else {
                 matchingVal = currentCustomers[i][1];
             }
 
-            if (currentValue.equals(matchingVal))
-            {
+            if (currentValue.equals(matchingVal)){
                 return  true;
             }
         }
@@ -139,8 +137,7 @@ public class Cleanser {
      * @throws Exception
      */
     private static String[][] LoadCurrentCustomers(CSVReader readerCustomers, CSVWriter writerCustomers,
-                                                   int indexAlgorithm, int indexColumn) throws  Exception
-    {
+                                                   int indexAlgorithm, int indexColumn) throws  Exception {
 
         Map<String,String> Customers = new HashMap<String,String>();
         String [] nextLine;
@@ -151,18 +148,20 @@ public class Cleanser {
                 //Set  algorithm Index for first column
                 switch (indexAlgorithm) {
                     case Cleanser.INDEX_ALGO_DOUBLE_META_PHONE:
-                        Customers.put(CustomMatchingUtility.Convert(nextLine[indexColumn], CustomMatchingUtility.DoubleMetaphoneAlgorithm), nextLine[indexColumn]);
+                        Customers.put(CustomMatchingUtility.Convert(nextLine[indexColumn],
+                                      CustomMatchingUtility.DoubleMetaphoneAlgorithm), nextLine[indexColumn]);
                         break;
                     case Cleanser.INDEX_ALGO_META_PHONE:
-                        Customers.put(CustomMatchingUtility.Convert(nextLine[indexColumn], CustomMatchingUtility.MetaphoneAlgorithm), nextLine[indexColumn]);
+                        Customers.put(CustomMatchingUtility.Convert(nextLine[indexColumn],
+                                      CustomMatchingUtility.MetaphoneAlgorithm), nextLine[indexColumn]);
                         break;
                     default:
-                        Customers.put(CustomMatchingUtility.Convert(nextLine[indexColumn], CustomMatchingUtility.SoundexAlgorithm), nextLine[indexColumn]);
+                        Customers.put(CustomMatchingUtility.Convert(nextLine[indexColumn],
+                                      CustomMatchingUtility.SoundexAlgorithm), nextLine[indexColumn]);
                         break;
                 }
             }
-            catch (IllegalArgumentException ex)
-            {
+            catch (IllegalArgumentException ex) {
                 //handles algorithm encode exceptions
                 logger.error(ex);
             }
@@ -192,19 +191,17 @@ public class Cleanser {
      * Data Cleansing will be done on specified input csv and transform into specified csv files
      *
      * @param reader input csv file
-     * @param writerTransformedNew  output transform csv file of new customer activities
-     * @param writerTransformedExisting  output transform csv file of new customer activities
+     * @param writerTransformed  output transform csv file of new customer activities
      * @param writerNotTransformed output not transformed/ignored csv file
      * @param indexColumnName indexing column name by algorithm
      * @param columnsIncluded Including column names for transformation
      * @param indexAlgorithm Specified algorithm for indexing
      * @throws IOException
      */
-    private static void Cleanse(CSVReader reader, CSVWriter writerTransformedNew,CSVWriter writerTransformedExisting,
+    private static void Cleanse(CSVReader reader,CSVWriter writerTransformed,
                                 CSVWriter writerNotTransformed, String indexColumnName, String indexOutputColumnName,
                                 String isCutomerColumnName, String[][] currentCustomer, String [] columnsIncluded,
-                                int indexAlgorithm ) throws Exception
-    {
+                                int indexAlgorithm ) throws Exception {
         int totalCounter = 0;
         int transformedCounter = 0;
         int currentCustomerActionCounter = 0;
@@ -222,8 +219,7 @@ public class Cleanser {
         list.add(0, indexOutputColumnName);
         list.add(1, isCutomerColumnName);
 
-        writerTransformedNew.writeNext(list.toArray(new String[indexColumnName.length()+1]));
-        writerTransformedExisting.writeNext(list.toArray(new String[indexColumnName.length()+1]));
+        writerTransformed.writeNext(list.toArray(new String[indexColumnName.length()+1]));
 
         //Get the column index of given column name
         columnIndex = Arrays.asList(nextLine).indexOf(indexColumnName);
@@ -256,13 +252,16 @@ public class Cleanser {
                             //Set  algorithm Index for first column
                                 switch (indexAlgorithm) {
                                     case Cleanser.INDEX_ALGO_DOUBLE_META_PHONE:
-                                        outputLine[0] = CustomMatchingUtility.Convert(nextLine[columnIndex], CustomMatchingUtility.DoubleMetaphoneAlgorithm);
+                                        outputLine[0] = CustomMatchingUtility.Convert(nextLine[columnIndex],
+                                                                        CustomMatchingUtility.DoubleMetaphoneAlgorithm);
                                         break;
                                     case Cleanser.INDEX_ALGO_META_PHONE:
-                                        outputLine[0] = CustomMatchingUtility.Convert(nextLine[columnIndex], CustomMatchingUtility.MetaphoneAlgorithm);
+                                        outputLine[0] = CustomMatchingUtility.Convert(nextLine[columnIndex],
+                                                                        CustomMatchingUtility.MetaphoneAlgorithm);
                                         break;
                                     default:
-                                        outputLine[0] = CustomMatchingUtility.Convert(nextLine[columnIndex], CustomMatchingUtility.SoundexAlgorithm);
+                                        outputLine[0] = CustomMatchingUtility.Convert(nextLine[columnIndex],
+                                                                        CustomMatchingUtility.SoundexAlgorithm);
                                         break;
                                 }
                         } else {
@@ -291,7 +290,7 @@ public class Cleanser {
                                 currentCustomerActionCounter++;
                             }
 
-                            writerTransformedExisting.writeNext(outputLine);
+                            writerTransformed.writeNext(outputLine);
                         }
                         else
                         {
