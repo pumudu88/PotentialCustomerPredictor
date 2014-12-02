@@ -4,6 +4,8 @@ package org.wso2.carbon.ml.preprocessor;
  * Created by tharik on 11/28/14.
  */
 import au.com.bytecode.opencsv.CSVWriter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -13,24 +15,29 @@ import java.util.HashMap;
 
 public class Aggregator {
 
+
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvAggregate = "Aggregate.csv";
+    private static String [] headers  = {"Company", "downloads", "whitepapers", "tutorials", "workshops", "casestudies", "productpages", "other"};
+
+    private static final Log logger = LogFactory.getLog(Cleanser.class);
 
     public static void main (String[] args) throws IOException {
 
 
-        System.out.println( (new Aggregator()).transformCsv("/Users/tharik/Desktop/machine learning/Archive/transformedExisting.csv") );
+        transformCsv("/Users/tharik/Desktop/machine learning/Archive/transformedExisting.csv");
     }
 
-    public String transformCsv (String csvFile) throws IOException {
-        return csvMapToString(getCsvMap(csvFile));
+    public static void transformCsv (String csvFile) throws IOException {
+
+        mapToCsv(getCsvMap(csvFile));
     }
 
-    private HashMap<String, String[]> getCsvMap (String csvFile) throws IOException {
+    private static HashMap<String, String[]> getCsvMap (String csvPath) throws IOException {
 
 
         HashMap<String, String[]> csvMap = new HashMap<String, String[]>();
-        BufferedReader reader = new BufferedReader(new FileReader(csvFile));
+        BufferedReader reader = new BufferedReader(new FileReader(csvPath));
         String csvLine;
 
         // Create map
@@ -76,45 +83,38 @@ public class Aggregator {
                                 columnValues[5] =  String.valueOf (Integer.parseInt(columnValues[5]) + (actionsType.contains("productpages") ? 1 : 0));
 
 
-                                if (!company.equals("Company"))
+                                if (!company.equals("Company")) {
                                     csvMap.put(company, columnValues);
+                                }
                             }
                         }
                     }
-                    catch (Exception nfe) {
-                        //TODO: handle NumberFormatException
-                        System.out.println(nfe);
+                    catch (Exception ex) {
+                        logger.error(ex);
                     }
                 }
             }
         }
         catch (Exception e) {
-            //TODO: handle IOException
             System.out.println(e);
         }
         return csvMap;
     }
 
-    private String csvMapToString (HashMap<String, String[]> csvMap) {
+    private static void mapToCsv (HashMap<String, String[]> csvMap) {
 
         try {
             CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvAggregate),
                     ',', CSVWriter.NO_QUOTE_CHARACTER);
 
-            String [] headers  = {"Company", "downloads", "whitepapers", "tutorials", "workshops", "casestudies", "productpages", "other"};
-
+            //Write headers to CSV
             writerNotTransformed.writeNext(headers);
-
-
-
-            StringBuilder newCsvFile = new StringBuilder();
 
             for (String company : csvMap.keySet()) {
                 String[] columnValues = csvMap.get(company);
 
 
                // writerNotTransformed.writeNext(headers);
-
                 String [] outputLine = new String[8];
 
                 outputLine[0] = company;
@@ -131,11 +131,10 @@ public class Aggregator {
             }
 
             writerNotTransformed.close();
-            return newCsvFile.toString();
         }
         catch(Exception ex)
         {
-            return null;
+            logger.error(ex);
         }
     }
 
