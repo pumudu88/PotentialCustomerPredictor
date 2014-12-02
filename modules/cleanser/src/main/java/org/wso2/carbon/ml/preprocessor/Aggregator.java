@@ -9,10 +9,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-public class CSVMapper {
+public class Aggregator {
 
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvAggregate = "Aggregate.csv";
@@ -20,7 +19,7 @@ public class CSVMapper {
     public static void main (String[] args) throws IOException {
 
 
-        System.out.println( (new CSVMapper()).transformCsv("/Users/tharik/Desktop/machine learning/Archive/transformedExisting.csv") );
+        System.out.println( (new Aggregator()).transformCsv("/Users/tharik/Desktop/machine learning/Archive/transformedExisting.csv") );
     }
 
     public String transformCsv (String csvFile) throws IOException {
