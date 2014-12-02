@@ -99,7 +99,7 @@ public class PreProcessor {
 
             System.out.println("------country name validation test-------------");
             ValidationUtility validation = new ValidationUtility();
-            System.out.println(validation.countryByIpAddressValidation("85.115.52.180", "United Kingdom").toString());
+            System.out.println(validation.countryByIpAddressValidation("115.84.146.69", "Maldives").toString());
 
             long estimatedTime = System.currentTimeMillis() - startTime;
             logger.info("Time taken : " + estimatedTime / 1000 + " seconds");

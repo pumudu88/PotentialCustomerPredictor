@@ -53,3 +53,9 @@ modules/cleanser/target/classes/org/wso2/carbon/ml/predictor/Cleanser.class
 .idea/libraries/Maven__com_maxmind_geoip_geoip_api_1_2_14.xml
 
 modules/cleanser/target/classes/GeoLiteCity.dat
+
+.idea/libraries/Maven__commons_beanutils_commons_beanutils_1_8_3.xml
+
+.idea/libraries/Maven__commons_digester_commons_digester_1_8.xml
+
+.idea/libraries/Maven__commons_validator_commons_validator_1_4_0.xml

@@ -2,6 +2,7 @@ package org.wso2.carbon.ml.validations;
 
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
+import org.apache.commons.validator.routines.InetAddressValidator;
 
 import java.io.IOException;
 import java.util.Map;
@@ -14,10 +15,11 @@ public class ValidationUtility {
 
 
     final Map<String, String> countryMap = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+    private static InetAddressValidator ipAddressValidator = new InetAddressValidator();
 
     public ValidationUtility() {
 
-        countryMap.put("Andorra, Principality Of", "AD");
+        countryMap.put("Andorra", "AD");
         countryMap.put("United Arab Emirates", "AE");
         countryMap.put("Afghanistan", "AF");
         countryMap.put("Antigua And Barbuda", "AG");
@@ -43,7 +45,7 @@ public class ValidationUtility {
         countryMap.put("Burundi", "BI");
         countryMap.put("Benin", "BJ");
         countryMap.put("Bermuda", "BM");
-        countryMap.put("Brunei Darussalam", "BN");
+        countryMap.put("Brunei", "BN");
         countryMap.put("Bolivia", "BO");
         countryMap.put("Brazil", "BR");
         countryMap.put("Bahamas", "BS");
@@ -58,7 +60,7 @@ public class ValidationUtility {
         countryMap.put("Congo, The Democratic Republic Of The", "CD");
         countryMap.put("Congo", "CG");
         countryMap.put("Switzerland", "CH");
-        countryMap.put("Ivory Coast (Cote D'Ivoire)", "CI");
+        countryMap.put("Cote D'Ivoire", "CI");
         countryMap.put("Cook Islands", "CK");
         countryMap.put("Chile", "CL");
         countryMap.put("Cameroon", "CM");
@@ -95,22 +97,22 @@ public class ValidationUtility {
         countryMap.put("Great Britain", "UK");
         countryMap.put("Grenada", "GD");
         countryMap.put("Georgia", "GE");
-        countryMap.put("French Guyana", "GF");
+        countryMap.put("French Guiana", "GF");
         countryMap.put("Ghana", "GH");
         countryMap.put("Gibraltar", "GI");
         countryMap.put("Greenland", "GL");
         countryMap.put("Gambia", "GM");
         countryMap.put("Guinea", "GN");
-        countryMap.put("Guadeloupe (French)", "GP");
+        countryMap.put("Guadeloupe", "GP");
         countryMap.put("Equatorial Guinea", "GQ");
         countryMap.put("Greece", "GR");
         countryMap.put("S. Georgia & S. Sandwich Isls.", "GS");
         countryMap.put("Guatemala", "GT");
         countryMap.put("Guam (USA)", "GU");
-        countryMap.put("Guinea Bissau", "GW");
+        countryMap.put("Guinea-Bissau", "GW");
         countryMap.put("Guyana", "GY");
         countryMap.put("Hong Kong", "HK");
-        countryMap.put("Heard And McDonald Islands", "HM");
+        countryMap.put("Heard Island And McDonald Islands", "HM");
         countryMap.put("Honduras", "HN");
         countryMap.put("Croatia", "HR");
         countryMap.put("Haiti", "HT");
@@ -148,7 +150,7 @@ public class ValidationUtility {
         countryMap.put("Lithuania", "LT");
         countryMap.put("Luxembourg", "LU");
         countryMap.put("Latvia", "LV");
-        countryMap.put("Libya", "LY");
+        countryMap.put("Libyan Arab Jamahiriya", "LY");
         countryMap.put("Morocco", "MA");
         countryMap.put("Monaco", "MC");
         countryMap.put("Moldavia", "MD");
@@ -186,7 +188,7 @@ public class ValidationUtility {
         countryMap.put("Oman", "OM");
         countryMap.put("Panama", "PA");
         countryMap.put("Peru", "PE");
-        countryMap.put("Polynesia (French)", "PF");
+        countryMap.put("French Polynesia", "PF");
         countryMap.put("Papua New Guinea", "PG");
         countryMap.put("Philippines", "PH");
         countryMap.put("Pakistan", "PK");
@@ -217,7 +219,7 @@ public class ValidationUtility {
         countryMap.put("Senegal", "SN");
         countryMap.put("Somalia", "SO");
         countryMap.put("Suriname", "SR");
-        countryMap.put("Saint Tome (Sao Tome) And Principe", "ST");
+        countryMap.put("Sao Tome and Principe", "ST");
         countryMap.put("Former USSR", "SU");
         countryMap.put("El Salvador", "SV");
         countryMap.put("Syria", "SY");
@@ -241,18 +243,18 @@ public class ValidationUtility {
         countryMap.put("Ukraine", "UA");
         countryMap.put("Uganda", "UG");
         countryMap.put("United Kingdom", "UK");
-        countryMap.put("USA Minor Outlying Islands", "UM");
+        countryMap.put("United States Minor Outlying Islands", "US");
         countryMap.put("United States", "US");
         countryMap.put("Uruguay", "UY");
         countryMap.put("Uzbekistan", "UZ");
         countryMap.put("Holy See (Vatican City State)", "VA");
         countryMap.put("Saint Vincent & Grenadines", "VC");
         countryMap.put("Venezuela", "VE");
-        countryMap.put("Virgin Islands (British)", "VG");
-        countryMap.put("Virgin Islands (USA)", "VI");
+        countryMap.put("British Virgin Islands", "VG");
+        countryMap.put("Virgin Islands", "VI");
         countryMap.put("Vietnam", "VN");
         countryMap.put("Vanuatu", "VU");
-        countryMap.put("Wallis And Futuna Islands", "WF");
+        countryMap.put("Wallis And Futuna", "WF");
         countryMap.put("Samoa", "WS");
         countryMap.put("Yemen", "YE");
         countryMap.put("Mayotte", "YT");
@@ -264,10 +266,11 @@ public class ValidationUtility {
 
     }
 
-    public Boolean countryByIpAddressValidation(String ipAddress,String countryName) {
+    public Boolean countryByIpAddressValidation(String ipAddress, String countryName) {
 
         LookupService countryLocation = null;
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        Location ipLocation = null;
 
         Boolean returnValue;
 
@@ -278,28 +281,31 @@ public class ValidationUtility {
             e.printStackTrace();
         }
 
-        Location ipLocation = countryLocation.getLocation(ipAddress);
-        System.out.println("IP location code  : " + getCountryCode(ipLocation.countryName));
-        System.out.println("country code      : " + getCountryCode(countryName));
+        if (ipAddressValidator.isValid(ipAddress)) {
 
-        if(getCountryCode(ipLocation.countryName).equals(getCountryCode(countryName))) {
-            returnValue = true;
+            ipLocation = countryLocation.getLocation(ipAddress);
+
+            if (getCountryCode(ipLocation.countryName).equals(getCountryCode(countryName))) {
+                returnValue = true;
+            } else {
+                returnValue = false;
+            }
+
         } else {
             returnValue = false;
         }
+
 
         return returnValue;
     }
 
     public String getCountryCode(String country) {
         String countryCode = countryMap.get(country);
-        if(countryCode==null) {
-            countryCode="Not Found";
+        if (countryCode == null) {
+            countryCode = "Not Found";
         }
         return countryCode;
     }
-
-
 
 
 }
