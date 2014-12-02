@@ -6,6 +6,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.ml.algorithms.CustomMatchingUtility;
 import org.wso2.carbon.ml.algorithms.DoubleMetaphoneUtility;
+import org.wso2.carbon.ml.validations.ValidationUtility;
+
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,6 +27,11 @@ public class Cleanser {
     public static final String INDEX_COLUMN_NAME = "Index";
     public static final String INDEX_COLUMN_INPUT = "Company";
     public static final String IS_CUSTOMER_COLUMN_NAME = "Is Customer";
+    public static final String IS_VALID_COUNTRY_COLUMN_NAME = "Is valid Country";
+
+    public static final String COUNTRY_COLUMN_NAME = "Country";
+    public static final String IP_COLUMN_NAME ="IpAddress";
+
     public static final int MIN_NAME_LENGTH = 2;
     public static final String MIN_INDEX_VAL = "-1";
     public static final int DOUBLE_META_PHONE_THRESHOLD = 10;
@@ -81,7 +88,8 @@ public class Cleanser {
                     Cleanser.INDEX_ALGO_DOUBLE_META_PHONE, 0);
 
             Cleanse(reader, writerTransformed, writerNotTransformed, INDEX_COLUMN_INPUT,
-                    Cleanser.INDEX_COLUMN_NAME, Cleanser.IS_CUSTOMER_COLUMN_NAME, currentCustomers, columnsIncluded,
+                    Cleanser.INDEX_COLUMN_NAME, Cleanser.IS_CUSTOMER_COLUMN_NAME, Cleanser.IS_VALID_COUNTRY_COLUMN_NAME,
+                    Cleanser.COUNTRY_COLUMN_NAME, Cleanser.IP_COLUMN_NAME, currentCustomers, columnsIncluded,
                     Cleanser.INDEX_ALGO_DOUBLE_META_PHONE);
 
             long estimatedTime = System.currentTimeMillis() - startTime;
@@ -200,7 +208,7 @@ public class Cleanser {
      */
     private static void Cleanse(CSVReader reader,CSVWriter writerTransformed,
                                 CSVWriter writerNotTransformed, String indexColumnName, String indexOutputColumnName,
-                                String isCutomerColumnName, String[][] currentCustomer, String [] columnsIncluded,
+                                String isCutomerColumnName, String isValidCountryColumnName, String countryColumnName, String ipColumnName,  String[][] currentCustomer, String [] columnsIncluded,
                                 int indexAlgorithm ) throws Exception {
         int totalCounter = 0;
         int transformedCounter = 0;
@@ -208,7 +216,13 @@ public class Cleanser {
 
 
         int columnIndex ;
+        int countryColumnIndex;
+        int ipColumnIndex;
+
+
         int []columnIncludedIndexes = new int[columnsIncluded.length];
+
+        ValidationUtility validator = new ValidationUtility();
 
         //Writing Header row for output files
         String [] nextLine = reader.readNext();
@@ -216,13 +230,17 @@ public class Cleanser {
 
         //Add one more column for algorithm index to specified column array and write as header
         List<String> list = new LinkedList<String>(Arrays.asList(columnsIncluded));
+
         list.add(0, indexOutputColumnName);
         list.add(1, isCutomerColumnName);
+        list.add(2, isValidCountryColumnName);
 
         writerTransformed.writeNext(list.toArray(new String[indexColumnName.length()+1]));
 
         //Get the column index of given column name
         columnIndex = Arrays.asList(nextLine).indexOf(indexColumnName);
+        countryColumnIndex = Arrays.asList(nextLine).indexOf(countryColumnName);
+        ipColumnIndex = Arrays.asList(nextLine).indexOf(ipColumnName);
 
         for(int i =0; i < nextLine.length; i++)
         {
@@ -242,7 +260,7 @@ public class Cleanser {
                 if (nextLine.length >= columnIncludedIndexes.length && !(nextLine[columnIndex].equals(""))) {
 
                     //Initialize output with specified columns plus one more column for algorithm index
-                    String[] outputLine = new String[columnIncludedIndexes.length + 2];
+                    String[] outputLine = new String[columnIncludedIndexes.length + 3];
 
                     try {
 
@@ -272,13 +290,15 @@ public class Cleanser {
                         if (outputLine[0] != null) {
 
                             boolean isExistingCustomer = isCustomer(currentCustomer, outputLine[0]);
+
                             outputLine[1] = String.valueOf(isExistingCustomer);
+                            outputLine[2] = String.valueOf(validator.countryByIpAddressValidation(nextLine[ipColumnIndex], nextLine[countryColumnIndex]));
 
                             //Set specified columns for rest
-                            for (int i = 2; i < columnIncludedIndexes.length +2; i++) {
+                            for (int i = 3; i < columnIncludedIndexes.length +3; i++) {
                                 //Check include index is available on readLine
-                                if (nextLine.length > columnIncludedIndexes[i - 2]) {
-                                    outputLine[i] = nextLine[columnIncludedIndexes[i - 2]];
+                                if (nextLine.length > columnIncludedIndexes[i - 3]) {
+                                    outputLine[i] = nextLine[columnIncludedIndexes[i - 3]];
                                 } else {
                                     outputLine[i] = "";
                                 }
