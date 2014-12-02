@@ -220,6 +220,7 @@ public class Cleanser {
         //Add one more column for algorithm index to specified column array and write as header
         List<String> list = new LinkedList<String>(Arrays.asList(columnsIncluded));
         list.add(0, indexOutputColumnName);
+        list.add(1, isCutomerColumnName);
 
         writerTransformedNew.writeNext(list.toArray(new String[indexColumnName.length()+1]));
         writerTransformedExisting.writeNext(list.toArray(new String[indexColumnName.length()+1]));
@@ -245,7 +246,7 @@ public class Cleanser {
                 if (nextLine.length >= columnIncludedIndexes.length && !(nextLine[columnIndex].equals(""))) {
 
                     //Initialize output with specified columns plus one more column for algorithm index
-                    String[] outputLine = new String[columnIncludedIndexes.length + 1];
+                    String[] outputLine = new String[columnIncludedIndexes.length + 2];
 
                     try {
 
@@ -272,15 +273,13 @@ public class Cleanser {
                         if (outputLine[0] != null) {
 
                             boolean isExistingCustomer = isCustomer(currentCustomer, outputLine[0]);
-
-
                             outputLine[1] = String.valueOf(isExistingCustomer);
 
                             //Set specified columns for rest
-                            for (int i = 1; i < columnIncludedIndexes.length +1; i++) {
+                            for (int i = 2; i < columnIncludedIndexes.length +2; i++) {
                                 //Check include index is available on readLine
-                                if (nextLine.length > columnIncludedIndexes[i - 1]) {
-                                    outputLine[i] = nextLine[columnIncludedIndexes[i - 1]];
+                                if (nextLine.length > columnIncludedIndexes[i - 2]) {
+                                    outputLine[i] = nextLine[columnIncludedIndexes[i - 2]];
                                 } else {
                                     outputLine[i] = "";
                                 }
@@ -290,10 +289,9 @@ public class Cleanser {
 
                             if (isExistingCustomer) {
                                 currentCustomerActionCounter++;
-                                writerTransformedExisting.writeNext(outputLine);
-                            } else {
-                                writerTransformedNew.writeNext(outputLine);
                             }
+
+                            writerTransformedExisting.writeNext(outputLine);
                         }
                         else
                         {
