@@ -210,7 +210,8 @@ public class Cleanser {
      */
     private static void Cleanse(CSVReader reader,CSVWriter writerTransformed,
                                 CSVWriter writerNotTransformed, String indexColumnName, String indexOutputColumnName,
-                                String isCutomerColumnName, String isValidCountryColumnName, String countryColumnName, String ipColumnName,  String[][] currentCustomer, String [] columnsIncluded,
+                                String isCutomerColumnName, String isValidCountryColumnName, String countryColumnName,
+                                String ipColumnName,  String[][] currentCustomer, String [] columnsIncluded,
                                 int indexAlgorithm ) throws Exception {
         int totalCounter = 0;
         int transformedCounter = 0;
@@ -236,10 +237,8 @@ public class Cleanser {
 
         list.add(0, indexOutputColumnName);
         list.add(1, isCutomerColumnName);
+        list.add(2, isValidCountryColumnName);
 
-        if(enableIpValidate){
-            list.add(2, isValidCountryColumnName);
-        }
 
         generatedColumnCount = list.size() - columnIncludedIndexes.length;
 
@@ -298,15 +297,20 @@ public class Cleanser {
                         if (outputLine[0] != null) {
 
                             boolean isExistingCustomer = isCustomer(currentCustomer, outputLine[0]);
+                            boolean isValidIp = false;
 
                             outputLine[1] = String.valueOf(isExistingCustomer);
 
                             if(enableIpValidate){
-                                outputLine[2] = String.valueOf(validator.countryByIpAddressValidation(nextLine[ipColumnIndex], nextLine[countryColumnIndex]));
+                                isValidIp = validator.countryByIpAddressValidation(nextLine[ipColumnIndex],
+                                        nextLine[countryColumnIndex]);
                             }
 
+                            outputLine[2] = String.valueOf(isValidIp);
+
                             //Set specified columns for rest
-                            for (int i = generatedColumnCount; i < columnIncludedIndexes.length + generatedColumnCount; i++) {
+                            for (int i = generatedColumnCount;
+                                 i < columnIncludedIndexes.length + generatedColumnCount; i++) {
                                 //Check include index is available on readLine
                                 if (nextLine.length > columnIncludedIndexes[i - generatedColumnCount]) {
                                     outputLine[i] = nextLine[columnIncludedIndexes[i - generatedColumnCount]];

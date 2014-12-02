@@ -25,7 +25,7 @@ public class Aggregator {
     public static void main (String[] args) throws IOException {
 
 
-        transformCsv("/Users/tharik/Desktop/machine learning/Archive/transformedExisting.csv");
+        transformCsv(Cleanser.csvPath + Cleanser.csvWriteTransfomed);
     }
 
     public static void transformCsv (String csvFile) throws IOException {
