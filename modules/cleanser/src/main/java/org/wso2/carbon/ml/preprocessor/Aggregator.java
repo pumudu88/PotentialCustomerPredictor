@@ -15,16 +15,17 @@ import java.util.HashMap;
 
 public class Aggregator {
 
-    public static final String INDEX_COLUMN_INPUT = "Company";
+    public static final String INDEX_COLUMN_INPUT = "Company Index";
     public static final String ACTIVITY_COLUMN_NAME = "Link";
     public static final String TITLE_COLUMN_NAME ="Title";
+    public static final String COMPANY_COLUMN_NAME = "Company";
 
     public static final char CSV_SEPERATOR = ',';
     public static final String CSV_CHARACTER_FORMAT = "UTF-8";
 
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvAggregate = "Aggregate.csv";
-    private static String [] headers  = {"Company", "downloads", "whitepapers", "tutorials", "workshops", "casestudies", "productpages", "other", "seniorTitleCount", "juniorTitleCount"};
+    private static String [] headers  = {"Company Index", "downloads", "whitepapers", "tutorials", "workshops", "casestudies", "productpages", "other", "seniorTitleCount", "juniorTitleCount", "Company Name"};
     private static String [] keyWords = {"downloads", "whitepapers", "tutorials", "workshops", "casestudies", "productpages"};
 
     private static final Log logger = LogFactory.getLog(Cleanser.class);
@@ -53,8 +54,9 @@ public class Aggregator {
         String[] nextLine = reader.readNext();
         int linkColumnIndex = Arrays.asList(nextLine).indexOf(Aggregator.ACTIVITY_COLUMN_NAME);
         int titleIndex  = Arrays.asList(nextLine).indexOf(Aggregator.TITLE_COLUMN_NAME);
+        int companyNameIndex = Arrays.asList(nextLine).indexOf(Aggregator.COMPANY_COLUMN_NAME);
 
-        int preColumnCount = 3;
+        int preColumnCount = 4;
 
 
         // Create map
@@ -104,6 +106,8 @@ public class Aggregator {
                         else if( Integer.parseInt(nextLine[titleIndex]) == TitleUtility.Jounior) {
                             columnValues[8] = String.valueOf(Integer.parseInt(columnValues[8]) + 1);
                         }
+
+                        columnValues[9] = nextLine[companyNameIndex];
                     }
                     catch (Exception ex) {
                         logger.error(ex);
