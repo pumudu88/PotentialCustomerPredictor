@@ -285,7 +285,7 @@ public class ValidationUtility {
 
             ipLocation = countryLocation.getLocation(ipAddress);
 
-            if (getCountryCode(ipLocation.countryName).equals(getCountryCode(countryName))) {
+            if (ipLocation.countryCode.equals(getCountryCode(countryName))) {
                 returnValue = true;
             } else {
                 returnValue = false;
