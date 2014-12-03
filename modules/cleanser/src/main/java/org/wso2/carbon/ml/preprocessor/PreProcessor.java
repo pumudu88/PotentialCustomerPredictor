@@ -4,6 +4,7 @@ import org.apache.commons.codec.EncoderException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.ml.algorithms.*;
+import org.wso2.carbon.ml.classifiers.TitleUtility;
 import org.wso2.carbon.ml.validations.ValidationUtility;
 
 import java.util.ArrayList;
@@ -100,6 +101,13 @@ public class PreProcessor {
             System.out.println("------country name validation test-------------");
             ValidationUtility validation = new ValidationUtility();
             System.out.println(validation.countryByIpAddressValidation("115.84.146.69", "Maldives").toString());
+
+            for(int i = 1; i < 100; i++) {
+                validation.countryByIpAddressValidation("115.84.146.69", "Maldives");
+            }
+
+            System.out.println("-----------------Title classifier-------------------");
+            System.out.println("title integer :" + TitleUtility.tilteClassifier("senior sdfsdfs"));
 
             long estimatedTime = System.currentTimeMillis() - startTime;
             logger.info("Time taken : " + estimatedTime / 1000 + " seconds");
