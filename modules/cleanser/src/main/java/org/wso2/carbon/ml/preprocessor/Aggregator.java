@@ -23,6 +23,7 @@ public class Aggregator {
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvAggregate = "Aggregate.csv";
     private static String [] headers  = {"Company", "downloads", "whitepapers", "tutorials", "workshops", "casestudies", "productpages", "other"};
+    private static String [] keyWords = {"downloads", "whitepapers", "tutorials", "workshops", "casestudies", "productpages"};
 
     private static final Log logger = LogFactory.getLog(Cleanser.class);
 
@@ -47,12 +48,7 @@ public class Aggregator {
                 CSV_SEPERATOR, CSVReader.DEFAULT_QUOTE_CHARACTER,
                 CSVReader.DEFAULT_QUOTE_CHARACTER);
 
-
         String[] nextLine = reader.readNext();
-
-
-
-
         int linkColumnIndex = Arrays.asList(nextLine).indexOf(ACTIVITY_COLUMN_NAME);
 
 
@@ -68,26 +64,23 @@ public class Aggregator {
                         String actionsType;
                         String[] columnValues = csvMap.get(company);
 
+                        if (columnValues == null) {
+                            columnValues = new String[keyWords.length + 1];
+                            columnValues[0] = columnValues[1] = columnValues[2] = columnValues[3] = columnValues[4] = columnValues[5] = columnValues[6] = "0";
+                        }
+
                         if(nextLine.length > linkColumnIndex && !nextLine[linkColumnIndex].equals("")) {
 
                             actionsType = nextLine[linkColumnIndex].trim();
+
                             if (actionsType.equals("")) {
-                                columnValues[6] = columnValues[6] + 1;
+                                    columnValues[6] = String.valueOf(Integer.parseInt(columnValues[6]) + 1);
                             } else {
 
-
-                                if (columnValues == null) {
-                                    columnValues = new String[7];
-                                    columnValues[0] = columnValues[1] = columnValues[2] = columnValues[3] = columnValues[4] = columnValues[5] = columnValues[6] = "0";
+                                for (int i = 0; i < columnValues.length - 1 ; i++)
+                                {
+                                    columnValues[i] = String.valueOf(Integer.parseInt(columnValues[i]) + (actionsType.contains(keyWords[i]) ? 1 : 0));
                                 }
-
-                                columnValues[0] = String.valueOf(Integer.parseInt(columnValues[0]) + (actionsType.contains("downloads") ? 1 : 0));
-                                columnValues[1] = String.valueOf(Integer.parseInt(columnValues[1]) + (actionsType.contains("whitepapers") ? 1 : 0));
-                                columnValues[2] = String.valueOf(Integer.parseInt(columnValues[2]) + (actionsType.contains("tutorials") ? 1 : 0));
-                                columnValues[3] = String.valueOf(Integer.parseInt(columnValues[3]) + (actionsType.contains("workshops") ? 1 : 0));
-                                columnValues[4] = String.valueOf(Integer.parseInt(columnValues[4]) + (actionsType.contains("casestudies") ? 1 : 0));
-                                columnValues[5] = String.valueOf(Integer.parseInt(columnValues[5]) + (actionsType.contains("productpages") ? 1 : 0));
-
 
                                 if (!company.equals(INDEX_COLUMN_INPUT)) {
                                     csvMap.put(company, columnValues);
@@ -95,14 +88,7 @@ public class Aggregator {
                             }
                         }
                         else  {
-                            if (columnValues == null) {
-                                columnValues = new String[7];
-                                columnValues[0] = columnValues[1] = columnValues[2] = columnValues[3] = columnValues[4] = columnValues[5] = columnValues[6] = "0";
-                            }
-                            else
-                            {
                                 columnValues[6] = String.valueOf(Integer.parseInt(columnValues[6]) + 1);
-                            }
                         }
                     }
                     catch (Exception ex) {
@@ -135,14 +121,12 @@ public class Aggregator {
                     outputLine[0] = company;
                     int preColumnCount = 1;
 
-                    for (int i = preColumnCount; i < columnValues.length; i++) {
+                    for (int i = preColumnCount; i < columnValues.length + preColumnCount; i++) {
                         outputLine[i] = String.valueOf(columnValues[i - preColumnCount]);
                     }
-
                     writerNotTransformed.writeNext(outputLine);
                 }
             }
-
             writerNotTransformed.close();
         }
         catch(Exception ex)
