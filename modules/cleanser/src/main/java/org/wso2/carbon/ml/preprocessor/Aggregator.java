@@ -7,6 +7,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.ml.classifiers.TitleUtility;
 
 import java.io.*;
 import java.util.Arrays;
@@ -16,13 +17,14 @@ public class Aggregator {
 
     public static final String INDEX_COLUMN_INPUT = "Company";
     public static final String ACTIVITY_COLUMN_NAME = "Link";
+    public static final String TITLE_COLUMN_NAME ="Title";
 
     public static final char CSV_SEPERATOR = ',';
     public static final String CSV_CHARACTER_FORMAT = "UTF-8";
 
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvAggregate = "Aggregate.csv";
-    private static String [] headers  = {"Company", "downloads", "whitepapers", "tutorials", "workshops", "casestudies", "productpages", "other"};
+    private static String [] headers  = {"Company", "downloads", "whitepapers", "tutorials", "workshops", "casestudies", "productpages", "other", "seniorTitleCount", "juniorTitleCount"};
     private static String [] keyWords = {"downloads", "whitepapers", "tutorials", "workshops", "casestudies", "productpages"};
 
     private static final Log logger = LogFactory.getLog(Cleanser.class);
@@ -49,7 +51,10 @@ public class Aggregator {
                 CSVReader.DEFAULT_QUOTE_CHARACTER);
 
         String[] nextLine = reader.readNext();
-        int linkColumnIndex = Arrays.asList(nextLine).indexOf(ACTIVITY_COLUMN_NAME);
+        int linkColumnIndex = Arrays.asList(nextLine).indexOf(Aggregator.ACTIVITY_COLUMN_NAME);
+        int titleIndex  = Arrays.asList(nextLine).indexOf(Aggregator.TITLE_COLUMN_NAME);
+
+        int preColumnCount = 3;
 
 
         // Create map
@@ -65,8 +70,9 @@ public class Aggregator {
                         String[] columnValues = csvMap.get(company);
 
                         if (columnValues == null) {
-                            columnValues = new String[keyWords.length + 1];
-                            columnValues[0] = columnValues[1] = columnValues[2] = columnValues[3] = columnValues[4] = columnValues[5] = columnValues[6] = "0";
+                            columnValues = new String[keyWords.length + preColumnCount];
+                            columnValues[0] = columnValues[1] = columnValues[2] = columnValues[3] = columnValues[4]
+                                    = columnValues[5] = columnValues[6] = columnValues[7] = columnValues[8] = "0";
                         }
 
                         if(nextLine.length > linkColumnIndex && !nextLine[linkColumnIndex].equals("")) {
@@ -74,10 +80,10 @@ public class Aggregator {
                             actionsType = nextLine[linkColumnIndex].trim();
 
                             if (actionsType.equals("")) {
-                                    columnValues[6] = String.valueOf(Integer.parseInt(columnValues[6]) + 1);
+                                    columnValues[6] = String.valueOf(Integer.parseInt(columnValues[6]) + preColumnCount);
                             } else {
 
-                                for (int i = 0; i < columnValues.length - 1 ; i++)
+                                for (int i = 0; i < columnValues.length - preColumnCount ; i++)
                                 {
                                     columnValues[i] = String.valueOf(Integer.parseInt(columnValues[i]) + (actionsType.contains(keyWords[i]) ? 1 : 0));
                                 }
@@ -90,6 +96,14 @@ public class Aggregator {
                         else  {
                                 columnValues[6] = String.valueOf(Integer.parseInt(columnValues[6]) + 1);
                         }
+
+
+                        if( Integer.parseInt(nextLine[titleIndex]) == TitleUtility.Senior) {
+                            columnValues[7] = String.valueOf(Integer.parseInt(columnValues[7]) + 1);
+                        }
+                        else if( Integer.parseInt(nextLine[titleIndex]) == TitleUtility.Jounior) {
+                            columnValues[8] = String.valueOf(Integer.parseInt(columnValues[8]) + 1);
+                        }
                     }
                     catch (Exception ex) {
                         logger.error(ex);
@@ -97,8 +111,8 @@ public class Aggregator {
                 }
             }
         }
-        catch (Exception e) {
-            System.out.println(e);
+        catch (Exception ex) {
+            logger.error(ex);
         }
         return csvMap;
     }
@@ -117,7 +131,7 @@ public class Aggregator {
 
                 if (!company.equals("")) {
 
-                    String[] outputLine = new String[8];
+                    String[] outputLine = new String[headers.length];
                     outputLine[0] = company;
                     int preColumnCount = 1;
 
