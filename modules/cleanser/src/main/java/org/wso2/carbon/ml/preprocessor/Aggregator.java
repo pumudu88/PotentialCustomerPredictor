@@ -25,8 +25,10 @@ public class Aggregator {
 
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvAggregate = "Aggregate.csv";
-    private static String [] headers  = {"Company Index", "downloads", "whitepapers", "tutorials", "workshops", "casestudies", "productpages", "other", "seniorTitleCount", "juniorTitleCount", "Company Name"};
-    private static String [] keyWords = {"downloads", "whitepapers", "tutorials", "workshops", "casestudies", "productpages"};
+    private static String [] headers  = {"Company Index", "downloads", "whitepapers", "tutorials", "workshops",
+            "casestudies", "productpages", "other", "seniorTitleCount", "juniorTitleCount", "Company Name"};
+    private static String [] keyWords = {"downloads", "whitepapers", "tutorials", "workshops", "casestudies",
+            "productpages"};
 
     private static final Log logger = LogFactory.getLog(Cleanser.class);
 
@@ -82,12 +84,14 @@ public class Aggregator {
                             actionsType = nextLine[linkColumnIndex].trim();
 
                             if (actionsType.equals("")) {
-                                    columnValues[6] = String.valueOf(Integer.parseInt(columnValues[6]) + preColumnCount);
+                                    columnValues[6] = String.valueOf(Integer.parseInt(columnValues[6])
+                                                                                        + preColumnCount);
                             } else {
 
                                 for (int i = 0; i < columnValues.length - preColumnCount ; i++)
                                 {
-                                    columnValues[i] = String.valueOf(Integer.parseInt(columnValues[i]) + (actionsType.contains(keyWords[i]) ? 1 : 0));
+                                    columnValues[i] = String.valueOf(Integer.parseInt(columnValues[i])
+                                                                      + (actionsType.contains(keyWords[i]) ? 1 : 0));
                                 }
 
                                 if (!company.equals(INDEX_COLUMN_INPUT)) {
