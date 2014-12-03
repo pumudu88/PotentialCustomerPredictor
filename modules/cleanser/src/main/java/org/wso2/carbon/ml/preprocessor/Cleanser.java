@@ -86,10 +86,10 @@ public class Cleanser {
                                                             ',', CSVWriter.NO_QUOTE_CHARACTER);
 
 
-            currentCustomers = LoadCurrentCustomers(readerCustomers, writerCustomers,
+            currentCustomers = loadCurrentCustomers(readerCustomers, writerCustomers,
                     Cleanser.INDEX_ALGO_DOUBLE_META_PHONE, 0);
 
-            Cleanse(reader, writerTransformed, writerNotTransformed, INDEX_COLUMN_INPUT,
+            cleanse(reader, writerTransformed, writerNotTransformed, INDEX_COLUMN_INPUT,
                     Cleanser.INDEX_COLUMN_NAME, Cleanser.IS_CUSTOMER_COLUMN_NAME, Cleanser.IS_VALID_COUNTRY_COLUMN_NAME,
                     Cleanser.COUNTRY_COLUMN_NAME, Cleanser.IP_COLUMN_NAME, currentCustomers, columnsIncluded,
                     Cleanser.INDEX_ALGO_DOUBLE_META_PHONE);
@@ -146,7 +146,7 @@ public class Cleanser {
      * @return
      * @throws Exception
      */
-    private static String[][] LoadCurrentCustomers(CSVReader readerCustomers, CSVWriter writerCustomers,
+    private static String[][] loadCurrentCustomers(CSVReader readerCustomers, CSVWriter writerCustomers,
                                                    int indexAlgorithm, int indexColumn) throws  Exception {
 
         Map<String,String> Customers = new HashMap<String,String>();
@@ -208,9 +208,10 @@ public class Cleanser {
      * @param indexAlgorithm Specified algorithm for indexing
      * @throws IOException
      */
-    private static void Cleanse(CSVReader reader,CSVWriter writerTransformed,
+    private static void cleanse(CSVReader reader,CSVWriter writerTransformed,
                                 CSVWriter writerNotTransformed, String indexColumnName, String indexOutputColumnName,
-                                String isCutomerColumnName, String isValidCountryColumnName, String countryColumnName, String ipColumnName,  String[][] currentCustomer, String [] columnsIncluded,
+                                String isCutomerColumnName, String isValidCountryColumnName, String countryColumnName,
+                                String ipColumnName,  String[][] currentCustomer, String [] columnsIncluded,
                                 int indexAlgorithm ) throws Exception {
         int totalCounter = 0;
         int transformedCounter = 0;
@@ -236,10 +237,8 @@ public class Cleanser {
 
         list.add(0, indexOutputColumnName);
         list.add(1, isCutomerColumnName);
+        list.add(2, isValidCountryColumnName);
 
-        if(enableIpValidate){
-            list.add(2, isValidCountryColumnName);
-        }
 
         generatedColumnCount = list.size() - columnIncludedIndexes.length;
 
@@ -298,15 +297,20 @@ public class Cleanser {
                         if (outputLine[0] != null) {
 
                             boolean isExistingCustomer = isCustomer(currentCustomer, outputLine[0]);
+                            boolean isValidIp = false;
 
                             outputLine[1] = String.valueOf(isExistingCustomer);
 
                             if(enableIpValidate){
-                                outputLine[2] = String.valueOf(validator.countryByIpAddressValidation(nextLine[ipColumnIndex], nextLine[countryColumnIndex]));
+                                isValidIp = validator.countryByIpAddressValidation(nextLine[ipColumnIndex],
+                                        nextLine[countryColumnIndex]);
                             }
 
+                            outputLine[2] = String.valueOf(isValidIp);
+
                             //Set specified columns for rest
-                            for (int i = generatedColumnCount; i < columnIncludedIndexes.length + generatedColumnCount; i++) {
+                            for (int i = generatedColumnCount;
+                                 i < columnIncludedIndexes.length + generatedColumnCount; i++) {
                                 //Check include index is available on readLine
                                 if (nextLine.length > columnIncludedIndexes[i - generatedColumnCount]) {
                                     outputLine[i] = nextLine[columnIncludedIndexes[i - generatedColumnCount]];

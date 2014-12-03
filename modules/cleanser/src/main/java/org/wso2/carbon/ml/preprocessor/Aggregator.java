@@ -11,10 +11,13 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class Aggregator {
 
+    public static final String INDEX_COLUMN_INPUT = "Company";
+    public static final String ACTIVITY_COLUMN_NAME = "Link";
 
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvAggregate = "Aggregate.csv";
@@ -25,7 +28,7 @@ public class Aggregator {
     public static void main (String[] args) throws IOException {
 
 
-        transformCsv("/Users/tharik/Desktop/machine learning/Archive/transformedExisting.csv");
+        transformCsv(Cleanser.csvPath + Cleanser.csvWriteTransfomed);
     }
 
     public static void transformCsv (String csvFile) throws IOException {
@@ -40,6 +43,12 @@ public class Aggregator {
         BufferedReader reader = new BufferedReader(new FileReader(csvPath));
         String csvLine;
 
+        csvLine = reader.readLine();
+        String[] csvHeaders = csvLine.split(",");
+
+        int linkColumnIndex = Arrays.asList(csvHeaders).indexOf(ACTIVITY_COLUMN_NAME);
+
+
         // Create map
         try {
             while ((csvLine = reader.readLine()) != null) {
@@ -51,7 +60,8 @@ public class Aggregator {
 
                         String actionsType;
                         String[] columnValues = csvMap.get(company);
-                        if(csvColumns.length < 7)
+
+                        if(csvColumns.length <= linkColumnIndex)
                         {
                             if (columnValues == null) {
                                 columnValues = new String[7];
@@ -64,29 +74,29 @@ public class Aggregator {
                         }
                         else {
 
-                            actionsType = csvColumns[6].trim();
-                            if (actionsType.equals("")) {
-                                columnValues[6] = columnValues[6] + 1;
-                            } else {
+                                actionsType = csvColumns[linkColumnIndex].trim();
+                                if (actionsType.equals("")) {
+                                    columnValues[6] = columnValues[6] + 1;
+                                } else {
 
 
-                                if (columnValues == null) {
-                                    columnValues = new String[7];
-                                    columnValues[0] = columnValues[1] = columnValues[2] = columnValues[3] = columnValues[4] = columnValues[5] = columnValues[6] = "0";
+                                    if (columnValues == null) {
+                                        columnValues = new String[7];
+                                        columnValues[0] = columnValues[1] = columnValues[2] = columnValues[3] = columnValues[4] = columnValues[5] = columnValues[6] = "0";
+                                    }
+
+                                    columnValues[0] = String.valueOf(Integer.parseInt(columnValues[0]) + (actionsType.contains("downloads") ? 1 : 0));
+                                    columnValues[1] = String.valueOf(Integer.parseInt(columnValues[1]) + (actionsType.contains("whitepapers") ? 1 : 0));
+                                    columnValues[2] = String.valueOf(Integer.parseInt(columnValues[2]) + (actionsType.contains("tutorials") ? 1 : 0));
+                                    columnValues[3] = String.valueOf(Integer.parseInt(columnValues[3]) + (actionsType.contains("workshops") ? 1 : 0));
+                                    columnValues[4] = String.valueOf(Integer.parseInt(columnValues[4]) + (actionsType.contains("casestudies") ? 1 : 0));
+                                    columnValues[5] = String.valueOf(Integer.parseInt(columnValues[5]) + (actionsType.contains("productpages") ? 1 : 0));
+
+
+                                    if (!company.equals(INDEX_COLUMN_INPUT)) {
+                                        csvMap.put(company, columnValues);
+                                    }
                                 }
-
-                                columnValues[0] = String.valueOf (Integer.parseInt(columnValues[0]) + (actionsType.contains("downloads") ? 1 : 0));
-                                columnValues[1] =  String.valueOf (Integer.parseInt(columnValues[1]) + (actionsType.contains("whitepapers") ? 1 : 0));
-                                columnValues[2] =  String.valueOf (Integer.parseInt(columnValues[2]) + (actionsType.contains("tutorials") ? 1 : 0));
-                                columnValues[3] =  String.valueOf (Integer.parseInt(columnValues[3]) + (actionsType.contains("workshops") ? 1 : 0));
-                                columnValues[4] =  String.valueOf (Integer.parseInt(columnValues[4]) + (actionsType.contains("casestudies") ? 1 : 0));
-                                columnValues[5] =  String.valueOf (Integer.parseInt(columnValues[5]) + (actionsType.contains("productpages") ? 1 : 0));
-
-
-                                if (!company.equals("Company")) {
-                                    csvMap.put(company, columnValues);
-                                }
-                            }
                         }
                     }
                     catch (Exception ex) {
