@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.ml.algorithms.CustomMatchingUtility;
 import org.wso2.carbon.ml.algorithms.DoubleMetaphoneUtility;
+import org.wso2.carbon.ml.classifiers.TitleUtility;
 import org.wso2.carbon.ml.validations.ValidationUtility;
 
 import java.io.FileInputStream;
@@ -31,6 +32,7 @@ public class Cleanser {
 
     public static final String COUNTRY_COLUMN_NAME = "Country";
     public static final String IP_COLUMN_NAME ="IpAddress";
+    public static final String TITLE_COLUMN_NAME ="Title";
 
     public static final int MIN_NAME_LENGTH = 2;
     public static final String MIN_INDEX_VAL = "-1";
@@ -91,8 +93,8 @@ public class Cleanser {
 
             cleanse(reader, writerTransformed, writerNotTransformed, INDEX_COLUMN_INPUT,
                     Cleanser.INDEX_COLUMN_NAME, Cleanser.IS_CUSTOMER_COLUMN_NAME, Cleanser.IS_VALID_COUNTRY_COLUMN_NAME,
-                    Cleanser.COUNTRY_COLUMN_NAME, Cleanser.IP_COLUMN_NAME, currentCustomers, columnsIncluded,
-                    Cleanser.INDEX_ALGO_DOUBLE_META_PHONE);
+                    Cleanser.COUNTRY_COLUMN_NAME, Cleanser.IP_COLUMN_NAME, Cleanser.TITLE_COLUMN_NAME, currentCustomers,
+                    columnsIncluded, Cleanser.INDEX_ALGO_DOUBLE_META_PHONE);
 
             long estimatedTime = System.currentTimeMillis() - startTime;
             logger.info("Time taken : "+ estimatedTime/1000 + " seconds");
@@ -211,7 +213,7 @@ public class Cleanser {
     private static void cleanse(CSVReader reader,CSVWriter writerTransformed,
                                 CSVWriter writerNotTransformed, String indexColumnName, String indexOutputColumnName,
                                 String isCutomerColumnName, String isValidCountryColumnName, String countryColumnName,
-                                String ipColumnName,  String[][] currentCustomer, String [] columnsIncluded,
+                                String ipColumnName, String titleColumnName, String[][] currentCustomer, String [] columnsIncluded,
                                 int indexAlgorithm ) throws Exception {
         int totalCounter = 0;
         int transformedCounter = 0;
@@ -221,10 +223,12 @@ public class Cleanser {
         int columnIndex ;
         int countryColumnIndex;
         int ipColumnIndex;
+        int titleColumnIndex;
         int generatedColumnCount;
 
 
-        int []columnIncludedIndexes = new int[columnsIncluded.length];
+
+        int [] columnIncludedIndexes = new int[columnsIncluded.length];
 
         ValidationUtility validator = new ValidationUtility();
 
@@ -248,6 +252,7 @@ public class Cleanser {
         columnIndex = Arrays.asList(nextLine).indexOf(indexColumnName);
         countryColumnIndex = Arrays.asList(nextLine).indexOf(countryColumnName);
         ipColumnIndex = Arrays.asList(nextLine).indexOf(ipColumnName);
+        titleColumnIndex = Arrays.asList(nextLine).indexOf(titleColumnName);
 
         for(int i =0; i < nextLine.length; i++)
         {
@@ -308,12 +313,20 @@ public class Cleanser {
 
                             outputLine[2] = String.valueOf(isValidIp);
 
-                            //Set specified columns for rest
+                            //Set specified columns for output
                             for (int i = generatedColumnCount;
                                  i < columnIncludedIndexes.length + generatedColumnCount; i++) {
                                 //Check include index is available on readLine
                                 if (nextLine.length > columnIncludedIndexes[i - generatedColumnCount]) {
-                                    outputLine[i] = nextLine[columnIncludedIndexes[i - generatedColumnCount]];
+
+                                   if (titleColumnIndex == columnIncludedIndexes[i - generatedColumnCount])
+                                   {
+                                       outputLine[i] = TitleUtility.tilteClassifier(nextLine[columnIncludedIndexes[i - generatedColumnCount]]).toString();
+                                   }
+                                    else
+                                   {
+                                       outputLine[i] = nextLine[columnIncludedIndexes[i - generatedColumnCount]];
+                                   }
                                 } else {
                                     outputLine[i] = "";
                                 }
