@@ -121,7 +121,7 @@ public class Aggregator {
 
         try {
             CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvAggregate),
-                    ',', CSVWriter.NO_QUOTE_CHARACTER);
+                    CSV_SEPERATOR, CSVWriter.NO_QUOTE_CHARACTER);
 
             //Write headers to CSV
             writerNotTransformed.writeNext(headers);
@@ -129,21 +129,18 @@ public class Aggregator {
             for (String company : csvMap.keySet()) {
                 String[] columnValues = csvMap.get(company);
 
+                if (!company.equals("")) {
 
-               // writerNotTransformed.writeNext(headers);
-                String [] outputLine = new String[8];
+                    String[] outputLine = new String[8];
+                    outputLine[0] = company;
+                    int preColumnCount = 1;
 
-                outputLine[0] = company;
-                outputLine[1] = String.valueOf(columnValues[0]);
-                outputLine[2] = String.valueOf(columnValues[1]);
-                outputLine[3] = String.valueOf(columnValues[2]);
-                outputLine[4] = String.valueOf(columnValues[3]);
-                outputLine[5] = String.valueOf(columnValues[4]);
-                outputLine[6] = String.valueOf(columnValues[5]);
-                outputLine[7] = String.valueOf(columnValues[6]);
+                    for (int i = preColumnCount; i < columnValues.length; i++) {
+                        outputLine[i] = String.valueOf(columnValues[i - preColumnCount]);
+                    }
 
-                writerNotTransformed.writeNext(outputLine);
-
+                    writerNotTransformed.writeNext(outputLine);
+                }
             }
 
             writerNotTransformed.close();
