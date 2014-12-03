@@ -15,7 +15,7 @@ import java.util.HashMap;
 
 public class Aggregator {
 
-    public static final String INDEX_COLUMN_INPUT = "Company Index";
+    public static final String INDEX_COLUMN_INPUT = "Index";
     public static final String ACTIVITY_COLUMN_NAME = "Link";
     public static final String TITLE_COLUMN_NAME ="Title";
     public static final String COMPANY_COLUMN_NAME = "Company";
@@ -57,6 +57,7 @@ public class Aggregator {
         int linkColumnIndex = Arrays.asList(nextLine).indexOf(Aggregator.ACTIVITY_COLUMN_NAME);
         int titleIndex  = Arrays.asList(nextLine).indexOf(Aggregator.TITLE_COLUMN_NAME);
         int companyNameIndex = Arrays.asList(nextLine).indexOf(Aggregator.COMPANY_COLUMN_NAME);
+        int companyIndexColumnIndex = Arrays.asList(nextLine).indexOf(Aggregator.INDEX_COLUMN_INPUT);
 
         int preColumnCount = 4;
 
@@ -67,11 +68,11 @@ public class Aggregator {
 
                 if (nextLine.length > 0) {
                     try {
-                        String company = nextLine[0].trim();
+                        String companyIndex = nextLine[companyIndexColumnIndex].trim();
 
 
                         String actionsType;
-                        String[] columnValues = csvMap.get(company);
+                        String[] columnValues = csvMap.get(companyIndex);
 
                         if (columnValues == null) {
                             columnValues = new String[keyWords.length + preColumnCount];
@@ -94,8 +95,8 @@ public class Aggregator {
                                                                       + (actionsType.contains(keyWords[i]) ? 1 : 0));
                                 }
 
-                                if (!company.equals(INDEX_COLUMN_INPUT)) {
-                                    csvMap.put(company, columnValues);
+                                if (!companyIndex.equals(INDEX_COLUMN_INPUT)) {
+                                    csvMap.put(companyIndex, columnValues);
                                 }
                             }
                         }
