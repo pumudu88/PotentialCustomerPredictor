@@ -19,6 +19,7 @@ public class Aggregator {
     public static final String ACTIVITY_COLUMN_NAME = "Link";
     public static final String TITLE_COLUMN_NAME ="Title";
     public static final String COMPANY_COLUMN_NAME = "Company";
+    public static final String IS_CUSTOMER_COLUMN_NAME = "Is Customer";
 
     public static final char CSV_SEPERATOR = ',';
     public static final String CSV_CHARACTER_FORMAT = "UTF-8";
@@ -26,7 +27,7 @@ public class Aggregator {
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvAggregate = "Aggregate.csv";
     private static String [] headers  = {"Company Index", "downloads", "whitepapers", "tutorials", "workshops",
-            "casestudies", "productpages", "other", "seniorTitleCount", "juniorTitleCount", "Company Name"};
+            "casestudies", "productpages", "other", "seniorTitleCount", "juniorTitleCount", "Company Name", "Is Customer"};
     private static String [] keyWords = {"downloads", "whitepapers", "tutorials", "workshops", "casestudies",
             "productpages"};
 
@@ -58,8 +59,10 @@ public class Aggregator {
         int titleIndex  = Arrays.asList(nextLine).indexOf(Aggregator.TITLE_COLUMN_NAME);
         int companyNameIndex = Arrays.asList(nextLine).indexOf(Aggregator.COMPANY_COLUMN_NAME);
         int companyIndexColumnIndex = Arrays.asList(nextLine).indexOf(Aggregator.INDEX_COLUMN_INPUT);
+        int isCustomerIndex = Arrays.asList(nextLine).indexOf(Aggregator.IS_CUSTOMER_COLUMN_NAME);
 
-        int preColumnCount = 4;
+
+        int preColumnCount = 5;
 
 
         // Create map
@@ -113,6 +116,7 @@ public class Aggregator {
                         }
 
                         columnValues[9] = nextLine[companyNameIndex];
+                        columnValues[10] = nextLine[isCustomerIndex];
                     }
                     catch (Exception ex) {
                         logger.error(ex);
