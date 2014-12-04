@@ -19,39 +19,48 @@ public class CustomMatchingUtility {
     public static final int SoundexAlgorithm = 5;
     static List<String> companySuffixList = new ArrayList<String>();
 
+    public static final int MinimumConvertLength = 2;
+
     public static void setCompanySuffix(String companySuffix) {
         companySuffixList.add(companySuffix);
     }
 
     /**
      * Convert given string with predefined phonetic algorithm
+     *
      * @param input
      * @param algorithmIndex
      * @return phonetic index for input string
      * @throws EncoderException
      */
-    public static String Convert(String input, int algorithmIndex) throws EncoderException {
+    public static String Convert(String input, int algorithmIndex) throws Exception {
 
         String encodedValue = "";
 
-        input = removeCompanyNameSuffix(input);
+        if (input.length() > CustomMatchingUtility.MinimumConvertLength) {
 
-        switch (algorithmIndex) {
-            case CustomMatchingUtility.BeiderMorseAlgorithm:
-                encodedValue = BeiderMorseUtility.Convert(input);
-                break;
-            case CustomMatchingUtility.DoubleMetaphoneAlgorithm:
-                encodedValue = DoubleMetaphoneUtility.Convert(input);
-                break;
-            case CustomMatchingUtility.MatchRatingApproachAlgorithm:
-                encodedValue = MatchRatingApproachUtility.Convert(input);
-                break;
-            case CustomMatchingUtility.MetaphoneAlgorithm:
-                encodedValue = MetaphoneUtility.Convert(input);
-                break;
-            case CustomMatchingUtility.SoundexAlgorithm:
-//              encodedValue = SoundexMatchUtility.Convert(input);
-                break;
+            input = removeCompanyNameSuffix(input);
+
+            switch (algorithmIndex) {
+                case CustomMatchingUtility.BeiderMorseAlgorithm:
+                    encodedValue = BeiderMorseUtility.Convert(input);
+                    break;
+                case CustomMatchingUtility.DoubleMetaphoneAlgorithm:
+                    encodedValue = DoubleMetaphoneUtility.Convert(input);
+                    break;
+                case CustomMatchingUtility.MatchRatingApproachAlgorithm:
+                    encodedValue = MatchRatingApproachUtility.Convert(input);
+                    break;
+                case CustomMatchingUtility.MetaphoneAlgorithm:
+                    encodedValue = MetaphoneUtility.Convert(input);
+                    break;
+                case CustomMatchingUtility.SoundexAlgorithm:
+                    encodedValue = SoundexMatchUtility.Convert(input);
+                    break;
+            }
+
+        } else {
+            encodedValue = input;
         }
 
         return encodedValue;
@@ -59,6 +68,7 @@ public class CustomMatchingUtility {
 
     /**
      * Remove company suffix from given input string.
+     *
      * @param input
      * @return
      */
@@ -87,6 +97,7 @@ public class CustomMatchingUtility {
 
     /**
      * Load company names to a list from given csv file path
+     *
      * @param csvFilePath
      */
     public static void LoadCompanySuffixFromCsv(String csvFilePath) {
@@ -96,7 +107,8 @@ public class CustomMatchingUtility {
         try {
 
             CSVReader reader = new CSVReader(
-                    new InputStreamReader(new FileInputStream(csvFilePath), "UTF-8"), ',', CSVReader.DEFAULT_QUOTE_CHARACTER, CSVReader.DEFAULT_QUOTE_CHARACTER);
+                    new InputStreamReader(new FileInputStream(csvFilePath), "UTF-8"), ',',
+                    CSVReader.DEFAULT_QUOTE_CHARACTER, CSVReader.DEFAULT_QUOTE_CHARACTER);
 
             while ((nextLine = reader.readNext()) != null) {
                 setCompanySuffix(nextLine[0].toString());
