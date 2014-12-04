@@ -111,9 +111,31 @@ public class PreProcessor {
             ValidationUtility validation = new ValidationUtility();
             System.out.println(validation.countryByIpAddressValidation("66.248.180.14", "Virgin Islands").toString());
 
-            for(int i = 1; i < 100000; i++) {
-                System.out.println(validation.countryByIpAddressValidation("115.84.146.69", "Maldives"));
-            }
+            System.out.println(validation.countryByIpAddressValidation("202.43.124.98", "Pakistan"));
+            System.out.println(validation.countryByIpAddressValidation("208.77.165.40", "United States"));
+//            for(int i = 1; i < 1200000; i++) {
+//                validation.countryByIpAddressValidation("115.84.146.69", "Maldives");
+//                validation.countryByIpAddressValidation("34534g4","4353453df");
+//                if( i == 100000){
+//                    System.out.println(i);
+//                }
+//                if( i == 200000){
+//                    System.out.println(i);
+//                }
+//                if( i == 300000){
+//                    System.out.println(i);
+//                }
+//                if( i == 500000){
+//                    System.out.println(i);
+//                }
+//                if( i == 700000){
+//                    System.out.println(i);
+//                }
+//                if( i == 1000000){
+//                    System.out.println(i);
+//                }
+//
+//            }
 
             System.out.println("-----------------Title classifier-------------------");
             System.out.println("title integer :" + TitleUtility.tilteClassifier("senior sdfsdfs"));
