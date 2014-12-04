@@ -29,12 +29,12 @@ public class Cleanser {
     public static final String INDEX_COLUMN_INPUT = "Company";
     public static final String IS_CUSTOMER_COLUMN_NAME = "Is Customer";
     public static final String IS_VALID_COUNTRY_COLUMN_NAME = "Is valid Country";
+    public static final String JOINED_DATE_COLUMN_NAME = "Joined Date";
 
     public static final String COUNTRY_COLUMN_NAME = "Country";
     public static final String IP_COLUMN_NAME ="IpAddress";
     public static final String TITLE_COLUMN_NAME ="Title";
 
-    public static final int MIN_NAME_LENGTH = 2;
     public static final String MIN_INDEX_VAL = "-1";
     public static final int DOUBLE_META_PHONE_THRESHOLD = 10;
 
@@ -43,7 +43,7 @@ public class Cleanser {
 
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvReadFile = "ContactWebsiteBehaviour_tier1_20141014.csv";
-    public static String csvReadCustomerFile = "customers.csv";
+    public static String csvReadCustomerFile = "customerBase.csv";
     public static String csvWriteCustomerFile = "customersIndexed.csv";
     public static String csvCompanySuffixFile =  "company_suffix.csv";
 
@@ -60,7 +60,7 @@ public class Cleanser {
     public static void main(String[] args) {
         try {
 
-            String [][] currentCustomers;
+            Map<String,String[]> currentCustomers;
 
             DoubleMetaphoneUtility.setMaxCodeLen(DOUBLE_META_PHONE_THRESHOLD);
             CustomMatchingUtility.LoadCompanySuffixFromCsv(csvPath + csvCompanySuffixFile);
@@ -93,8 +93,9 @@ public class Cleanser {
 
             cleanse(reader, writerTransformed, writerNotTransformed, INDEX_COLUMN_INPUT,
                     Cleanser.INDEX_COLUMN_NAME, Cleanser.IS_CUSTOMER_COLUMN_NAME, Cleanser.IS_VALID_COUNTRY_COLUMN_NAME,
-                    Cleanser.COUNTRY_COLUMN_NAME, Cleanser.IP_COLUMN_NAME, Cleanser.TITLE_COLUMN_NAME, currentCustomers,
-                    columnsIncluded, Cleanser.INDEX_ALGO_DOUBLE_META_PHONE);
+                    Cleanser.COUNTRY_COLUMN_NAME, Cleanser.IP_COLUMN_NAME, Cleanser.TITLE_COLUMN_NAME,
+                    Cleanser.JOINED_DATE_COLUMN_NAME, currentCustomers, columnsIncluded,
+                    Cleanser.INDEX_ALGO_DOUBLE_META_PHONE);
 
             long estimatedTime = System.currentTimeMillis() - startTime;
             logger.info("Time taken : "+ estimatedTime/1000 + " seconds");
@@ -120,23 +121,21 @@ public class Cleanser {
      * @param currentValue current index value
      * @return
      */
-    private static boolean isCustomer(String [][] currentCustomers, String currentValue) {
-        for (int i = 0; i < currentCustomers.length; i++) {
-            String matchingVal;
+    private static String isCustomer(Map<String,String[]> currentCustomers, String currentValue) {
 
-            if(currentValue.length() > Cleanser.MIN_NAME_LENGTH) {
-                matchingVal = currentCustomers[i][0];
-            }
-            else {
-                matchingVal = currentCustomers[i][1];
-            }
 
-            if (currentValue.equals(matchingVal)){
-                return  true;
-            }
-        }
+        String [] rowVal = currentCustomers.get(currentValue);
 
-        return false;
+
+       if (rowVal == null)
+       {
+           return "";
+       }
+       else
+       {
+           return rowVal[1];
+       }
+
 
     }
 
@@ -148,28 +147,37 @@ public class Cleanser {
      * @return
      * @throws Exception
      */
-    private static String[][] loadCurrentCustomers(CSVReader readerCustomers, CSVWriter writerCustomers,
+    private static  Map<String,String[]> loadCurrentCustomers(CSVReader readerCustomers, CSVWriter writerCustomers,
                                                    int indexAlgorithm, int indexColumn) throws  Exception {
 
-        Map<String,String> Customers = new HashMap<String,String>();
+        Map<String,String[]> Customers = new HashMap<String,String[]>();
         String [] nextLine;
+
+
+        nextLine = readerCustomers.readNext();
 
 
         while ((nextLine = readerCustomers.readNext()) != null) {
             try {
+
+                String [] rowVal = new String[2];
+
+                rowVal[0] = nextLine[indexColumn];
+                rowVal[1] = nextLine[1];
+
                 //Set  algorithm Index for first column
                 switch (indexAlgorithm) {
                     case Cleanser.INDEX_ALGO_DOUBLE_META_PHONE:
                         Customers.put(CustomMatchingUtility.Convert(nextLine[indexColumn],
-                                      CustomMatchingUtility.DoubleMetaphoneAlgorithm), nextLine[indexColumn]);
+                                      CustomMatchingUtility.DoubleMetaphoneAlgorithm), rowVal);
                         break;
                     case Cleanser.INDEX_ALGO_META_PHONE:
                         Customers.put(CustomMatchingUtility.Convert(nextLine[indexColumn],
-                                      CustomMatchingUtility.MetaphoneAlgorithm), nextLine[indexColumn]);
+                                      CustomMatchingUtility.MetaphoneAlgorithm), rowVal);
                         break;
                     default:
                         Customers.put(CustomMatchingUtility.Convert(nextLine[indexColumn],
-                                      CustomMatchingUtility.SoundexAlgorithm), nextLine[indexColumn]);
+                                      CustomMatchingUtility.SoundexAlgorithm), rowVal);
                         break;
                 }
             }
@@ -179,23 +187,7 @@ public class Cleanser {
             }
 
         }
-
-        String [][] CustomersArray =  new String[Customers.size()][2];
-        final Iterator<?> iterator = Customers.entrySet().iterator();
-
-        int counter = 0;
-        while(iterator.hasNext()){
-            final Map.Entry<?, ?> mapping = (Map.Entry<?, ?>) iterator.next();
-
-            CustomersArray[counter][0] = mapping.getKey().toString();
-            CustomersArray[counter][1] = mapping.getValue().toString();
-
-            String [] customers = {CustomersArray[counter][0], CustomersArray[counter][1]};
-            writerCustomers.writeNext(customers);
-            counter++;
-        }
-
-        return CustomersArray;
+        return Customers;
     }
 
     /**
@@ -213,7 +205,7 @@ public class Cleanser {
     private static void cleanse(CSVReader reader,CSVWriter writerTransformed,
                                 CSVWriter writerNotTransformed, String indexColumnName, String indexOutputColumnName,
                                 String isCutomerColumnName, String isValidCountryColumnName, String countryColumnName,
-                                String ipColumnName, String titleColumnName, String[][] currentCustomer, String [] columnsIncluded,
+                                String ipColumnName, String titleColumnName, String joinedDateColumnName, Map<String,String[]> currentCustomer, String [] columnsIncluded,
                                 int indexAlgorithm ) throws Exception {
         int totalCounter = 0;
         int transformedCounter = 0;
@@ -242,6 +234,7 @@ public class Cleanser {
         list.add(0, indexOutputColumnName);
         list.add(1, isCutomerColumnName);
         list.add(2, isValidCountryColumnName);
+        list.add(3, joinedDateColumnName);
 
 
         generatedColumnCount = list.size() - columnIncludedIndexes.length;
@@ -272,15 +265,14 @@ public class Cleanser {
                 if (nextLine.length >= columnIncludedIndexes.length && !(nextLine[columnIndex].equals(""))) {
 
                     //Initialize output with specified columns plus one more column for algorithm index
-                    String[] outputLine = new String[columnIncludedIndexes.length + 3];
+                    String[] outputLine = new String[columnIncludedIndexes.length + 4];
 
                     try {
 
 
-                        //If column value length is greater than specified minimum length then index it
-                        if (nextLine[columnIndex].length() > Cleanser.MIN_NAME_LENGTH) {
-                            //Set  algorithm Index for first column
-                                switch (indexAlgorithm) {
+
+                        //Set  algorithm Index for first column
+                        switch (indexAlgorithm) {
                                     case Cleanser.INDEX_ALGO_DOUBLE_META_PHONE:
                                         outputLine[0] = CustomMatchingUtility.Convert(nextLine[columnIndex],
                                                                         CustomMatchingUtility.DoubleMetaphoneAlgorithm);
@@ -293,16 +285,23 @@ public class Cleanser {
                                         outputLine[0] = CustomMatchingUtility.Convert(nextLine[columnIndex],
                                                                         CustomMatchingUtility.SoundexAlgorithm);
                                         break;
-                                }
-                        } else {
-                            //Else Assign default index value
-                            outputLine[0] = Cleanser.MIN_INDEX_VAL;
                         }
+
 
                         if (outputLine[0] != null) {
 
-                            boolean isExistingCustomer = isCustomer(currentCustomer, outputLine[0]);
+                            boolean isExistingCustomer;
+                            String  isCustomerDate = isCustomer(currentCustomer, outputLine[0]);
                             boolean isValidIp = false;
+
+                            if (isCustomerDate.equals(""))
+                            {
+                                isExistingCustomer = false;
+                            }
+                            else
+                            {
+                                isExistingCustomer = true;
+                            }
 
                             outputLine[1] = String.valueOf(isExistingCustomer);
 
@@ -312,6 +311,7 @@ public class Cleanser {
                             }
 
                             outputLine[2] = String.valueOf(isValidIp);
+                            outputLine[3] = isCustomerDate;
 
                             //Set specified columns for output
                             for (int i = generatedColumnCount;
