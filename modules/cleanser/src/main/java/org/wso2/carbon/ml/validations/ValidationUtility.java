@@ -242,7 +242,7 @@ public class ValidationUtility {
         countryMap.put("Tanzania", "TZ");
         countryMap.put("Ukraine", "UA");
         countryMap.put("Uganda", "UG");
-        countryMap.put("United Kingdom", "UK");
+        countryMap.put("United Kingdom", "GB");
         countryMap.put("United States Minor Outlying Islands", "US");
         countryMap.put("United States", "US");
         countryMap.put("Uruguay", "UY");
@@ -266,7 +266,13 @@ public class ValidationUtility {
 
     }
 
-    public Boolean countryByIpAddressValidation(String ipAddress, String countryName) {
+    /**
+     * Return true if ip address matches with given country name, else return false.
+     * @param ipAddress
+     * @param countryName
+     * @return
+     */
+    public synchronized Boolean countryByIpAddressValidation(String ipAddress, String countryName) {
 
         LookupService countryLocation = null;
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
@@ -275,8 +281,7 @@ public class ValidationUtility {
         Boolean returnValue;
 
         try {
-            countryLocation = new LookupService(classloader.getResource("GeoLiteCity.dat").getPath(),
-                    LookupService.GEOIP_MEMORY_CACHE | LookupService.GEOIP_CHECK_CACHE);
+            countryLocation = new LookupService(classloader.getResource("GeoLiteCity.dat").getPath(), LookupService.GEOIP_CHECK_CACHE);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -285,6 +290,10 @@ public class ValidationUtility {
 
             ipLocation = countryLocation.getLocation(ipAddress);
 
+//            System.out.println( "country name from csv   : " + countryName);
+//            System.out.println( "country code using name : " +getCountryCode(countryName));
+//            System.out.println( "country name using ip   : " +ipLocation.countryName);
+//            System.out.println( "country code using ip   : "+ipLocation.countryCode);
             if (ipLocation.countryCode.equals(getCountryCode(countryName))) {
                 returnValue = true;
             } else {
@@ -296,10 +305,17 @@ public class ValidationUtility {
         }
 
 
+        countryLocation.close();
+
         return returnValue;
     }
 
-    public String getCountryCode(String country) {
+    /**
+     * Return country code for given country name.
+     * @param country
+     * @return
+     */
+    public synchronized String getCountryCode(String country) {
         String countryCode = countryMap.get(country);
         if (countryCode == null) {
             countryCode = "Not Found";
