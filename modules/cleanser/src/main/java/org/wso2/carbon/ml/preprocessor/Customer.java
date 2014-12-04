@@ -1,6 +1,7 @@
 package org.wso2.carbon.ml.preprocessor;
 
-import java.util.ArrayList;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by tharik on 12/4/14.
@@ -23,11 +24,83 @@ public class Customer {
     private boolean isCustomer;
     private String joinedDate;
 
-    private ArrayList<String> activityTimestamps;
+    private ArrayList<Date> activityTimeStamps;
     private ArrayList<String> countries;
 
-    private String medianTimeBetweenTwoActivities;
-    private String maxTimeBetweenTwoActivities;
+
+    public Customer()
+    {
+        activityTimeStamps = new ArrayList<Date>();
+        countries = new ArrayList<String>();
+    }
+
+    public void addCountry(String countryName)
+    {
+        countries.add(countryName);
+    }
+
+    public void addActivityTimeStamp(Date timeStamp)
+    {
+        activityTimeStamps.add(timeStamp);
+        Collections.sort(activityTimeStamps);
+    }
+
+    public long getMedianTimeBetweenTwoActivities()
+    {
+        long median;
+        long [] timeIntervals = this.constructIntervals();
+
+        if (timeIntervals.length % 2 == 0) {
+            median = (timeIntervals[timeIntervals.length / 2] + timeIntervals[timeIntervals.length / 2 - 1]) / 2;
+        }
+        else {
+            median = timeIntervals[timeIntervals.length / 2];
+        }
+
+        return  median;
+    }
+
+    public long getMaxTimeBetweenTwoActivities()
+    {
+        long [] timeIntervals = this.constructIntervals();
+
+        //Return last element which is the highest
+        return timeIntervals[timeIntervals.length -1];
+
+    }
+
+    /**
+     * Construct Intervals based on activity time stamps
+     * @return Interval array
+     */
+    private long[] constructIntervals()
+    {
+        long [] timeIntervals = new long[activityTimeStamps.size() -1];
+
+        for (int i = 0; i < timeIntervals.length; i++)
+        {
+            timeIntervals[i] = getDateDiff(activityTimeStamps.get(i), activityTimeStamps.get(i + 1), TimeUnit.MILLISECONDS);
+        }
+
+        Arrays.sort(timeIntervals);
+
+        return  timeIntervals;
+
+    }
+
+    /**
+     * Get a diff between two dates
+     * @param date1 the oldest date
+     * @param date2 the newest date
+     * @param timeUnit the unit in which you want the diff
+     * @return the diff value, in the provided unit
+     */
+    public static long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
+        long diffInMillies = date2.getTime() - date1.getTime();
+        return timeUnit.convert(diffInMillies,TimeUnit.MILLISECONDS);
+    }
+
+
 
     public String getCompanyIndex() {
         return companyIndex;
@@ -133,12 +206,12 @@ public class Customer {
         this.joinedDate = joinedDate;
     }
 
-    public ArrayList<String> getActivityTimestamps() {
-        return activityTimestamps;
+    public ArrayList<Date> getActivityTimeStamps() {
+        return activityTimeStamps;
     }
 
-    public void setActivityTimestamps(ArrayList<String> activityTimestamps) {
-        this.activityTimestamps = activityTimestamps;
+    public void setActivityTimeStamps(ArrayList<Date> activityTimestamps) {
+        this.activityTimeStamps = activityTimestamps;
     }
 
     public ArrayList<String> getCountries() {
@@ -147,21 +220,5 @@ public class Customer {
 
     public void setCountries(ArrayList<String> countries) {
         this.countries = countries;
-    }
-
-    public String getMedianTimeBetweenTwoActivities() {
-        return medianTimeBetweenTwoActivities;
-    }
-
-    public void setMedianTimeBetweenTwoActivities(String medianTimeBetweenTwoActivities) {
-        this.medianTimeBetweenTwoActivities = medianTimeBetweenTwoActivities;
-    }
-
-    public String getMaxTimeBetweenTwoActivities() {
-        return maxTimeBetweenTwoActivities;
-    }
-
-    public void setMaxTimeBetweenTwoActivities(String maxTimeBetweenTwoActivities) {
-        this.maxTimeBetweenTwoActivities = maxTimeBetweenTwoActivities;
     }
 }
