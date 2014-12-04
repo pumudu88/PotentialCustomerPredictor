@@ -52,6 +52,10 @@ public class PreProcessor {
         nameList.add("Corp");
         nameList.add("Inc");
 
+        nameList.add("BBC");
+        nameList.add("bbc");
+        nameList.add("ACT");
+
         try {
 
             // set metaphone settings
@@ -100,10 +104,10 @@ public class PreProcessor {
 
             System.out.println("------country name validation test-------------");
             ValidationUtility validation = new ValidationUtility();
-            System.out.println(validation.countryByIpAddressValidation("115.84.146.69", "Maldives").toString());
+            System.out.println(validation.countryByIpAddressValidation("66.248.180.14", "Virgin Islands").toString());
 
-            for(int i = 1; i < 100; i++) {
-                validation.countryByIpAddressValidation("115.84.146.69", "Maldives");
+            for(int i = 1; i < 100000; i++) {
+                System.out.println(validation.countryByIpAddressValidation("115.84.146.69", "Maldives"));
             }
 
             System.out.println("-----------------Title classifier-------------------");

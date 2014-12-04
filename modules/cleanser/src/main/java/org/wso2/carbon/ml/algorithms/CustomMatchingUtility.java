@@ -23,6 +23,13 @@ public class CustomMatchingUtility {
         companySuffixList.add(companySuffix);
     }
 
+    /**
+     * Convert given string with predefined phonetic algorithm
+     * @param input
+     * @param algorithmIndex
+     * @return phonetic index for input string
+     * @throws EncoderException
+     */
     public static String Convert(String input, int algorithmIndex) throws EncoderException {
 
         String encodedValue = "";
@@ -50,6 +57,11 @@ public class CustomMatchingUtility {
         return encodedValue;
     }
 
+    /**
+     * Remove company suffix from given input string.
+     * @param input
+     * @return
+     */
     private static String removeCompanyNameSuffix(String input) {
         StringBuffer result = new StringBuffer();
 
@@ -73,6 +85,10 @@ public class CustomMatchingUtility {
 
     }
 
+    /**
+     * Load company names to a list from given csv file path
+     * @param csvFilePath
+     */
     public static void LoadCompanySuffixFromCsv(String csvFilePath) {
 
         String[] nextLine;
