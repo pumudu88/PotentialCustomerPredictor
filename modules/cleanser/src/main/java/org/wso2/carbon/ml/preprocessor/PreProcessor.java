@@ -56,6 +56,11 @@ public class PreProcessor {
         nameList.add("bbc");
         nameList.add("ACT");
 
+        nameList.add("to");
+        nameList.add("hp");
+        nameList.add("nsi");
+
+
         try {
 
             // set metaphone settings
