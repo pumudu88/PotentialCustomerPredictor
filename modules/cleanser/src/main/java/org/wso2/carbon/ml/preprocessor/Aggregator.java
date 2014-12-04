@@ -20,6 +20,7 @@ public class Aggregator {
     public static final String TITLE_COLUMN_NAME ="Title";
     public static final String COMPANY_COLUMN_NAME = "Company";
     public static final String IS_CUSTOMER_COLUMN_NAME = "Is Customer";
+    public static final String JOINED_DATE_COLUMN_NAME = "Joined Date";
 
     public static final char CSV_SEPERATOR = ',';
     public static final String CSV_CHARACTER_FORMAT = "UTF-8";
@@ -27,7 +28,7 @@ public class Aggregator {
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvAggregate = "Aggregate.csv";
     private static String [] headers  = {"Company Index", "downloads", "whitepapers", "tutorials", "workshops",
-            "casestudies", "productpages", "other", "seniorTitleCount", "juniorTitleCount", "Company Name", "Is Customer"};
+            "casestudies", "productpages", "other", "seniorTitleCount", "juniorTitleCount", "Company Name", "Is Customer", "Joined Date"};
     private static String [] keyWords = {"downloads", "whitepapers", "tutorials", "workshops", "casestudies",
             "productpages"};
 
@@ -60,9 +61,10 @@ public class Aggregator {
         int companyNameIndex = Arrays.asList(nextLine).indexOf(Aggregator.COMPANY_COLUMN_NAME);
         int companyIndexColumnIndex = Arrays.asList(nextLine).indexOf(Aggregator.INDEX_COLUMN_INPUT);
         int isCustomerIndex = Arrays.asList(nextLine).indexOf(Aggregator.IS_CUSTOMER_COLUMN_NAME);
+        int joinedDateIndex = Arrays.asList(nextLine).indexOf(Aggregator.JOINED_DATE_COLUMN_NAME);
 
 
-        int preColumnCount = 5;
+        int preColumnCount = 6;
 
 
         // Create map
@@ -117,6 +119,7 @@ public class Aggregator {
 
                         columnValues[9] = nextLine[companyNameIndex];
                         columnValues[10] = nextLine[isCustomerIndex];
+                        columnValues[11] = nextLine[joinedDateIndex];
                     }
                     catch (Exception ex) {
                         logger.error(ex);
