@@ -1,6 +1,4 @@
 package org.wso2.carbon.ml.preprocessor;
-
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -29,8 +27,7 @@ public class Customer {
     private ArrayList<String> countries;
 
 
-    public Customer()
-    {
+    public Customer(){
         activityTimeStamps = new ArrayList<Date>();
         countries = new ArrayList<String>();
     }
@@ -40,14 +37,12 @@ public class Customer {
         countries.add(countryName);
     }
 
-    public void addActivityTimeStamp(Date timeStamp)
-    {
+    public void addActivityTimeStamp(Date timeStamp) {
         activityTimeStamps.add(timeStamp);
         Collections.sort(activityTimeStamps);
     }
 
-    public String [] getTopCountries(int count)
-    {
+    public String [] getTopCountries(int count) {
         ArrayList<Country> uniqueCountries = new ArrayList<Country>();
         String [] topCountries;
 
@@ -101,8 +96,7 @@ public class Customer {
         return  topCountries;
     }
 
-    private int getCountryIndex(ArrayList<Country> uniqueCountries , String countryName)
-    {
+    private int getCountryIndex(ArrayList<Country> uniqueCountries , String countryName) {
             for (int i = 0; i < uniqueCountries.size(); i++) {
 
                 if (uniqueCountries.get(i).getCountry().equals(countryName.trim())) {
@@ -113,8 +107,7 @@ public class Customer {
             return -1;
     }
 
-    public long getMedianTimeBetweenTwoActivities()
-    {
+    public long getMedianTimeBetweenTwoActivities() {
         long median;
         long [] timeIntervals = this.constructIntervals();
 
@@ -128,8 +121,8 @@ public class Customer {
         return  median;
     }
 
-    public long getMaxTimeBetweenTwoActivities()
-    {
+    
+    public long getMaxTimeBetweenTwoActivities() {
         long [] timeIntervals = this.constructIntervals();
 
         //Return last element which is the highest
@@ -141,8 +134,7 @@ public class Customer {
      * Construct Intervals based on activity time stamps
      * @return Interval array
      */
-    private long[] constructIntervals()
-    {
+    private long[] constructIntervals() {
         long [] timeIntervals = new long[activityTimeStamps.size() -1];
 
         for (int i = 0; i < timeIntervals.length; i++)
