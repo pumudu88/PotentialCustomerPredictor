@@ -59,3 +59,13 @@ modules/cleanser/target/classes/GeoLiteCity.dat
 .idea/libraries/Maven__commons_digester_commons_digester_1_8.xml
 
 .idea/libraries/Maven__commons_validator_commons_validator_1_4_0.xml
+
+modules/cleanser/target/classes/countryCodes.csv
+
+modules/cleanser/target/classes/ipAddressToCountryDB.csv
+
+.idea/libraries/Maven__org_apache_commons_commons_lang3_3_0.xml
+
+modules/cleanser/target/classes/companySuffix.csv
+
+modules/cleanser/target/classes/titleClassifier.csv

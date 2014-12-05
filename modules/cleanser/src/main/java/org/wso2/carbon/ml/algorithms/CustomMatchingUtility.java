@@ -17,12 +17,20 @@ public class CustomMatchingUtility {
     public static final int MatchRatingApproachAlgorithm = 3;
     public static final int MetaphoneAlgorithm = 4;
     public static final int SoundexAlgorithm = 5;
+
     static List<String> companySuffixList = new ArrayList<String>();
+    private ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 
     public static final int MinimumConvertLength = 2;
 
-    public static void setCompanySuffix(String companySuffix) {
+    public void setCompanySuffix(String companySuffix) {
         companySuffixList.add(companySuffix);
+    }
+
+
+    public CustomMatchingUtility() {
+
+        loadCompanySuffixFromCsv(classloader.getResource("companySuffix.csv").getPath());
     }
 
     /**
@@ -33,7 +41,7 @@ public class CustomMatchingUtility {
      * @return phonetic index for input string
      * @throws EncoderException
      */
-    public static String Convert(String input, int algorithmIndex) throws Exception {
+    public String Convert(String input, int algorithmIndex) throws Exception {
 
         String encodedValue = "";
 
@@ -72,7 +80,7 @@ public class CustomMatchingUtility {
      * @param input
      * @return
      */
-    private static String removeCompanyNameSuffix(String input) {
+    private String removeCompanyNameSuffix(String input) {
         StringBuffer result = new StringBuffer();
 
         String[] splitedCompanyName = input.split("\\s+");
@@ -100,7 +108,7 @@ public class CustomMatchingUtility {
      *
      * @param csvFilePath
      */
-    public static void LoadCompanySuffixFromCsv(String csvFilePath) {
+    public void loadCompanySuffixFromCsv(String csvFilePath) {
 
         String[] nextLine;
 
