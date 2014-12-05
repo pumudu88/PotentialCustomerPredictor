@@ -89,7 +89,8 @@ public class PreProcessor {
             System.out.println("rule type     :" + BeiderMorseUtility.getRuleType().toString());
 
             System.out.println("----custom matching settings--------");
-            CustomMatchingUtility.LoadCompanySuffixFromCsv(csvCompanySuffixFile);
+            CustomMatchingUtility customMatch = new CustomMatchingUtility();
+
 
             System.out.println("company suffix csv file path :" + csvCompanySuffixFile);
 
@@ -104,13 +105,13 @@ public class PreProcessor {
                 System.out.println("double metaphone : " + DoubleMetaphoneUtility.Convert(nameList.get(i)));
                 System.out.println("MRA              : " + MatchRatingApproachUtility.Convert(nameList.get(i)));
                 System.out.println("BeiderMorse      : " + BeiderMorseUtility.Convert(nameList.get(i)));
-                System.out.println("custom utility   : " + CustomMatchingUtility.Convert(nameList.get(i), CustomMatchingUtility.MatchRatingApproachAlgorithm));
+                System.out.println("custom utility   : " + customMatch.Convert(nameList.get(i), CustomMatchingUtility.MatchRatingApproachAlgorithm));
             }
 
             System.out.println("------country name validation test-------------");
             ValidationUtility validation = new ValidationUtility();
             System.out.println(validation.countryByIpAddressValidation("66.248.180.14", "Virgin Islands").toString());
-
+            System.out.println(validation.countryByIpAddressValidation("66.248.180.14", "Virgin Isladnds").toString());
             System.out.println(validation.countryByIpAddressValidation("202.43.124.98", "Pakistan"));
             System.out.println(validation.countryByIpAddressValidation("208.77.165.40", "United States"));
             System.out.println(validation.countryByIpAddressValidation("203.100.58.40", "Australia"));
