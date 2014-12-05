@@ -94,6 +94,8 @@ public class PreProcessor {
 
             System.out.println("company suffix csv file path :" + csvCompanySuffixFile);
 
+            System.out.println("----title classifier settings--------");
+            TitleUtility titleUtility = new TitleUtility();
 
             System.out.println("-------------test names-------------");
 
@@ -115,9 +117,10 @@ public class PreProcessor {
             System.out.println(validation.countryByIpAddressValidation("202.43.124.98", "Pakistan"));
             System.out.println(validation.countryByIpAddressValidation("208.77.165.40", "United States"));
             System.out.println(validation.countryByIpAddressValidation("203.100.58.40", "Australia"));
-//            for(int i = 1; i < 1200000; i++) {
+//            for(int i = 1; i < 800000; i++) {
 //                validation.countryByIpAddressValidation("115.84.146.69", "Maldives");
 //                validation.countryByIpAddressValidation("34534g4","4353453df");
+//                validation.countryByIpAddressValidation("202.43.124.98", "Pakistan");
 //                if( i == 100000){
 //                    System.out.println(i);
 //                }
@@ -133,15 +136,21 @@ public class PreProcessor {
 //                if( i == 700000){
 //                    System.out.println(i);
 //                }
-//                if( i == 1000000){
+//                if( i == 800000){
 //                    System.out.println(i);
 //                }
 //
 //            }
 
             System.out.println("-----------------Title classifier-------------------");
-            System.out.println("title integer :" + TitleUtility.tilteClassifier("senior sdfsdfs"));
+            List<String> titleList = new ArrayList<String>();
+            titleList.add("senior");
+            titleList.add("se");
+            titleList.add("student");
 
+            for(int i = 0;i < titleList.size();i++) {
+                System.out.println("title integer for " + titleList.get(i) +" : " + titleUtility.titleClassifier(titleList.get(i)));
+            }
             long estimatedTime = System.currentTimeMillis() - startTime;
             logger.info("Time taken : " + estimatedTime / 1000 + " seconds");
 
