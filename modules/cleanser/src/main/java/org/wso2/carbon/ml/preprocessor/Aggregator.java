@@ -109,22 +109,28 @@ public class Aggregator {
                             } else {
 
                                 if (actionsType.contains(Aggregator.KEY_WORD_DOWNLOADS)) {
-                                    columnValues.setDownloadActivityCount(columnValues.getDownloadActivityCount() + 1);
+                                    columnValues.setDownloadActivityCount(
+                                            columnValues.getDownloadActivityCount() + 1);
                                 }
                                 else  if (actionsType.contains(Aggregator.KEY_WORD_WHITE_PAPERS)) {
-                                    columnValues.setWhitePaperActivityCount(columnValues.getWhitePaperActivityCount() + 1);
+                                    columnValues.setWhitePaperActivityCount(
+                                            columnValues.getWhitePaperActivityCount() + 1);
                                 }
                                 else  if (actionsType.contains(Aggregator.KEY_WORD_TUTORIALS)) {
-                                    columnValues.setTutorialActivityCount(columnValues.getTutorialActivityCount() + 1);
+                                    columnValues.setTutorialActivityCount(
+                                            columnValues.getTutorialActivityCount() + 1);
                                 }
                                 else  if (actionsType.contains(Aggregator.KEY_WORD_WORKSHOPS)) {
-                                    columnValues.setWorkshopActivityCount(columnValues.getWorkshopActivityCount() + 1);
+                                    columnValues.setWorkshopActivityCount(
+                                            columnValues.getWorkshopActivityCount() + 1);
                                 }
                                 else  if (actionsType.contains(Aggregator.KEY_WORD_CASE_STUDIES)) {
-                                    columnValues.setCaseStudiesActivityCount(columnValues.getCaseStudiesActivityCount() + 1);
+                                    columnValues.setCaseStudiesActivityCount(
+                                            columnValues.getCaseStudiesActivityCount() + 1);
                                 }
                                 else  if (actionsType.contains(Aggregator.KEY_WORD_PRODUCT_PAGES)) {
-                                    columnValues.setProductPagesActivityCount(columnValues.getProductPagesActivityCount() + 1);
+                                    columnValues.setProductPagesActivityCount(
+                                            columnValues.getProductPagesActivityCount() + 1);
                                 }
                                 else {
                                     columnValues.setOtherActivityCount(columnValues.getOtherActivityCount() + 1);
@@ -167,8 +173,6 @@ public class Aggregator {
                         {
 
                         }
-
-
                     }
                     catch (Exception ex) {
                         logger.error(ex);

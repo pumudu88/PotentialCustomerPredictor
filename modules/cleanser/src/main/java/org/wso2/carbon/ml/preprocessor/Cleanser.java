@@ -209,7 +209,8 @@ public class Cleanser {
     private static void cleanse(CSVReader reader,CSVWriter writerTransformed,
                                 CSVWriter writerNotTransformed, String indexColumnName, String indexOutputColumnName,
                                 String isCutomerColumnName, String isValidCountryColumnName, String countryColumnName,
-                                String ipColumnName, String titleColumnName, String joinedDateColumnName, Map<String,String[]> currentCustomer, String [] columnsIncluded,
+                                String ipColumnName, String titleColumnName, String joinedDateColumnName,
+                                Map<String,String[]> currentCustomer, String [] columnsIncluded,
                                 int indexAlgorithm ) throws Exception {
         int totalCounter = 0;
         int transformedCounter = 0;
@@ -325,7 +326,8 @@ public class Cleanser {
 
                                    if (titleColumnIndex == columnIncludedIndexes[i - generatedColumnCount])
                                    {
-                                       outputLine[i] = titleUtil.titleClassifier(nextLine[columnIncludedIndexes[i - generatedColumnCount]]).toString();
+                                       outputLine[i] = titleUtil.titleClassifier(
+                                               nextLine[columnIncludedIndexes[i - generatedColumnCount]]).toString();
                                    }
                                     else
                                    {
