@@ -1,5 +1,6 @@
 package org.wso2.carbon.ml.preprocessor;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -43,6 +44,73 @@ public class Customer {
     {
         activityTimeStamps.add(timeStamp);
         Collections.sort(activityTimeStamps);
+    }
+
+    public String [] getTopCountries(int count)
+    {
+        ArrayList<Country> uniqueCountries = new ArrayList<Country>();
+        String [] topCountries;
+
+        if ( countries.size() < count)
+        {
+            count = countries.size();
+        }
+
+        topCountries = new String[count];
+
+        for (int i = 0; i < countries.size(); i++)
+        {
+            int index = this.getCountryIndex(uniqueCountries, countries.get(i));
+
+            if ( index == -1)
+            {
+                Country newCountry = new Country();
+
+                newCountry.setCountry(countries.get(i));
+                newCountry.setCount(1);
+
+                uniqueCountries.add(newCountry);
+            }
+            else
+            {
+                uniqueCountries.get(index).setCount( uniqueCountries.get(index).getCount() + 1);
+            }
+
+        }
+
+        Collections.sort(uniqueCountries, new Comparator<Country>() {
+            public int compare(Country c1, Country c2) {
+
+                if(c1.getCount() <= c2.getCount())
+                {
+                    return c1.getCount();
+
+                }
+                else
+                {
+                    return c2.getCount();
+                }
+            }
+        });
+
+        for (int i =0; i < topCountries.length; i++)
+        {
+            topCountries[i] = uniqueCountries.get(i).getCountry();
+        }
+
+        return  topCountries;
+    }
+
+    private int getCountryIndex(ArrayList<Country> uniqueCountries , String countryName)
+    {
+            for (int i = 0; i < uniqueCountries.size(); i++) {
+
+                if (uniqueCountries.get(i).getCountry().equals(countryName.trim())) {
+                    return i;
+                }
+            }
+
+            return -1;
     }
 
     public long getMedianTimeBetweenTwoActivities()
