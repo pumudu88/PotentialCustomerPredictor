@@ -25,9 +25,9 @@ public class ValidationUtility {
     private static String ipAddressToCountryDBFileName = "ipAddressToCountryDB.csv";
     private static String countryCodeFileName = "countryCodes.csv";
 
-    private static Integer FirstColumnIndex = 0;
-    private static Integer SecondColumnIndex = 1;
-    private static Integer ThirdColumnIndex = 2;
+    private static Integer FirstColumnIndex   = 0;
+    private static Integer SecondColumnIndex  = 1;
+    private static Integer ThirdColumnIndex   = 2;
 
     public ValidationUtility() {
 
@@ -96,15 +96,16 @@ public class ValidationUtility {
 
     /**
      * Return ip address range
+     *
      * @param ipAddress
      * @return
      */
     private String getIpAddressRange(String ipAddress) {
 
         String[] splitAddress = ipAddress.split("\\.");
-        splitAddress[splitAddress.length -1] = "*";
+        splitAddress[splitAddress.length - 1] = "*";
 
-        return StringUtils.join(splitAddress,".");
+        return StringUtils.join(splitAddress, ".");
     }
 
     /**
