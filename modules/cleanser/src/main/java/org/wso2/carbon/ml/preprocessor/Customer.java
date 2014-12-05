@@ -121,7 +121,7 @@ public class Customer {
         return  median;
     }
 
-    
+
     public long getMaxTimeBetweenTwoActivities() {
         long [] timeIntervals = this.constructIntervals();
 
@@ -250,11 +250,11 @@ public class Customer {
         this.companyName = companyName;
     }
 
-    public boolean isCustomer() {
+    public boolean getIsCustomer() {
         return isCustomer;
     }
 
-    public void setCustomer(boolean isCustomer) {
+    public void setIsCustomer(boolean isCustomer) {
         this.isCustomer = isCustomer;
     }
 

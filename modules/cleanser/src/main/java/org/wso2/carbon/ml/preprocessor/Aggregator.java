@@ -45,10 +45,10 @@ public class Aggregator {
         mapToCsv(getCsvMap(csvFile));
     }
 
-    private static HashMap<String, String[]> getCsvMap (String csvPath) throws IOException {
+    private static HashMap<String, Customer> getCsvMap (String csvPath) throws IOException {
 
 
-        HashMap<String, String[]> csvMap = new HashMap<String, String[]>();
+        HashMap<String, Customer> csvMap = new HashMap<String, Customer>();
 
         CSVReader reader=new CSVReader(
                 new InputStreamReader(new FileInputStream(csvPath), CSV_CHARACTER_FORMAT),
@@ -63,10 +63,6 @@ public class Aggregator {
         int isCustomerIndex = Arrays.asList(nextLine).indexOf(Aggregator.IS_CUSTOMER_COLUMN_NAME);
         int joinedDateIndex = Arrays.asList(nextLine).indexOf(Aggregator.JOINED_DATE_COLUMN_NAME);
 
-
-        int preColumnCount = 6;
-
-
         // Create map
         try {
             while ((nextLine = reader.readNext()) != null) {
@@ -77,12 +73,11 @@ public class Aggregator {
 
 
                         String actionsType;
-                        String[] columnValues = csvMap.get(companyIndex);
+                        Customer columnValues = csvMap.get(companyIndex);
 
                         if (columnValues == null) {
-                            columnValues = new String[keyWords.length + preColumnCount];
-                            columnValues[0] = columnValues[1] = columnValues[2] = columnValues[3] = columnValues[4]
-                                    = columnValues[5] = columnValues[6] = columnValues[7] = columnValues[8] = "0";
+                            columnValues = new Customer();
+
                         }
 
                         if(nextLine.length > linkColumnIndex && !nextLine[linkColumnIndex].equals("")) {
@@ -90,15 +85,32 @@ public class Aggregator {
                             actionsType = nextLine[linkColumnIndex].trim();
 
                             if (actionsType.equals("")) {
-                                    columnValues[6] = String.valueOf(Integer.parseInt(columnValues[6])
-                                                                                        + preColumnCount);
+                                columnValues.setOtherActivityCount(columnValues.getOtherActivityCount() + 1);
                             } else {
 
-                                for (int i = 0; i < columnValues.length - preColumnCount ; i++)
-                                {
-                                    columnValues[i] = String.valueOf(Integer.parseInt(columnValues[i])
-                                                                      + (actionsType.contains(keyWords[i]) ? 1 : 0));
+
+                                if (actionsType.contains("downloads")) {
+                                    columnValues.setDownloadActivityCount(columnValues.getDownloadActivityCount() + 1);
                                 }
+                                else  if (actionsType.contains("whitepapers")) {
+                                    columnValues.setWhitePaperActivityCount(columnValues.getWhitePaperActivityCount() + 1);
+                                }
+                                else  if (actionsType.contains("tutorials")) {
+                                    columnValues.setTutorialActivityCount(columnValues.getTutorialActivityCount() + 1);
+                                }
+                                else  if (actionsType.contains("workshops")) {
+                                    columnValues.setWorkshopActivityCount(columnValues.getWorkshopActivityCount() + 1);
+                                }
+                                else  if (actionsType.contains("casestudies")) {
+                                    columnValues.setCaseStudiesActivityCount(columnValues.getCaseStudiesActivityCount() + 1);
+                                }
+                                else  if (actionsType.contains("productpages")) {
+                                    columnValues.setProductPagesActivityCount(columnValues.getProductPagesActivityCount() + 1);
+                                }
+                                else {
+                                    columnValues.setOtherActivityCount(columnValues.getOtherActivityCount() + 1);
+                                }
+
 
                                 if (!companyIndex.equals(INDEX_COLUMN_INPUT)) {
                                     csvMap.put(companyIndex, columnValues);
@@ -106,20 +118,21 @@ public class Aggregator {
                             }
                         }
                         else  {
-                                columnValues[6] = String.valueOf(Integer.parseInt(columnValues[6]) + 1);
+                            columnValues.setOtherActivityCount(columnValues.getOtherActivityCount() + 1);
                         }
 
 
                         if( Integer.parseInt(nextLine[titleIndex]) == TitleUtility.Senior) {
-                            columnValues[7] = String.valueOf(Integer.parseInt(columnValues[7]) + 1);
+                            columnValues.setSeniorTitleCount(columnValues.getSeniorTitleCount() + 1);
                         }
                         else if( Integer.parseInt(nextLine[titleIndex]) == TitleUtility.Jounior) {
-                            columnValues[8] = String.valueOf(Integer.parseInt(columnValues[8]) + 1);
+                            columnValues.setJuniorTitleCount(columnValues.getJuniorTitleCount() + 1);
                         }
 
-                        columnValues[9] = nextLine[companyNameIndex];
-                        columnValues[10] = nextLine[isCustomerIndex];
-                        columnValues[11] = nextLine[joinedDateIndex];
+
+                        columnValues.setCompanyName(nextLine[companyNameIndex]);
+                        columnValues.setIsCustomer(Boolean.parseBoolean(nextLine[isCustomerIndex]));
+                        columnValues.setJoinedDate(nextLine[joinedDateIndex]);
                     }
                     catch (Exception ex) {
                         logger.error(ex);
@@ -133,7 +146,7 @@ public class Aggregator {
         return csvMap;
     }
 
-    private static void mapToCsv (HashMap<String, String[]> csvMap) {
+    private static void mapToCsv (HashMap<String, Customer> csvMap) {
 
         try {
             CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvAggregate),
@@ -143,17 +156,26 @@ public class Aggregator {
             writerNotTransformed.writeNext(headers);
 
             for (String company : csvMap.keySet()) {
-                String[] columnValues = csvMap.get(company);
+                Customer columnValues = csvMap.get(company);
 
                 if (!company.equals("")) {
 
                     String[] outputLine = new String[headers.length];
-                    outputLine[0] = company;
-                    int preColumnCount = 1;
 
-                    for (int i = preColumnCount; i < columnValues.length + preColumnCount; i++) {
-                        outputLine[i] = String.valueOf(columnValues[i - preColumnCount]);
-                    }
+                    outputLine[0] = company;
+                    outputLine[1] = String.valueOf(columnValues.getDownloadActivityCount());
+                    outputLine[2] = String.valueOf(columnValues.getWhitePaperActivityCount());
+                    outputLine[3] = String.valueOf(columnValues.getTutorialActivityCount());
+                    outputLine[4] = String.valueOf(columnValues.getWorkshopActivityCount());
+                    outputLine[5] = String.valueOf(columnValues.getCaseStudiesActivityCount());
+                    outputLine[6] = String.valueOf(columnValues.getProductPagesActivityCount());
+                    outputLine[7] = String.valueOf(columnValues.getOtherActivityCount());
+                    outputLine[8] = String.valueOf(columnValues.getSeniorTitleCount());
+                    outputLine[9] = String.valueOf(columnValues.getJuniorTitleCount());;
+                    outputLine[10] = columnValues.getCompanyName();
+                    outputLine[11] = String.valueOf(columnValues.getIsCustomer());
+                    outputLine[12] = columnValues.getJoinedDate();
+
                     writerNotTransformed.writeNext(outputLine);
                 }
             }
