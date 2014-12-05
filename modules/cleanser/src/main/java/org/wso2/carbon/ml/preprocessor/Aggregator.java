@@ -189,11 +189,11 @@ public class Aggregator {
             int totalCustomerCount = 0;
             int existingCustomerCount = 0;
 
-            CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvAggregate),
+            CSVWriter writerAggregate = new CSVWriter(new FileWriter(csvPath + csvAggregate),
                     CSV_SEPERATOR, CSVWriter.NO_QUOTE_CHARACTER);
 
             //Write headers to CSV
-            writerNotTransformed.writeNext(headers);
+            writerAggregate.writeNext(headers);
 
             for (String company : csvMap.keySet()) {
                 Customer columnValues = csvMap.get(company);
@@ -218,7 +218,7 @@ public class Aggregator {
                         outputLine[13] = String.valueOf(columnValues.getMedianTimeBetweenTwoActivities());
                         outputLine[14] = String.valueOf(columnValues.getMaxTimeBetweenTwoActivities());
 
-                        writerNotTransformed.writeNext(outputLine);
+                    writerAggregate.writeNext(outputLine);
                 }
 
                 totalCustomerCount++;
@@ -229,7 +229,7 @@ public class Aggregator {
 
 
             }
-            writerNotTransformed.close();
+            writerAggregate.close();
 
            logger.info("Total Customers : " + totalCustomerCount + " . Existing Customers : " + existingCustomerCount);
 
