@@ -37,11 +37,20 @@ public class Customer {
         countries.add(countryName);
     }
 
+    /**
+     * To add particular activity time stamp to country activity array
+     * @param timeStamp
+     */
     public void addActivityTimeStamp(Date timeStamp) {
         activityTimeStamps.add(timeStamp);
         Collections.sort(activityTimeStamps);
     }
 
+    /**
+     * Provide top repeated countries
+     * @param count how many countries required as out put
+     * @return array of top countries
+     */
     public String [] getTopCountries(int count) {
         ArrayList<Country> uniqueCountries = new ArrayList<Country>();
         String [] topCountries;
@@ -96,6 +105,12 @@ public class Customer {
         return  topCountries;
     }
 
+    /**
+     * Search specified country is existing in the list
+     * @param uniqueCountries list of unique countries
+     * @param countryName searching country name
+     * @return index of the searched value if exists
+     */
     private int getCountryIndex(ArrayList<Country> uniqueCountries , String countryName) {
             for (int i = 0; i < uniqueCountries.size(); i++) {
 
@@ -107,6 +122,10 @@ public class Customer {
             return -1;
     }
 
+    /**
+     * Provide median time between activities
+     * @return median time
+     */
     public long getMedianTimeBetweenTwoActivities() {
 
 
@@ -133,7 +152,10 @@ public class Customer {
         return  median;
     }
 
-
+    /**
+     * Provide maximum time between two acitivities
+     * @return maximum time
+     */
     public long getMaxTimeBetweenTwoActivities() {
 
         try {
