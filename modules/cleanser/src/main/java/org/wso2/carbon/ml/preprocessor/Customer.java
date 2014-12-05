@@ -7,8 +7,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class Customer {
 
-    private String companyIndex;
+    public static TimeUnit TIME_UNIT = TimeUnit.SECONDS;
 
+    private String companyIndex;
     private int downloadActivityCount;
     private int whitePaperActivityCount;
     private int tutorialActivityCount;
@@ -188,7 +189,7 @@ public class Customer {
                 timeIntervals = new long[activityTimeStamps.size() - 1];
 
                 for (int i = 0; i < timeIntervals.length; i++) {
-                    timeIntervals[i] = getDateDiff(activityTimeStamps.get(i), activityTimeStamps.get(i + 1), TimeUnit.SECONDS);
+                    timeIntervals[i] = getDateDiff(activityTimeStamps.get(i), activityTimeStamps.get(i + 1), Customer.TIME_UNIT);
                 }
 
                 Arrays.sort(timeIntervals);
@@ -208,7 +209,7 @@ public class Customer {
      */
     public static long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
         long diffInMillies = date2.getTime() - date1.getTime();
-        return timeUnit.convert(diffInMillies,TimeUnit.SECONDS);
+        return timeUnit.convert(diffInMillies, timeUnit);
     }
 
 
