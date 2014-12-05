@@ -3,6 +3,7 @@ package org.wso2.carbon.ml.validations;
 import au.com.bytecode.opencsv.CSVReader;
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.InetAddressValidator;
 
 import java.io.*;
@@ -24,16 +25,16 @@ public class ValidationUtility {
     private static String ipAddressToCountryDBFileName = "ipAddressToCountryDB.csv";
     private static String countryCodeFileName = "countryCodes.csv";
 
-    private static Integer FirstColumnIndex  = 0;
+    private static Integer FirstColumnIndex = 0;
     private static Integer SecondColumnIndex = 1;
-    private static Integer ThirdColumnIndex  = 2;
+    private static Integer ThirdColumnIndex = 2;
 
     public ValidationUtility() {
 
         loadDataToMapFromCsv(ipAddressToCountryDBFileName, ipAddressToCountryMap,
-                        ValidationUtility.FirstColumnIndex, ValidationUtility.ThirdColumnIndex);
+                ValidationUtility.FirstColumnIndex, ValidationUtility.ThirdColumnIndex);
         loadDataToMapFromCsv(countryCodeFileName, countryMap, ValidationUtility.FirstColumnIndex,
-                        ValidationUtility.SecondColumnIndex);
+                ValidationUtility.SecondColumnIndex);
 
     }
 
@@ -47,9 +48,8 @@ public class ValidationUtility {
     public synchronized Boolean countryByIpAddressValidation(String ipAddress, String countryName) {
 
         LookupService countryLocation = null;
-
         Location ipLocation = null;
-
+        String ipAddressRange;
         Boolean returnValue = null;
 
         try {
@@ -70,7 +70,10 @@ public class ValidationUtility {
                         returnValue = false;
                     }
                 } else {
-                    if (ipAddressToCountryMap.get(ipAddress).equals(getCountryCode(countryName))) {
+
+                    ipAddressRange = getIpAddressRange(ipAddress);
+
+                    if (ipAddressToCountryMap.get(ipAddressRange).equals(getCountryCode(countryName))) {
                         returnValue = true;
                     } else {
                         returnValue = false;
@@ -92,12 +95,25 @@ public class ValidationUtility {
     }
 
     /**
+     * Return ip address range
+     * @param ipAddress
+     * @return
+     */
+    private String getIpAddressRange(String ipAddress) {
+
+        String[] splitAddress = ipAddress.split("\\.");
+        splitAddress[splitAddress.length -1] = "*";
+
+        return StringUtils.join(splitAddress,".");
+    }
+
+    /**
      * Return country code for given country name.
      *
      * @param country
      * @return
      */
-    public synchronized String getCountryCode(String country) {
+    private String getCountryCode(String country) {
         String countryCode = countryMap.get(country);
         if (countryCode == null) {
             countryCode = "Not Found";
@@ -106,7 +122,7 @@ public class ValidationUtility {
     }
 
 
-    public synchronized void loadDataToMapFromCsv(String resourceName, Map<String, String> map, Integer keyCsvIndex, Integer valueCsvIndex) {
+    public void loadDataToMapFromCsv(String resourceName, Map<String, String> map, Integer keyCsvIndex, Integer valueCsvIndex) {
 
         String[] nextLine;
 
