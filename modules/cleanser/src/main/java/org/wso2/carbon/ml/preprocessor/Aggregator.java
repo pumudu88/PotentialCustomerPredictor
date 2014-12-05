@@ -10,7 +10,11 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.ml.classifiers.TitleUtility;
 
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 public class Aggregator {
@@ -21,6 +25,7 @@ public class Aggregator {
     public static final String COMPANY_COLUMN_NAME = "Company";
     public static final String IS_CUSTOMER_COLUMN_NAME = "Is Customer";
     public static final String JOINED_DATE_COLUMN_NAME = "Joined Date";
+    public static final String ACTIVITY_TIME_STAMP_COLUMN_NAME = "Activity date/time";
 
     public static final char CSV_SEPERATOR = ',';
     public static final String CSV_CHARACTER_FORMAT = "UTF-8";
@@ -28,9 +33,9 @@ public class Aggregator {
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvAggregate = "Aggregate.csv";
     private static String [] headers  = {"Company Index", "downloads", "whitepapers", "tutorials", "workshops",
-            "casestudies", "productpages", "other", "seniorTitleCount", "juniorTitleCount", "Company Name", "Is Customer", "Joined Date"};
-    private static String [] keyWords = {"downloads", "whitepapers", "tutorials", "workshops", "casestudies",
-            "productpages"};
+            "casestudies", "productpages", "other", "seniorTitleCount", "juniorTitleCount", "Company Name",
+            "Is Customer", "Joined Date", "Median between two Activities", "Max between 2 activities"};
+
 
     private static final Log logger = LogFactory.getLog(Cleanser.class);
 
@@ -62,6 +67,7 @@ public class Aggregator {
         int companyIndexColumnIndex = Arrays.asList(nextLine).indexOf(Aggregator.INDEX_COLUMN_INPUT);
         int isCustomerIndex = Arrays.asList(nextLine).indexOf(Aggregator.IS_CUSTOMER_COLUMN_NAME);
         int joinedDateIndex = Arrays.asList(nextLine).indexOf(Aggregator.JOINED_DATE_COLUMN_NAME);
+        int activityTimeStampIndex = Arrays.asList(nextLine).indexOf(Aggregator.ACTIVITY_TIME_STAMP_COLUMN_NAME);
 
         // Create map
         try {
@@ -129,10 +135,29 @@ public class Aggregator {
                             columnValues.setJuniorTitleCount(columnValues.getJuniorTitleCount() + 1);
                         }
 
-
                         columnValues.setCompanyName(nextLine[companyNameIndex]);
                         columnValues.setIsCustomer(Boolean.parseBoolean(nextLine[isCustomerIndex]));
                         columnValues.setJoinedDate(nextLine[joinedDateIndex]);
+
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd yyyy hh:mma");
+
+
+
+                        try{
+
+                        if (!nextLine[activityTimeStampIndex].equals("")) {
+
+                            Date timestamp = simpleDateFormat.parse(nextLine[activityTimeStampIndex].trim());
+                            columnValues.addActivityTimeStamp(timestamp);
+                        }
+
+                        }
+                        catch (ParseException ex)
+                        {
+
+                        }
+
+
                     }
                     catch (Exception ex) {
                         logger.error(ex);
@@ -162,21 +187,24 @@ public class Aggregator {
 
                     String[] outputLine = new String[headers.length];
 
-                    outputLine[0] = company;
-                    outputLine[1] = String.valueOf(columnValues.getDownloadActivityCount());
-                    outputLine[2] = String.valueOf(columnValues.getWhitePaperActivityCount());
-                    outputLine[3] = String.valueOf(columnValues.getTutorialActivityCount());
-                    outputLine[4] = String.valueOf(columnValues.getWorkshopActivityCount());
-                    outputLine[5] = String.valueOf(columnValues.getCaseStudiesActivityCount());
-                    outputLine[6] = String.valueOf(columnValues.getProductPagesActivityCount());
-                    outputLine[7] = String.valueOf(columnValues.getOtherActivityCount());
-                    outputLine[8] = String.valueOf(columnValues.getSeniorTitleCount());
-                    outputLine[9] = String.valueOf(columnValues.getJuniorTitleCount());;
-                    outputLine[10] = columnValues.getCompanyName();
-                    outputLine[11] = String.valueOf(columnValues.getIsCustomer());
-                    outputLine[12] = columnValues.getJoinedDate();
 
-                    writerNotTransformed.writeNext(outputLine);
+                        outputLine[0] = company;
+                        outputLine[1] = String.valueOf(columnValues.getDownloadActivityCount());
+                        outputLine[2] = String.valueOf(columnValues.getWhitePaperActivityCount());
+                        outputLine[3] = String.valueOf(columnValues.getTutorialActivityCount());
+                        outputLine[4] = String.valueOf(columnValues.getWorkshopActivityCount());
+                        outputLine[5] = String.valueOf(columnValues.getCaseStudiesActivityCount());
+                        outputLine[6] = String.valueOf(columnValues.getProductPagesActivityCount());
+                        outputLine[7] = String.valueOf(columnValues.getOtherActivityCount());
+                        outputLine[8] = String.valueOf(columnValues.getSeniorTitleCount());
+                        outputLine[9] = String.valueOf(columnValues.getJuniorTitleCount());
+                        outputLine[10] = columnValues.getCompanyName();
+                        outputLine[11] = String.valueOf(columnValues.getIsCustomer());
+                        outputLine[12] = columnValues.getJoinedDate();
+                        outputLine[13] = String.valueOf(columnValues.getMedianTimeBetweenTwoActivities());
+                        outputLine[14] = String.valueOf(columnValues.getMaxTimeBetweenTwoActivities());
+
+                        writerNotTransformed.writeNext(outputLine);
                 }
             }
             writerNotTransformed.close();

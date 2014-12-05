@@ -108,25 +108,49 @@ public class Customer {
     }
 
     public long getMedianTimeBetweenTwoActivities() {
-        long median;
+
+
+        long median = 0;
         long [] timeIntervals = this.constructIntervals();
 
-        if (timeIntervals.length % 2 == 0) {
-            median = (timeIntervals[timeIntervals.length / 2] + timeIntervals[timeIntervals.length / 2 - 1]) / 2;
-        }
-        else {
-            median = timeIntervals[timeIntervals.length / 2];
+        try {
+
+            if (timeIntervals != null && timeIntervals.length > 0) {
+
+                if (timeIntervals.length % 2 == 0) {
+                    median = (timeIntervals[timeIntervals.length / 2] + timeIntervals[timeIntervals.length / 2 - 1]) / 2;
+                } else {
+                    median = timeIntervals[timeIntervals.length / 2];
+                }
+            }
+
         }
 
+        catch (Exception ex)
+        {
+            return 0;
+        }
         return  median;
     }
 
 
     public long getMaxTimeBetweenTwoActivities() {
-        long [] timeIntervals = this.constructIntervals();
 
-        //Return last element which is the highest
-        return timeIntervals[timeIntervals.length -1];
+        try {
+
+            long[] timeIntervals = this.constructIntervals();
+
+            if (timeIntervals != null && timeIntervals.length > 0) {
+                //Return last element which is the highest
+                return timeIntervals[timeIntervals.length - 1];
+            } else {
+                return 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            return 0;
+        }
 
     }
 
@@ -135,16 +159,21 @@ public class Customer {
      * @return Interval array
      */
     private long[] constructIntervals() {
-        long [] timeIntervals = new long[activityTimeStamps.size() -1];
+        long[] timeIntervals = null;
 
-        for (int i = 0; i < timeIntervals.length; i++)
-        {
-            timeIntervals[i] = getDateDiff(activityTimeStamps.get(i), activityTimeStamps.get(i + 1), TimeUnit.MILLISECONDS);
-        }
+            if (activityTimeStamps.size() > 0) {
 
-        Arrays.sort(timeIntervals);
+                timeIntervals = new long[activityTimeStamps.size() - 1];
 
-        return  timeIntervals;
+                for (int i = 0; i < timeIntervals.length; i++) {
+                    timeIntervals[i] = getDateDiff(activityTimeStamps.get(i), activityTimeStamps.get(i + 1), TimeUnit.SECONDS);
+                }
+
+                Arrays.sort(timeIntervals);
+
+
+            }
+        return timeIntervals;
 
     }
 
@@ -157,7 +186,7 @@ public class Customer {
      */
     public static long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
         long diffInMillies = date2.getTime() - date1.getTime();
-        return timeUnit.convert(diffInMillies,TimeUnit.MILLISECONDS);
+        return timeUnit.convert(diffInMillies,TimeUnit.SECONDS);
     }
 
 
