@@ -13,7 +13,6 @@ import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -26,6 +25,14 @@ public class Aggregator {
     public static final String IS_CUSTOMER_COLUMN_NAME = "Is Customer";
     public static final String JOINED_DATE_COLUMN_NAME = "Joined Date";
     public static final String ACTIVITY_TIME_STAMP_COLUMN_NAME = "Activity date/time";
+    public static final String DATE_FORMAT = "MMM dd yyyy hh:mma";
+
+    public static final String KEY_WORD_DOWNLOADS = "downloads";
+    public static final String KEY_WORD_WHITE_PAPERS = "whitepapers";
+    public static final String KEY_WORD_TUTORIALS = "tutorials";
+    public static final String KEY_WORD_WORKSHOPS = "workshops";
+    public static final String KEY_WORD_CASE_STUDIES = "casestudies";
+    public static final String KEY_WORD_PRODUCT_PAGES = "productpages";
 
     public static final char CSV_SEPERATOR = ',';
     public static final String CSV_CHARACTER_FORMAT = "UTF-8";
@@ -94,23 +101,22 @@ public class Aggregator {
                                 columnValues.setOtherActivityCount(columnValues.getOtherActivityCount() + 1);
                             } else {
 
-
-                                if (actionsType.contains("downloads")) {
+                                if (actionsType.contains(Aggregator.KEY_WORD_DOWNLOADS)) {
                                     columnValues.setDownloadActivityCount(columnValues.getDownloadActivityCount() + 1);
                                 }
-                                else  if (actionsType.contains("whitepapers")) {
+                                else  if (actionsType.contains(Aggregator.KEY_WORD_WHITE_PAPERS)) {
                                     columnValues.setWhitePaperActivityCount(columnValues.getWhitePaperActivityCount() + 1);
                                 }
-                                else  if (actionsType.contains("tutorials")) {
+                                else  if (actionsType.contains(Aggregator.KEY_WORD_TUTORIALS)) {
                                     columnValues.setTutorialActivityCount(columnValues.getTutorialActivityCount() + 1);
                                 }
-                                else  if (actionsType.contains("workshops")) {
+                                else  if (actionsType.contains(Aggregator.KEY_WORD_WORKSHOPS)) {
                                     columnValues.setWorkshopActivityCount(columnValues.getWorkshopActivityCount() + 1);
                                 }
-                                else  if (actionsType.contains("casestudies")) {
+                                else  if (actionsType.contains(Aggregator.KEY_WORD_CASE_STUDIES)) {
                                     columnValues.setCaseStudiesActivityCount(columnValues.getCaseStudiesActivityCount() + 1);
                                 }
-                                else  if (actionsType.contains("productpages")) {
+                                else  if (actionsType.contains(Aggregator.KEY_WORD_PRODUCT_PAGES)) {
                                     columnValues.setProductPagesActivityCount(columnValues.getProductPagesActivityCount() + 1);
                                 }
                                 else {
@@ -139,9 +145,7 @@ public class Aggregator {
                         columnValues.setIsCustomer(Boolean.parseBoolean(nextLine[isCustomerIndex]));
                         columnValues.setJoinedDate(nextLine[joinedDateIndex]);
 
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM dd yyyy hh:mma");
-
-
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
 
                         try{
 
@@ -186,7 +190,6 @@ public class Aggregator {
                 if (!company.equals("")) {
 
                     String[] outputLine = new String[headers.length];
-
 
                         outputLine[0] = company;
                         outputLine[1] = String.valueOf(columnValues.getDownloadActivityCount());
