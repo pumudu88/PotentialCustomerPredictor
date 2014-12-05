@@ -48,8 +48,12 @@ public class Aggregator {
 
     public static void main (String[] args) throws IOException {
 
+        long startTime = System.currentTimeMillis();
 
         transformCsv(Cleanser.csvPath + Cleanser.csvWriteTransfomed);
+
+        long estimatedTime = System.currentTimeMillis() - startTime;
+        logger.info("Time taken : "+ estimatedTime/1000 + " seconds");
     }
 
     public static void transformCsv (String csvFile) throws IOException {
@@ -178,6 +182,10 @@ public class Aggregator {
     private static void mapToCsv (HashMap<String, Customer> csvMap) {
 
         try {
+
+            int totalCustomerCount = 0;
+            int existingCustomerCount = 0;
+
             CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvAggregate),
                     CSV_SEPERATOR, CSVWriter.NO_QUOTE_CHARACTER);
 
@@ -209,8 +217,21 @@ public class Aggregator {
 
                         writerNotTransformed.writeNext(outputLine);
                 }
+
+                totalCustomerCount++;
+
+                if (columnValues.getIsCustomer()){
+                    existingCustomerCount++;
+                }
+
+
             }
             writerNotTransformed.close();
+
+           logger.info("Total Customers : " + totalCustomerCount + " . Existing Customers : " + existingCustomerCount);
+
+
+
         }
         catch(Exception ex)
         {
