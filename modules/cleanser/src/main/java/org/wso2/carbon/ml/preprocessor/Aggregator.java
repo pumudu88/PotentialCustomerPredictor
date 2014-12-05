@@ -44,6 +44,9 @@ public class Aggregator {
             "Is Customer", "Joined Date", "Median between two Activities", "Max between 2 activities"};
 
 
+    private static TitleUtility titleUtil = new TitleUtility();
+
+
     private static final Log logger = LogFactory.getLog(Cleanser.class);
 
     public static void main (String[] args) throws IOException {
@@ -141,7 +144,7 @@ public class Aggregator {
                         if( Integer.parseInt(nextLine[titleIndex]) == TitleUtility.Senior) {
                             columnValues.setSeniorTitleCount(columnValues.getSeniorTitleCount() + 1);
                         }
-                        else if( Integer.parseInt(nextLine[titleIndex]) == TitleUtility.Jounior) {
+                        else if( Integer.parseInt(nextLine[titleIndex]) == titleUtil.Junior) {
                             columnValues.setJuniorTitleCount(columnValues.getJuniorTitleCount() + 1);
                         }
 

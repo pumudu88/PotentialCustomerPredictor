@@ -55,6 +55,8 @@ public class Cleanser {
     private static boolean enableIpValidate = false;
 
 
+    private static CustomMatchingUtility customMatching = new CustomMatchingUtility();
+    private static TitleUtility titleUtil = new TitleUtility();
 
 
     public static void main(String[] args) {
@@ -62,8 +64,10 @@ public class Cleanser {
 
             Map<String,String[]> currentCustomers;
 
+
+
             DoubleMetaphoneUtility.setMaxCodeLen(DOUBLE_META_PHONE_THRESHOLD);
-            CustomMatchingUtility.LoadCompanySuffixFromCsv(csvPath + csvCompanySuffixFile);
+            customMatching.loadCompanySuffixFromCsv(csvPath + csvCompanySuffixFile);
 
             long startTime = System.currentTimeMillis();
 
@@ -168,15 +172,15 @@ public class Cleanser {
                 //Set  algorithm Index for first column
                 switch (indexAlgorithm) {
                     case Cleanser.INDEX_ALGO_DOUBLE_META_PHONE:
-                        Customers.put(CustomMatchingUtility.Convert(nextLine[indexColumn],
-                                      CustomMatchingUtility.DoubleMetaphoneAlgorithm), rowVal);
+                        Customers.put(customMatching.Convert(nextLine[indexColumn],
+                                CustomMatchingUtility.DoubleMetaphoneAlgorithm), rowVal);
                         break;
                     case Cleanser.INDEX_ALGO_META_PHONE:
-                        Customers.put(CustomMatchingUtility.Convert(nextLine[indexColumn],
+                        Customers.put(customMatching.Convert(nextLine[indexColumn],
                                       CustomMatchingUtility.MetaphoneAlgorithm), rowVal);
                         break;
                     default:
-                        Customers.put(CustomMatchingUtility.Convert(nextLine[indexColumn],
+                        Customers.put(customMatching.Convert(nextLine[indexColumn],
                                       CustomMatchingUtility.SoundexAlgorithm), rowVal);
                         break;
                 }
@@ -274,15 +278,15 @@ public class Cleanser {
                         //Set  algorithm Index for first column
                         switch (indexAlgorithm) {
                                     case Cleanser.INDEX_ALGO_DOUBLE_META_PHONE:
-                                        outputLine[0] = CustomMatchingUtility.Convert(nextLine[columnIndex],
+                                        outputLine[0] = customMatching.Convert(nextLine[columnIndex],
                                                                         CustomMatchingUtility.DoubleMetaphoneAlgorithm);
                                         break;
                                     case Cleanser.INDEX_ALGO_META_PHONE:
-                                        outputLine[0] = CustomMatchingUtility.Convert(nextLine[columnIndex],
+                                        outputLine[0] = customMatching.Convert(nextLine[columnIndex],
                                                                         CustomMatchingUtility.MetaphoneAlgorithm);
                                         break;
                                     default:
-                                        outputLine[0] = CustomMatchingUtility.Convert(nextLine[columnIndex],
+                                        outputLine[0] = customMatching.Convert(nextLine[columnIndex],
                                                                         CustomMatchingUtility.SoundexAlgorithm);
                                         break;
                         }
@@ -321,7 +325,7 @@ public class Cleanser {
 
                                    if (titleColumnIndex == columnIncludedIndexes[i - generatedColumnCount])
                                    {
-                                       outputLine[i] = TitleUtility.tilteClassifier(nextLine[columnIncludedIndexes[i - generatedColumnCount]]).toString();
+                                       outputLine[i] = titleUtil.titleClassifier(nextLine[columnIncludedIndexes[i - generatedColumnCount]]).toString();
                                    }
                                     else
                                    {
