@@ -63,11 +63,22 @@ public class Aggregator {
         logger.info("Time taken : "+ estimatedTime/1000 + " seconds");
     }
 
+    /**
+     * Aggregate given CSV File
+     * @param csvFile
+     * @throws IOException
+     */
     public static void transformCsv (String csvFile) throws IOException {
 
         mapToCsv(getCsvMap(csvFile));
     }
 
+    /**
+     * Produce a hash map by given csv path
+     * @param csvPath input csv
+     * @return produced has map
+     * @throws IOException
+     */
     private static HashMap<String, Customer> getCsvMap (String csvPath) throws IOException {
 
 
@@ -75,8 +86,8 @@ public class Aggregator {
 
         CSVReader reader=new CSVReader(
                 new InputStreamReader(new FileInputStream(csvPath), CSV_CHARACTER_FORMAT),
-                CSV_SEPERATOR, CSVReader.DEFAULT_QUOTE_CHARACTER,
-                CSVReader.DEFAULT_QUOTE_CHARACTER);
+                                           Aggregator.CSV_SEPERATOR, CSVReader.DEFAULT_QUOTE_CHARACTER,
+                                           CSVReader.DEFAULT_QUOTE_CHARACTER);
 
         String[] nextLine = reader.readNext();
         int linkColumnIndex = Arrays.asList(nextLine).indexOf(Aggregator.ACTIVITY_COLUMN_NAME);
@@ -88,7 +99,6 @@ public class Aggregator {
         int activityTimeStampIndex = Arrays.asList(nextLine).indexOf(Aggregator.ACTIVITY_TIME_STAMP_COLUMN_NAME);
         int CountryIndex = Arrays.asList(nextLine).indexOf(Aggregator.COUNTRY_COLUMN);
 
-        // Create map
         try {
             while ((nextLine = reader.readNext()) != null) {
 
@@ -192,6 +202,10 @@ public class Aggregator {
         return csvMap;
     }
 
+    /**
+     * Create CSV from the given hash map
+     * @param csvMap Hash map which needs to be converted to a CSV
+     */
     private static void mapToCsv (HashMap<String, Customer> csvMap) {
 
         try {
