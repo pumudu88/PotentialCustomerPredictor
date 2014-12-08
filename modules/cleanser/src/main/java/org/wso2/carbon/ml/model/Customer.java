@@ -1,4 +1,4 @@
-package org.wso2.carbon.ml.preprocessor;
+package org.wso2.carbon.ml.model;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 

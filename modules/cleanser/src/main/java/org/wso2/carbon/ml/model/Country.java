@@ -1,4 +1,4 @@
-package org.wso2.carbon.ml.preprocessor;
+package org.wso2.carbon.ml.model;
 
 /**
  * Created by tharik on 12/5/14.

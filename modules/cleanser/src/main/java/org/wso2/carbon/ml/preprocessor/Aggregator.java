@@ -8,6 +8,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.ml.classifiers.TitleUtility;
+import org.wso2.carbon.ml.model.Customer;
 
 import java.io.*;
 import java.text.ParseException;
