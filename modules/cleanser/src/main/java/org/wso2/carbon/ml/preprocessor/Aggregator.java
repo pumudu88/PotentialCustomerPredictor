@@ -42,9 +42,10 @@ public class Aggregator {
 
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvAggregate = "Aggregate.csv";
-    private static String [] headers  = {"Company Index", "Company Name", "Country 1", "Country 2", "Country 3",  "Is Customer", "Joined Date", "downloads", "whitepapers", "tutorials", "workshops",
-            "casestudies", "productpages", "other", "seniorTitleCount", "juniorTitleCount",
-            "Median between two Activities", "Max between 2 activities"};
+    private static String [] headers  = {"Company Index", "Company Name", "Country 1", "Country 2", "Country 3",
+                                         "Is Customer", "Joined Date", "downloads", "whitepapers", "tutorials",
+                                         "workshops", "casestudies", "productpages", "other", "seniorTitleCount",
+                                        "juniorTitleCount","Median between two Activities", "Max between 2 activities"};
 
 
     private static TitleUtility titleUtil = new TitleUtility();
@@ -234,8 +235,6 @@ public class Aggregator {
                         outputLine[16] = String.valueOf(columnValues.getMedianTimeBetweenTwoActivities());
                         outputLine[17] = String.valueOf(columnValues.getMaxTimeBetweenTwoActivities());
 
-
-
                         writerAggregate.writeNext(outputLine);
                 }
 
@@ -250,8 +249,6 @@ public class Aggregator {
             writerAggregate.close();
 
            logger.info("Total Customers : " + totalCustomerCount + " . Existing Customers : " + existingCustomerCount);
-
-
 
         }
         catch(Exception ex)

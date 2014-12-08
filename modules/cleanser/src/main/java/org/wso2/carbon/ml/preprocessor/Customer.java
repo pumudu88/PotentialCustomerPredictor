@@ -301,19 +301,4 @@ public class Customer {
         this.joinedDate = joinedDate;
     }
 
-    public ArrayList<Date> getActivityTimeStamps() {
-        return activityTimeStamps;
-    }
-
-    public void setActivityTimeStamps(ArrayList<Date> activityTimestamps) {
-        this.activityTimeStamps = activityTimestamps;
-    }
-
-    public ArrayList<String> getCountries() {
-        return countries;
-    }
-
-    public void setCountries(ArrayList<String> countries) {
-        this.countries = countries;
-    }
 }
