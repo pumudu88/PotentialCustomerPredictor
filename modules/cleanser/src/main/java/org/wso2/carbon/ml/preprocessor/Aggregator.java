@@ -45,7 +45,7 @@ public class Aggregator {
     public static String csvAggregate = "Aggregate.csv";
     private static String [] headers  = {"Company Index", "Company Name", "Country 1", "Country 2", "Country 3",
                                          "Is Customer", "Joined Date", "downloads", "whitepapers", "tutorials",
-                                         "workshops", "casestudies", "productpages", "other", "seniorTitleCount",
+                                         "workshops", "casestudies", "productpages", "other", "totalActivities","seniorTitleCount",
                                         "juniorTitleCount","Median between two Activities", "Max between 2 activities"};
 
 
@@ -245,10 +245,20 @@ public class Aggregator {
                         outputLine[11] = String.valueOf(columnValues.getCaseStudiesActivityCount());
                         outputLine[12] = String.valueOf(columnValues.getProductPagesActivityCount());
                         outputLine[13] = String.valueOf(columnValues.getOtherActivityCount());
-                        outputLine[14] = String.valueOf(columnValues.getSeniorTitleCount());
-                        outputLine[15] = String.valueOf(columnValues.getJuniorTitleCount());
-                        outputLine[16] = String.valueOf(columnValues.getMedianTimeBetweenTwoActivities());
-                        outputLine[17] = String.valueOf(columnValues.getMaxTimeBetweenTwoActivities());
+
+                        outputLine[14] = String.valueOf(columnValues.getDownloadActivityCount()
+                                                        + columnValues.getWhitePaperActivityCount()
+                                                        + columnValues.getTutorialActivityCount()
+                                                        + columnValues.getWorkshopActivityCount()
+                                                        + columnValues.getCaseStudiesActivityCount()
+                                                        + columnValues.getProductPagesActivityCount()
+                                                        + columnValues.getOtherActivityCount()
+                                                        );
+
+                        outputLine[15] = String.valueOf(columnValues.getSeniorTitleCount());
+                        outputLine[16] = String.valueOf(columnValues.getJuniorTitleCount());
+                        outputLine[17] = String.valueOf(columnValues.getMedianTimeBetweenTwoActivities());
+                        outputLine[18] = String.valueOf(columnValues.getMaxTimeBetweenTwoActivities());
 
                         writerAggregate.writeNext(outputLine);
                 }
