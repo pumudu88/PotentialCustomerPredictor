@@ -218,7 +218,7 @@ public class Aggregator {
 
                         for (int i =0; i < countries.length; i++)
                         {
-                            outputLine[15 + i] = countries[i];
+                            outputLine[2 + i] = countries[i];
                         }
 
                         outputLine[5] = String.valueOf(columnValues.getIsCustomer());
