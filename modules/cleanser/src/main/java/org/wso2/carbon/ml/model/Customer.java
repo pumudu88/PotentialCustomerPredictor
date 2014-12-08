@@ -191,8 +191,7 @@ public class Customer {
      * @return the diff value, in the provided unit
      */
     public static long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
-        long diffInMillies = date2.getTime() - date1.getTime();
-        return timeUnit.convert(diffInMillies, timeUnit);
+        return timeUnit.convert( date2.getTime() - date1.getTime() , TimeUnit.MILLISECONDS);
     }
 
 
