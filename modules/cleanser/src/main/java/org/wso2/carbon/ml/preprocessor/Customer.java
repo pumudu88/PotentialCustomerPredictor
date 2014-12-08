@@ -63,47 +63,47 @@ public class Customer {
 
         topCountries = new String[count];
 
-        for (int i = 0; i < countries.size(); i++)
-        {
-            int index = this.getCountryIndex(uniqueCountries, countries.get(i));
+            if (countries.size() > 0) {
 
-            if ( index == -1)
-            {
-                Country newCountry = new Country();
+                for (int i = 0; i < countries.size(); i++) {
+                    int index = this.getCountryIndex(uniqueCountries, countries.get(i));
 
-                newCountry.setCountry(countries.get(i));
-                newCountry.setCount(1);
+                    if (index == -1) {
+                        Country newCountry = new Country();
 
-                uniqueCountries.add(newCountry);
-            }
-            else
-            {
-                uniqueCountries.get(index).setCount( uniqueCountries.get(index).getCount() + 1);
-            }
+                        newCountry.setCountry(countries.get(i));
+                        newCountry.setCount(1);
 
-        }
-
-        Collections.sort(uniqueCountries, new Comparator<Country>() {
-            public int compare(Country c1, Country c2) {
-
-                if(c1.getCount() <= c2.getCount())
-                {
-                    return c1.getCount();
+                        uniqueCountries.add(newCountry);
+                    } else {
+                        uniqueCountries.get(index).setCount(uniqueCountries.get(index).getCount() + 1);
+                    }
 
                 }
-                else
-                {
-                    return c2.getCount();
+
+                Collections.sort(uniqueCountries, new Comparator<Country>() {
+                    public int compare(Country c1, Country c2) {
+
+                        if (c1.getCount() <= c2.getCount()) {
+                            return c1.getCount();
+
+                        } else {
+                            return c2.getCount();
+                        }
+                    }
+                });
+
+                for (int i = 0; i < topCountries.length; i++) {
+                    if (uniqueCountries.size() > i) {
+
+                        topCountries[i] = uniqueCountries.get(i).getCountry();
+                    } else {
+                        topCountries[i] = "";
+                    }
                 }
             }
-        });
 
-        for (int i =0; i < topCountries.length; i++)
-        {
-            topCountries[i] = uniqueCountries.get(i).getCountry();
-        }
-
-        return  topCountries;
+            return topCountries;
     }
 
     /**
@@ -129,11 +129,9 @@ public class Customer {
      */
     public long getMedianTimeBetweenTwoActivities() {
 
-
         long median = 0;
         long [] timeIntervals = this.constructIntervals();
 
-        try {
 
             if (timeIntervals != null && timeIntervals.length > 0) {
 
@@ -144,12 +142,6 @@ public class Customer {
                 }
             }
 
-        }
-
-        catch (Exception ex)
-        {
-            return 0;
-        }
         return  median;
     }
 
@@ -158,9 +150,6 @@ public class Customer {
      * @return maximum time
      */
     public long getMaxTimeBetweenTwoActivities() {
-
-        try {
-
             long[] timeIntervals = this.constructIntervals();
 
             if (timeIntervals != null && timeIntervals.length > 0) {
@@ -169,12 +158,6 @@ public class Customer {
             } else {
                 return 0;
             }
-        }
-        catch (Exception ex)
-        {
-            return 0;
-        }
-
     }
 
     /**

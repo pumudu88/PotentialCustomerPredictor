@@ -25,6 +25,8 @@ public class Aggregator {
     public static final String IS_CUSTOMER_COLUMN_NAME = "Is Customer";
     public static final String JOINED_DATE_COLUMN_NAME = "Joined Date";
     public static final String ACTIVITY_TIME_STAMP_COLUMN_NAME = "Activity date/time";
+    public static final String COUNTRY_COLUMN = "Country";
+
     public static final String DATE_FORMAT = "MMM dd yyyy hh:mma";
 
     public static final String KEY_WORD_DOWNLOADS = "downloads";
@@ -34,6 +36,7 @@ public class Aggregator {
     public static final String KEY_WORD_CASE_STUDIES = "casestudies";
     public static final String KEY_WORD_PRODUCT_PAGES = "productpages";
 
+
     public static final char CSV_SEPERATOR = ',';
     public static final String CSV_CHARACTER_FORMAT = "UTF-8";
 
@@ -41,7 +44,7 @@ public class Aggregator {
     public static String csvAggregate = "Aggregate.csv";
     private static String [] headers  = {"Company Index", "downloads", "whitepapers", "tutorials", "workshops",
             "casestudies", "productpages", "other", "seniorTitleCount", "juniorTitleCount", "Company Name",
-            "Is Customer", "Joined Date", "Median between two Activities", "Max between 2 activities"};
+            "Is Customer", "Joined Date", "Median between two Activities", "Max between 2 activities", "Country 1", "Country 2", "Country 3"};
 
 
     private static TitleUtility titleUtil = new TitleUtility();
@@ -82,6 +85,7 @@ public class Aggregator {
         int isCustomerIndex = Arrays.asList(nextLine).indexOf(Aggregator.IS_CUSTOMER_COLUMN_NAME);
         int joinedDateIndex = Arrays.asList(nextLine).indexOf(Aggregator.JOINED_DATE_COLUMN_NAME);
         int activityTimeStampIndex = Arrays.asList(nextLine).indexOf(Aggregator.ACTIVITY_TIME_STAMP_COLUMN_NAME);
+        int CountryIndex = Arrays.asList(nextLine).indexOf(Aggregator.COUNTRY_COLUMN);
 
         // Create map
         try {
@@ -166,6 +170,7 @@ public class Aggregator {
 
                             Date timestamp = simpleDateFormat.parse(nextLine[activityTimeStampIndex].trim());
                             columnValues.addActivityTimeStamp(timestamp);
+                            columnValues.addCountry(nextLine[CountryIndex]);
                         }
 
                         }
@@ -222,7 +227,14 @@ public class Aggregator {
                         outputLine[13] = String.valueOf(columnValues.getMedianTimeBetweenTwoActivities());
                         outputLine[14] = String.valueOf(columnValues.getMaxTimeBetweenTwoActivities());
 
-                    writerAggregate.writeNext(outputLine);
+                        String [] countries = columnValues.getTopCountries(3);
+
+                        for (int i =0; i < countries.length; i++)
+                        {
+                            outputLine[15 + i] = countries[i];
+                        }
+
+                        writerAggregate.writeNext(outputLine);
                 }
 
                 totalCustomerCount++;
