@@ -42,9 +42,9 @@ public class Aggregator {
 
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvAggregate = "Aggregate.csv";
-    private static String [] headers  = {"Company Index", "downloads", "whitepapers", "tutorials", "workshops",
-            "casestudies", "productpages", "other", "seniorTitleCount", "juniorTitleCount", "Company Name",
-            "Is Customer", "Joined Date", "Median between two Activities", "Max between 2 activities", "Country 1", "Country 2", "Country 3"};
+    private static String [] headers  = {"Company Index", "Company Name", "Country 1", "Country 2", "Country 3",  "Is Customer", "Joined Date", "downloads", "whitepapers", "tutorials", "workshops",
+            "casestudies", "productpages", "other", "seniorTitleCount", "juniorTitleCount",
+            "Median between two Activities", "Max between 2 activities"};
 
 
     private static TitleUtility titleUtil = new TitleUtility();
@@ -212,27 +212,29 @@ public class Aggregator {
                     String[] outputLine = new String[headers.length];
 
                         outputLine[0] = company;
-                        outputLine[1] = String.valueOf(columnValues.getDownloadActivityCount());
-                        outputLine[2] = String.valueOf(columnValues.getWhitePaperActivityCount());
-                        outputLine[3] = String.valueOf(columnValues.getTutorialActivityCount());
-                        outputLine[4] = String.valueOf(columnValues.getWorkshopActivityCount());
-                        outputLine[5] = String.valueOf(columnValues.getCaseStudiesActivityCount());
-                        outputLine[6] = String.valueOf(columnValues.getProductPagesActivityCount());
-                        outputLine[7] = String.valueOf(columnValues.getOtherActivityCount());
-                        outputLine[8] = String.valueOf(columnValues.getSeniorTitleCount());
-                        outputLine[9] = String.valueOf(columnValues.getJuniorTitleCount());
-                        outputLine[10] = columnValues.getCompanyName();
-                        outputLine[11] = String.valueOf(columnValues.getIsCustomer());
-                        outputLine[12] = columnValues.getJoinedDate();
-                        outputLine[13] = String.valueOf(columnValues.getMedianTimeBetweenTwoActivities());
-                        outputLine[14] = String.valueOf(columnValues.getMaxTimeBetweenTwoActivities());
-
+                        outputLine[1] = columnValues.getCompanyName();
                         String [] countries = columnValues.getTopCountries(3);
 
                         for (int i =0; i < countries.length; i++)
                         {
                             outputLine[15 + i] = countries[i];
                         }
+
+                        outputLine[5] = String.valueOf(columnValues.getIsCustomer());
+                        outputLine[6] = columnValues.getJoinedDate();
+                        outputLine[7] = String.valueOf(columnValues.getDownloadActivityCount());
+                        outputLine[8] = String.valueOf(columnValues.getWhitePaperActivityCount());
+                        outputLine[9] = String.valueOf(columnValues.getTutorialActivityCount());
+                        outputLine[10] = String.valueOf(columnValues.getWorkshopActivityCount());
+                        outputLine[11] = String.valueOf(columnValues.getCaseStudiesActivityCount());
+                        outputLine[12] = String.valueOf(columnValues.getProductPagesActivityCount());
+                        outputLine[13] = String.valueOf(columnValues.getOtherActivityCount());
+                        outputLine[14] = String.valueOf(columnValues.getSeniorTitleCount());
+                        outputLine[15] = String.valueOf(columnValues.getJuniorTitleCount());
+                        outputLine[16] = String.valueOf(columnValues.getMedianTimeBetweenTwoActivities());
+                        outputLine[17] = String.valueOf(columnValues.getMaxTimeBetweenTwoActivities());
+
+
 
                         writerAggregate.writeNext(outputLine);
                 }
