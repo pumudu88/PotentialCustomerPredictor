@@ -41,6 +41,8 @@ public class Aggregator {
     public static final char CSV_SEPERATOR = ',';
     public static final String CSV_CHARACTER_FORMAT = "UTF-8";
 
+    public static final boolean SKIP_AFTER_JOIN_ACTIVITIES = false;
+
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvAggregate = "Aggregate.csv";
     private static String [] headers  = {"Company Index", "Company Name", "Country 1", "Country 2", "Country 3",
@@ -174,20 +176,35 @@ public class Aggregator {
                         columnValues.setIsCustomer(Boolean.parseBoolean(nextLine[isCustomerIndex]));
                         columnValues.setJoinedDate(nextLine[joinedDateIndex]);
 
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
+                        SimpleDateFormat activityDateFormat = new SimpleDateFormat(DATE_FORMAT);
+                        SimpleDateFormat joinedDateFormat = new SimpleDateFormat("MM/DD/YYYY");
 
                         try{
 
                         if (!nextLine[activityTimeStampIndex].equals("")) {
 
-                            Date timestamp = simpleDateFormat.parse(nextLine[activityTimeStampIndex].trim());
-                            columnValues.addActivityTimeStamp(timestamp);
-                            columnValues.addCountry(nextLine[CountryIndex]);
+                            Date activitytimestamp = activityDateFormat.parse(nextLine[activityTimeStampIndex].trim());
+
+
+                            if (!columnValues.getIsCustomer())
+                            {
+                                columnValues.addActivityTimeStamp(activitytimestamp);
+                            }
+                             //Check weather skipping after join activity enables for existing customers
+                             else if (columnValues.getIsCustomer() && !Aggregator.SKIP_AFTER_JOIN_ACTIVITIES) {
+                                 columnValues.addActivityTimeStamp(activitytimestamp);
+                             }
+                             //If skipping is enabled but join date is after activity date for existing customers
+                             else if (columnValues.getIsCustomer() && !nextLine[joinedDateIndex].equals("") &&
+                                     joinedDateFormat.parse(nextLine[joinedDateIndex]).after(activitytimestamp)) {
+                                 columnValues.addActivityTimeStamp(activitytimestamp);
+                             }
                         }
 
+                         columnValues.addCountry(nextLine[CountryIndex]);
+
                         }
-                        catch (ParseException ex)
-                        {
+                        catch (ParseException ex) {
 
                         }
                     }
