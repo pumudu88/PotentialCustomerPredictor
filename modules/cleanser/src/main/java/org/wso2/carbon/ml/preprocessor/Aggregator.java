@@ -41,6 +41,8 @@ public class Aggregator {
     public static final char CSV_SEPERATOR = ',';
     public static final String CSV_CHARACTER_FORMAT = "UTF-8";
 
+    public static final int ACTIVITY_NUMBER = 100;
+
     public static final boolean SKIP_AFTER_JOIN_ACTIVITIES = false;
 
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
@@ -48,7 +50,7 @@ public class Aggregator {
     private static String [] headers  = {"Company Index", "Company Name", "Country 1", "Country 2", "Country 3",
                                          "Is Customer", "Joined Date", "downloads", "whitepapers", "tutorials",
                                          "workshops", "casestudies", "productpages", "other", "totalActivities","seniorTitleCount",
-                                        "juniorTitleCount","Median between two Activities", "Max between 2 activities"};
+                                        "juniorTitleCount","Median between two Activities", "Max between 2 activities", "Time since 100th activity"};
 
 
     private static TitleUtility titleUtil = new TitleUtility();
@@ -276,6 +278,22 @@ public class Aggregator {
                         outputLine[16] = String.valueOf(columnValues.getJuniorTitleCount());
                         outputLine[17] = String.valueOf(columnValues.getMedianTimeBetweenTwoActivities());
                         outputLine[18] = String.valueOf(columnValues.getMaxTimeBetweenTwoActivities());
+
+
+
+
+                        if (columnValues.getActivityTimeStamps().size() >= Aggregator.ACTIVITY_NUMBER)
+                        {
+
+                            Date hundredthActicity = columnValues.getActivityTimeStamps().get(Aggregator.ACTIVITY_NUMBER - 1);
+                            Date today = new Date();
+                            outputLine[19] = String.valueOf(columnValues.getDateDiff(hundredthActicity, today, Customer.TIME_UNIT));
+
+                        }
+                        else
+                        {
+                            outputLine[19] = "0";
+                        }
 
                         writerAggregate.writeNext(outputLine);
                 }
