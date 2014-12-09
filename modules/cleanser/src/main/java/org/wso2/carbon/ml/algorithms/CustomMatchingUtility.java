@@ -21,7 +21,7 @@ public class CustomMatchingUtility {
     static List<String> companySuffixList = new ArrayList<String>();
     private ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 
-    public static final int MinimumConvertLength = 2;
+    public static final int MinimumConvertLength = 3;
 
     public void setCompanySuffix(String companySuffix) {
         companySuffixList.add(companySuffix);
