@@ -59,6 +59,7 @@ public class TitleUtility {
                     new InputStreamReader(new FileInputStream(csvFilePath), "UTF-8"), ',',
                     CSVReader.DEFAULT_QUOTE_CHARACTER, CSVReader.DEFAULT_QUOTE_CHARACTER);
 
+            reader.readNext();
             while ((nextLine = reader.readNext()) != null) {
                 seniorTitleList.add(nextLine[0].toString().toLowerCase());
                 juniorTitleList.add(nextLine[1].toString().toLowerCase());

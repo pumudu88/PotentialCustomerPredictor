@@ -60,6 +60,11 @@ public class PreProcessor {
         nameList.add("hp");
         nameList.add("nsi");
 
+        nameList.add("USAA ");
+        nameList.add("ASS");
+
+        nameList.add("no company");
+
 
         try {
 
@@ -147,6 +152,7 @@ public class PreProcessor {
             titleList.add("senior");
             titleList.add("se");
             titleList.add("student");
+            titleList.add("not related");
 
             for(int i = 0;i < titleList.size();i++) {
                 System.out.println("title integer for " + titleList.get(i) +" : " + titleUtility.titleClassifier(titleList.get(i)));
