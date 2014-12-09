@@ -62,6 +62,7 @@ public class PreProcessor {
 
         nameList.add("USAA ");
         nameList.add("ASS");
+        nameList.add("usa");
 
         nameList.add("no company");
 
