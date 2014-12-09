@@ -45,9 +45,9 @@ public class CustomMatchingUtility {
 
         String encodedValue = "";
 
-        if (input.length() > CustomMatchingUtility.MinimumConvertLength) {
+        input = removeCompanyNameSuffix(input.toLowerCase().trim());
 
-            input = removeCompanyNameSuffix(input);
+        if (input.length() > CustomMatchingUtility.MinimumConvertLength) {
 
             switch (algorithmIndex) {
                 case CustomMatchingUtility.BeiderMorseAlgorithm:
@@ -99,7 +99,7 @@ public class CustomMatchingUtility {
 
         String companyWithOutSuffix = result.toString();
 
-        return companyWithOutSuffix;
+        return companyWithOutSuffix.trim();
 
     }
 
@@ -119,7 +119,7 @@ public class CustomMatchingUtility {
                     CSVReader.DEFAULT_QUOTE_CHARACTER, CSVReader.DEFAULT_QUOTE_CHARACTER);
 
             while ((nextLine = reader.readNext()) != null) {
-                setCompanySuffix(nextLine[0].toString());
+                setCompanySuffix(nextLine[0].toString().toLowerCase());
             }
 
             reader.close();
