@@ -97,7 +97,7 @@ public class CustomMatchingUtility {
         for (int i = 0; i < splitedCompanyName.length; i++) {
 
             for (int j = 0; j < companySuffixList.size(); j++) {
-                if (splitedCompanyName[i].equals(companySuffixList.get(j))) {
+                if (splitedCompanyName[i].toUpperCase().equals(companySuffixList.get(j).toUpperCase())) {
                     splitedCompanyName[i] = "";
                 }
             }
