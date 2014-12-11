@@ -64,7 +64,81 @@ public class PreProcessor {
         nameList.add("ASS");
         nameList.add("usa");
 
+        nameList.add("paypal");
+
         nameList.add("no company");
+
+        /*
+        nameList.add("AAST");
+        nameList.add("AKILA Co");
+        nameList.add("Andrews International");
+        nameList.add("Axede");
+        nameList.add("CamTe");
+        nameList.add("CDTEC");
+        nameList.add("Centrogas GmBH");
+        nameList.add("Cerium");
+        nameList.add("Children's Hospital of Philadelphia");
+        nameList.add("Citi");
+        nameList.add("Code3");
+        nameList.add("computer");
+        nameList.add("Deew");
+        nameList.add("Deluxe corporation");
+        nameList.add("DFKI");
+        nameList.add("eBusiness");
+        nameList.add("Eerwe");
+        nameList.add("Hline");
+        nameList.add("ICTRC");
+        nameList.add("Igate");
+        nameList.add("Info");
+        nameList.add("InfoRev");
+        nameList.add("ISAE");
+        nameList.add("Kiwibank");
+        nameList.add("Kosm");
+        nameList.add("Merck & Co");
+        nameList.add("Merlin Intrenational");
+        nameList.add("MITS");
+        nameList.add("MModal");
+        nameList.add("NEWEDGE");
+        nameList.add("NIC inc.");
+        nameList.add("NTOU");
+        nameList.add("nulo");
+        nameList.add("pason");
+        nameList.add("paypal");
+        nameList.add("purdue");
+        nameList.add("SAGA");
+        nameList.add("siva");
+        nameList.add("trinet");
+        nameList.add("Teranet");
+        nameList.add("Torento");
+
+        nameList.add("TYKY");
+        nameList.add("UPMC");
+        nameList.add("Yahoo");
+*/
+
+
+
+        nameList.add("eBusiness");
+        nameList.add("API Science");
+        nameList.add("WebScience");
+
+        nameList.add("Newegg Inc.");
+        nameList.add("NIC inc.");
+
+        nameList.add("InfoRev");
+
+        nameList.add("Kiwibank");
+        nameList.add("GAP Inc.");
+
+        nameList.add("Andrews International");
+        nameList.add("Wonders");
+        nameList.add("Andris");
+        nameList.add("andrews");
+
+        nameList.add("Children's Hospital of Philadelphia");
+        nameList.add("Children's Hospital of Boston");
+        nameList.add("Children's Hospital & Medical Center");
+
 
 
         try {
@@ -72,7 +146,7 @@ public class PreProcessor {
             // set metaphone settings
             System.out.println("------------metaphone and double metaphone settings-----------------");
             MetaphoneUtility.setMaxCodeLen(10);
-            DoubleMetaphoneUtility.setMaxCodeLen(10);
+            DoubleMetaphoneUtility.setMaxCodeLen(30);
 
             System.out.println("code length metaphone : " + MetaphoneUtility.getMaxCodeLen());
             System.out.println("code length double metaphone : " + DoubleMetaphoneUtility.getMaxCodeLen());
@@ -108,12 +182,13 @@ public class PreProcessor {
             for (int i = 0; i < nameList.size(); i++) {
 
                 System.out.println("----" + nameList.get(i) + "---");
+                System.out.println("double metaphone lenght :: " + DoubleMetaphoneUtility.getMaxCodeLen());
                 System.out.println("soundex          : " + SoundexMatchUtility.Convert(nameList.get(i)));
                 System.out.println("metaphone        : " + MetaphoneUtility.Convert(nameList.get(i)));
                 System.out.println("double metaphone : " + DoubleMetaphoneUtility.Convert(nameList.get(i)));
                 System.out.println("MRA              : " + MatchRatingApproachUtility.Convert(nameList.get(i)));
                 System.out.println("BeiderMorse      : " + BeiderMorseUtility.Convert(nameList.get(i)));
-                System.out.println("custom utility   : " + customMatch.Convert(nameList.get(i), CustomMatchingUtility.MatchRatingApproachAlgorithm));
+                System.out.println("custom utility   : " + customMatch.Convert(nameList.get(i), CustomMatchingUtility.DoubleMetaphoneAlgorithm));
             }
 
             System.out.println("------country name validation test-------------");

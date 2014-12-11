@@ -41,12 +41,16 @@ public class Aggregator {
     public static final char CSV_SEPERATOR = ',';
     public static final String CSV_CHARACTER_FORMAT = "UTF-8";
 
+    public static final int ACTIVITY_NUMBER = 100;
+
+    public static final boolean SKIP_AFTER_JOIN_ACTIVITIES = false;
+
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvAggregate = "Aggregate.csv";
     private static String [] headers  = {"Company Index", "Company Name", "Country 1", "Country 2", "Country 3",
                                          "Is Customer", "Joined Date", "downloads", "whitepapers", "tutorials",
-                                         "workshops", "casestudies", "productpages", "other", "seniorTitleCount",
-                                        "juniorTitleCount","Median between two Activities", "Max between 2 activities"};
+                                         "workshops", "casestudies", "productpages", "other", "totalActivities","seniorTitleCount",
+                                        "juniorTitleCount","Median between two Activities", "Max between 2 activities", "Time since 100th activity"};
 
 
     private static TitleUtility titleUtil = new TitleUtility();
@@ -174,20 +178,35 @@ public class Aggregator {
                         columnValues.setIsCustomer(Boolean.parseBoolean(nextLine[isCustomerIndex]));
                         columnValues.setJoinedDate(nextLine[joinedDateIndex]);
 
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
+                        SimpleDateFormat activityDateFormat = new SimpleDateFormat(DATE_FORMAT);
+                        SimpleDateFormat joinedDateFormat = new SimpleDateFormat("MM/DD/YYYY");
 
                         try{
 
                         if (!nextLine[activityTimeStampIndex].equals("")) {
 
-                            Date timestamp = simpleDateFormat.parse(nextLine[activityTimeStampIndex].trim());
-                            columnValues.addActivityTimeStamp(timestamp);
-                            columnValues.addCountry(nextLine[CountryIndex]);
+                            Date activitytimestamp = activityDateFormat.parse(nextLine[activityTimeStampIndex].trim());
+
+
+                            if (!columnValues.getIsCustomer())
+                            {
+                                columnValues.addActivityTimeStamp(activitytimestamp);
+                            }
+                             //Check weather skipping after join activity enables for existing customers
+                             else if (columnValues.getIsCustomer() && !Aggregator.SKIP_AFTER_JOIN_ACTIVITIES) {
+                                 columnValues.addActivityTimeStamp(activitytimestamp);
+                             }
+                             //If skipping is enabled but join date is after activity date for existing customers
+                             else if (columnValues.getIsCustomer() && !nextLine[joinedDateIndex].equals("") &&
+                                     joinedDateFormat.parse(nextLine[joinedDateIndex]).after(activitytimestamp)) {
+                                 columnValues.addActivityTimeStamp(activitytimestamp);
+                             }
                         }
 
+                         columnValues.addCountry(nextLine[CountryIndex]);
+
                         }
-                        catch (ParseException ex)
-                        {
+                        catch (ParseException ex) {
 
                         }
                     }
@@ -245,10 +264,36 @@ public class Aggregator {
                         outputLine[11] = String.valueOf(columnValues.getCaseStudiesActivityCount());
                         outputLine[12] = String.valueOf(columnValues.getProductPagesActivityCount());
                         outputLine[13] = String.valueOf(columnValues.getOtherActivityCount());
-                        outputLine[14] = String.valueOf(columnValues.getSeniorTitleCount());
-                        outputLine[15] = String.valueOf(columnValues.getJuniorTitleCount());
-                        outputLine[16] = String.valueOf(columnValues.getMedianTimeBetweenTwoActivities());
-                        outputLine[17] = String.valueOf(columnValues.getMaxTimeBetweenTwoActivities());
+
+                        outputLine[14] = String.valueOf(columnValues.getDownloadActivityCount()
+                                                        + columnValues.getWhitePaperActivityCount()
+                                                        + columnValues.getTutorialActivityCount()
+                                                        + columnValues.getWorkshopActivityCount()
+                                                        + columnValues.getCaseStudiesActivityCount()
+                                                        + columnValues.getProductPagesActivityCount()
+                                                        + columnValues.getOtherActivityCount()
+                                                        );
+
+                        outputLine[15] = String.valueOf(columnValues.getSeniorTitleCount());
+                        outputLine[16] = String.valueOf(columnValues.getJuniorTitleCount());
+                        outputLine[17] = String.valueOf(columnValues.getMedianTimeBetweenTwoActivities());
+                        outputLine[18] = String.valueOf(columnValues.getMaxTimeBetweenTwoActivities());
+
+
+
+
+                        if (columnValues.getActivityTimeStamps().size() >= Aggregator.ACTIVITY_NUMBER)
+                        {
+
+                            Date hundredthActicity = columnValues.getActivityTimeStamps().get(Aggregator.ACTIVITY_NUMBER - 1);
+                            Date today = new Date();
+                            outputLine[19] = String.valueOf(columnValues.getDateDiff(hundredthActicity, today, Customer.TIME_UNIT));
+
+                        }
+                        else
+                        {
+                            outputLine[19] = "0";
+                        }
 
                         writerAggregate.writeNext(outputLine);
                 }

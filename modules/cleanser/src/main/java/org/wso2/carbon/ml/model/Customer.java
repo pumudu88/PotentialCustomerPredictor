@@ -300,4 +300,8 @@ public class Customer {
         this.joinedDate = joinedDate;
     }
 
+    public ArrayList<Date> getActivityTimeStamps() {
+        return activityTimeStamps;
+    }
+
 }

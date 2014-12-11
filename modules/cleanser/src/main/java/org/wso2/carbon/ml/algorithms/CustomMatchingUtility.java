@@ -21,7 +21,7 @@ public class CustomMatchingUtility {
     static List<String> companySuffixList = new ArrayList<String>();
     private ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 
-    public static final int MinimumConvertLength = 3;
+    public static final int MinimumConvertLength = 6;
 
     public void setCompanySuffix(String companySuffix) {
         companySuffixList.add(companySuffix);
@@ -31,6 +31,15 @@ public class CustomMatchingUtility {
     public CustomMatchingUtility() {
 
         loadCompanySuffixFromCsv(classloader.getResource("companySuffix.csv").getPath());
+
+         try {
+             DoubleMetaphoneUtility.setMaxCodeLen(20);
+         }
+         catch (Exception ex)
+         {
+
+         }
+
     }
 
     /**
@@ -88,7 +97,7 @@ public class CustomMatchingUtility {
         for (int i = 0; i < splitedCompanyName.length; i++) {
 
             for (int j = 0; j < companySuffixList.size(); j++) {
-                if (splitedCompanyName[i].equals(companySuffixList.get(j))) {
+                if (splitedCompanyName[i].toUpperCase().equals(companySuffixList.get(j).toUpperCase())) {
                     splitedCompanyName[i] = "";
                 }
             }
