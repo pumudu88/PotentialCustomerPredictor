@@ -125,22 +125,8 @@ public class Cleanser {
      * @param currentValue current index value
      * @return
      */
-    private static String isCustomer(Map<String,String[]> currentCustomers, String currentValue) {
-
-
-        String [] rowVal = currentCustomers.get(currentValue);
-
-
-       if (rowVal == null)
-       {
-           return "";
-       }
-       else
-       {
-           return rowVal[1];
-       }
-
-
+    private static String[] isCustomer(Map<String,String[]> currentCustomers, String currentValue) {
+        return currentCustomers.get(currentValue);
     }
 
     /**
@@ -166,8 +152,8 @@ public class Cleanser {
 
                 String [] rowVal = new String[2];
 
-                rowVal[0] = nextLine[indexColumn];
-                rowVal[1] = nextLine[1];
+                rowVal[0] = nextLine[indexColumn].trim();
+                rowVal[1] = nextLine[1].trim();
 
                 //Set  algorithm Index for first column
                 switch (indexAlgorithm) {
@@ -296,10 +282,11 @@ public class Cleanser {
                         if (outputLine[0] != null) {
 
                             boolean isExistingCustomer;
-                            String  isCustomerDate = isCustomer(currentCustomer, outputLine[0]);
+                            String  [] result = isCustomer(currentCustomer, outputLine[0]);
+
                             boolean isValidIp = false;
 
-                            if (isCustomerDate.equals(""))
+                            if (result == null || result[0].equals(""))
                             {
                                 isExistingCustomer = false;
                             }
@@ -316,7 +303,7 @@ public class Cleanser {
                             }
 
                             outputLine[2] = String.valueOf(isValidIp);
-                            outputLine[3] = isCustomerDate;
+
 
                             //Set specified columns for output
                             for (int i = generatedColumnCount;
@@ -342,6 +329,8 @@ public class Cleanser {
 
                             if (isExistingCustomer) {
                                 currentCustomerActionCounter++;
+                                outputLine[3] = result[1];
+                                outputLine[5] = result[0];
                             }
 
                             writerTransformed.writeNext(outputLine);
