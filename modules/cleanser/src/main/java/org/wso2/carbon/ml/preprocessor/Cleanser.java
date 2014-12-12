@@ -22,7 +22,6 @@ import java.util.*;
 public class Cleanser {
 
     private static final Log logger = LogFactory.getLog(Cleanser.class);
-
     public static final int INDEX_ALGO_SOUNDEX = 1;
     public static final int INDEX_ALGO_META_PHONE = 2;
     public static final int INDEX_ALGO_DOUBLE_META_PHONE = 3;
@@ -31,41 +30,28 @@ public class Cleanser {
     public static final String IS_CUSTOMER_COLUMN_NAME = "Is Customer";
     public static final String IS_VALID_COUNTRY_COLUMN_NAME = "Is valid Country";
     public static final String JOINED_DATE_COLUMN_NAME = "Joined Date";
-
     public static final String COUNTRY_COLUMN_NAME = "Country";
     public static final String IP_COLUMN_NAME ="IpAddress";
     public static final String TITLE_COLUMN_NAME ="Title";
-
-    public static final String MIN_INDEX_VAL = "-1";
     public static final int DOUBLE_META_PHONE_THRESHOLD = 10;
-
     public static final char CSV_SEPERATOR = ',';
     public static final String CSV_CHARACTER_FORMAT = "UTF-8";
 
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvReadFile = "ContactWebsiteBehaviour_tier1_20141014.csv";
     public static String csvReadCustomerFile = "customerBase.csv";
-    public static String csvWriteCustomerFile = "customersIndexed.csv";
     public static String csvCompanySuffixFile =  "company_suffix.csv";
-
     public static String csvWriteTransfomed = "transformed.csv";
     public static String csvWriteNotTransformedFile = "notTransformed.csv";
     public static String [] columnsIncluded = { "Title", "Company", "Country", "IpAddress",
                                                 "Activity date/time", "Link"};
-
     private static boolean enableIpValidate = false;
-
-
     private static CustomMatchingUtility customMatching = new CustomMatchingUtility();
     private static TitleUtility titleUtil = new TitleUtility();
 
-
     public static void main(String[] args) {
         try {
-
             Map<String,String[]> currentCustomers;
-
-
 
             DoubleMetaphoneUtility.setMaxCodeLen(DOUBLE_META_PHONE_THRESHOLD);
             customMatching.loadCompanySuffixFromCsv(csvPath + csvCompanySuffixFile);
@@ -74,26 +60,22 @@ public class Cleanser {
 
             CSVReader reader=new CSVReader(
                     new InputStreamReader(new FileInputStream(csvPath + csvReadFile), CSV_CHARACTER_FORMAT),
-                                          CSV_SEPERATOR, CSVReader.DEFAULT_QUOTE_CHARACTER,
+                                          Cleanser.CSV_SEPERATOR, CSVReader.DEFAULT_QUOTE_CHARACTER,
                                           CSVReader.DEFAULT_QUOTE_CHARACTER);
 
             CSVReader readerCustomers=new CSVReader(
                     new InputStreamReader(new FileInputStream(csvPath + csvReadCustomerFile), CSV_CHARACTER_FORMAT),
-                                          CSV_SEPERATOR, CSVReader.DEFAULT_QUOTE_CHARACTER,
+                                          Cleanser.CSV_SEPERATOR, CSVReader.DEFAULT_QUOTE_CHARACTER,
                                           CSVReader.DEFAULT_QUOTE_CHARACTER);
 
-
-            CSVWriter writerCustomers = new CSVWriter(new FileWriter(csvPath + csvWriteCustomerFile), CSV_SEPERATOR,
-                                                      CSVWriter.NO_QUOTE_CHARACTER);
-
             CSVWriter writerTransformed= new CSVWriter(new FileWriter(csvPath + csvWriteTransfomed),
-                                                                ',', CSVWriter.NO_QUOTE_CHARACTER);
+                                          Cleanser.CSV_SEPERATOR, CSVWriter.NO_QUOTE_CHARACTER);
 
             CSVWriter writerNotTransformed = new CSVWriter(new FileWriter(csvPath + csvWriteNotTransformedFile),
-                                                            ',', CSVWriter.NO_QUOTE_CHARACTER);
+                                          Cleanser.CSV_SEPERATOR, CSVWriter.NO_QUOTE_CHARACTER);
 
 
-            currentCustomers = loadCurrentCustomers(readerCustomers, writerCustomers,
+            currentCustomers = loadCurrentCustomers(readerCustomers,
                     Cleanser.INDEX_ALGO_DOUBLE_META_PHONE, 0);
 
             cleanse(reader, writerTransformed, writerNotTransformed, INDEX_COLUMN_INPUT,
@@ -107,15 +89,9 @@ public class Cleanser {
 
             writerTransformed.close();
             writerNotTransformed.close();
-            writerCustomers.close();
             reader.close();
-
-
-
-
         }
-        catch(Exception ex)
-        {
+        catch(Exception ex) {
             logger.error(ex);
         }
     }
@@ -138,21 +114,18 @@ public class Cleanser {
      * @return
      * @throws Exception
      */
-    private static  Map<String,String[]> loadCurrentCustomers(CSVReader readerCustomers, CSVWriter writerCustomers,
+    private static  Map<String,String[]> loadCurrentCustomers(CSVReader readerCustomers,
                                                    int indexAlgorithm, int indexColumn) throws  Exception {
 
         Map<String,String[]> Customers = new HashMap<String,String[]>();
         String [] nextLine;
 
-
-        nextLine = readerCustomers.readNext();
-
+        readerCustomers.readNext();
 
         while ((nextLine = readerCustomers.readNext()) != null) {
             try {
 
                 String [] rowVal = new String[2];
-
                 rowVal[0] = nextLine[indexColumn].trim();
                 rowVal[1] = nextLine[1].trim();
 
@@ -176,7 +149,6 @@ public class Cleanser {
                 //handles algorithm encode exceptions
                 logger.error(ex);
             }
-
         }
         return Customers;
     }
@@ -202,15 +174,11 @@ public class Cleanser {
         int totalCounter = 0;
         int transformedCounter = 0;
         int currentCustomerActionCounter = 0;
-
-
         int columnIndex ;
         int countryColumnIndex;
         int ipColumnIndex;
         int titleColumnIndex;
         int generatedColumnCount;
-
-
 
         int [] columnIncludedIndexes = new int[columnsIncluded.length];
 
@@ -228,9 +196,7 @@ public class Cleanser {
         list.add(2, isValidCountryColumnName);
         list.add(3, joinedDateColumnName);
 
-
         generatedColumnCount = list.size() - columnIncludedIndexes.length;
-
         writerTransformed.writeNext(list.toArray(new String[indexColumnName.length()+1]));
 
         //Get the column index of given column name
@@ -239,19 +205,15 @@ public class Cleanser {
         ipColumnIndex = Arrays.asList(nextLine).indexOf(ipColumnName);
         titleColumnIndex = Arrays.asList(nextLine).indexOf(titleColumnName);
 
-        for(int i =0; i < nextLine.length; i++)
-        {
+        for(int i =0; i < nextLine.length; i++) {
             nextLine[i] = nextLine[i].trim();
         }
 
-        for(int i = 0; i < columnsIncluded.length; i++)
-        {
+        for(int i = 0; i < columnsIncluded.length; i++) {
             columnIncludedIndexes[i] = Arrays.asList(nextLine).indexOf(columnsIncluded[i]);
         }
 
         while ((nextLine = reader.readNext()) != null) {
-
-
 
                 //Check read line is number of required columns and indexing column value is not empty
                 if (nextLine.length >= columnIncludedIndexes.length && !(nextLine[columnIndex].equals(""))) {
@@ -260,9 +222,6 @@ public class Cleanser {
                     String[] outputLine = new String[columnIncludedIndexes.length + 4];
 
                     try {
-
-
-
                         //Set  algorithm Index for first column
                         switch (indexAlgorithm) {
                                     case Cleanser.INDEX_ALGO_DOUBLE_META_PHONE:
@@ -278,47 +237,37 @@ public class Cleanser {
                                                                         CustomMatchingUtility.SoundexAlgorithm);
                                         break;
                         }
-
-
                         if (outputLine[0] != null) {
-
                             boolean isExistingCustomer;
                             String  [] result = isCustomer(currentCustomer, outputLine[0]);
-
                             boolean isValidIp = false;
 
-                            if (result == null || result[0].equals(""))
-                            {
+                            if (result == null || result[0].equals("")) {
                                 isExistingCustomer = false;
                             }
-                            else
-                            {
+                            else{
                                 isExistingCustomer = true;
                             }
 
                             outputLine[1] = Customer.booleanToString(isExistingCustomer);
 
-                            if(enableIpValidate){
+                            if(enableIpValidate) {
                                 isValidIp = validator.countryByIpAddressValidation(nextLine[ipColumnIndex],
                                         nextLine[countryColumnIndex]);
                             }
 
                             outputLine[2] = String.valueOf(isValidIp);
 
-
                             //Set specified columns for output
                             for (int i = generatedColumnCount;
                                  i < columnIncludedIndexes.length + generatedColumnCount; i++) {
                                 //Check include index is available on readLine
                                 if (nextLine.length > columnIncludedIndexes[i - generatedColumnCount]) {
-
-                                   if (titleColumnIndex == columnIncludedIndexes[i - generatedColumnCount])
-                                   {
+                                   if (titleColumnIndex == columnIncludedIndexes[i - generatedColumnCount]) {
                                        outputLine[i] = titleUtil.titleClassifier(
                                                nextLine[columnIncludedIndexes[i - generatedColumnCount]]).toString();
                                    }
-                                    else
-                                   {
+                                    else {
                                        outputLine[i] = nextLine[columnIncludedIndexes[i - generatedColumnCount]];
                                    }
                                 } else {
@@ -333,16 +282,11 @@ public class Cleanser {
                                 outputLine[3] = result[1];
                                 outputLine[5] = result[0];
                             }
-
                             writerTransformed.writeNext(outputLine);
                         }
-                        else
-                        {
+                        else {
                             writerNotTransformed.writeNext(nextLine);
                         }
-
-
-
                     } catch (IllegalArgumentException ex) {
                         //handles algorithm encode exceptions
                         writerNotTransformed.writeNext(nextLine);
@@ -352,8 +296,6 @@ public class Cleanser {
                     writerNotTransformed.writeNext(nextLine);
                 }
                 totalCounter++;
-
-
         }
 
         logger.info(totalCounter + " rows processed.  "
