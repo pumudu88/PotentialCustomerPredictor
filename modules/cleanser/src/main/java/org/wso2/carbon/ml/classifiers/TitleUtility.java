@@ -1,8 +1,9 @@
 package org.wso2.carbon.ml.classifiers;
 
 import au.com.bytecode.opencsv.CSVReader;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import java.awt.image.TileObserver;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +13,14 @@ import java.util.List;
  */
 public class TitleUtility {
 
-    public static final int NotRelevant = 0;
-    public static final int Junior      = 1;
-    public static final int Senior      = 2;
+    private static final Log logger = LogFactory.getLog(TitleUtility.class);
 
-    static List<String> seniorTitleList      = new ArrayList<String>();
-    static List<String> juniorTitleList      = new ArrayList<String>();
+    public static final int NotRelevant = 0;
+    public static final int Junior = 1;
+    public static final int Senior = 2;
+
+    static List<String> seniorTitleList = new ArrayList<String>();
+    static List<String> juniorTitleList = new ArrayList<String>();
     static List<String> notReleventTitleList = new ArrayList<String>();
 
     private ClassLoader classloader = Thread.currentThread().getContextClassLoader();
@@ -32,15 +35,15 @@ public class TitleUtility {
 
         int returnValue = TitleUtility.Junior;
 
-        if(seniorTitleList.contains(title.toLowerCase())) {
+        if (seniorTitleList.contains(title.toLowerCase())) {
             returnValue = TitleUtility.Senior;
         }
 
-        if(juniorTitleList.contains(title.toLowerCase())) {
+        if (juniorTitleList.contains(title.toLowerCase())) {
             returnValue = TitleUtility.Junior;
         }
 
-        if(notReleventTitleList.contains(title.toLowerCase())) {
+        if (notReleventTitleList.contains(title.toLowerCase())) {
             returnValue = TitleUtility.NotRelevant;
         }
 
@@ -69,11 +72,11 @@ public class TitleUtility {
             reader.close();
 
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.error(e);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.error(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
 
     }
