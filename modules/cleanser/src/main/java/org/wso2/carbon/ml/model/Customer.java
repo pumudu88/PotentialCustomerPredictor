@@ -199,11 +199,27 @@ public class Customer {
      * @param input
      * @return
      */
-    public static String toBooleanToString(final Boolean input) {
+    public static String booleanToString(Boolean input) {
         if (input == null) {
-            return "null";
-        } else {
-            return input.booleanValue() ? "1" : "0";
+            return "0";
+
+        } else if (input.booleanValue()){
+            return  "1";
+
+        }
+        else{
+            return "0";
+
+        }
+    }
+
+    public static boolean stringToBoolean(String input)
+    {
+        if (input.trim().equals("1")){
+            return true;
+        }
+        else{
+            return false;
         }
     }
 

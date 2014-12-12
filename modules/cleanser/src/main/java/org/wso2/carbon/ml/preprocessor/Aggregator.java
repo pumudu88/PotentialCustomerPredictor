@@ -176,7 +176,7 @@ public class Aggregator {
                         }
 
                         columnValues.setCompanyName(nextLine[companyNameIndex]);
-                        columnValues.setIsCustomer(Boolean.parseBoolean(nextLine[isCustomerIndex]));
+                        columnValues.setIsCustomer(Customer.stringToBoolean(nextLine[isCustomerIndex]));
                         columnValues.setJoinedDate(nextLine[joinedDateIndex]);
 
                         SimpleDateFormat activityDateFormat = new SimpleDateFormat(DATE_FORMAT_ACTIVITY);
@@ -256,7 +256,7 @@ public class Aggregator {
                             outputLine[2 + i] = countries[i];
                         }
 
-                        outputLine[5] = Customer.toBooleanToString(columnValues.getIsCustomer());
+                        outputLine[5] = Customer.booleanToString(columnValues.getIsCustomer());
                         outputLine[6] = columnValues.getJoinedDate();
                         outputLine[7] = String.valueOf(columnValues.getDownloadActivityCount());
                         outputLine[8] = String.valueOf(columnValues.getWhitePaperActivityCount());

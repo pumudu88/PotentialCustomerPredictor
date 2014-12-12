@@ -296,7 +296,7 @@ public class Cleanser {
                                 isExistingCustomer = true;
                             }
 
-                            outputLine[1] = Customer.toBooleanToString(isExistingCustomer);
+                            outputLine[1] = Customer.booleanToString(isExistingCustomer);
 
                             if(enableIpValidate){
                                 isValidIp = validator.countryByIpAddressValidation(nextLine[ipColumnIndex],
