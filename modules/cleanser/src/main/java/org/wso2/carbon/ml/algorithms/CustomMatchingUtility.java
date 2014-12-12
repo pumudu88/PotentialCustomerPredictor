@@ -2,6 +2,8 @@ package org.wso2.carbon.ml.algorithms;
 
 import au.com.bytecode.opencsv.CSVReader;
 import org.apache.commons.codec.EncoderException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,6 +13,8 @@ import java.util.List;
  * Created by pumudu on 11/28/14.
  */
 public class CustomMatchingUtility {
+
+    private static final Log logger = LogFactory.getLog(CustomMatchingUtility.class);
 
     public static final int BeiderMorseAlgorithm = 1;
     public static final int DoubleMetaphoneAlgorithm = 2;
@@ -32,13 +36,11 @@ public class CustomMatchingUtility {
 
         loadCompanySuffixFromCsv(classloader.getResource("companySuffix.csv").getPath());
 
-         try {
-             DoubleMetaphoneUtility.setMaxCodeLen(20);
-         }
-         catch (Exception ex)
-         {
-
-         }
+        try {
+            DoubleMetaphoneUtility.setMaxCodeLen(20);
+        } catch (Exception e) {
+            logger.error(e);
+        }
 
     }
 
@@ -134,11 +136,11 @@ public class CustomMatchingUtility {
             reader.close();
 
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.error(e);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.error(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
 
     }
