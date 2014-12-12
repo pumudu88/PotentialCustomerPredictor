@@ -4,6 +4,8 @@ import au.com.bytecode.opencsv.CSVReader;
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.InetAddressValidator;
 
 import java.io.*;
@@ -15,7 +17,7 @@ import java.util.TreeMap;
  */
 public class ValidationUtility {
 
-
+    private static final Log logger = LogFactory.getLog(ValidationUtility.class);
     private static InetAddressValidator ipAddressValidator = new InetAddressValidator();
     ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 
@@ -23,11 +25,11 @@ public class ValidationUtility {
     final Map<String, String> countryMap = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
 
     private static String ipAddressToCountryDBFileName = "ipAddressToCountryDB.csv";
-    private static String countryCodeFileName = "countryCodes.csv";
+    private static String countryCodeFileName          = "countryCodes.csv";
 
-    private static Integer FirstColumnIndex   = 0;
-    private static Integer SecondColumnIndex  = 1;
-    private static Integer ThirdColumnIndex   = 2;
+    private static Integer FirstColumnIndex  = 0;
+    private static Integer SecondColumnIndex = 1;
+    private static Integer ThirdColumnIndex  = 2;
 
     public ValidationUtility() {
 
@@ -55,7 +57,7 @@ public class ValidationUtility {
         try {
             countryLocation = new LookupService(classloader.getResource("GeoLiteCity.dat").getPath(), LookupService.GEOIP_CHECK_CACHE);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
 
         try {
@@ -84,8 +86,7 @@ public class ValidationUtility {
                 returnValue = false;
             }
         } catch (NullPointerException e) {
-            System.out.println("error in ip : " + ipAddress);
-            System.out.println("error in country : " + countryName);
+            logger.error(e);
         }
 
 
@@ -141,11 +142,11 @@ public class ValidationUtility {
 
 
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.error(e);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.error(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
 
 
