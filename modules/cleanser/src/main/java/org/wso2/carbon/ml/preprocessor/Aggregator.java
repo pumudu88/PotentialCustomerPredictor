@@ -48,6 +48,8 @@ public class Aggregator {
 
     public static String csvPath = "/Users/tharik/Desktop/machine learning/Archive/";
     public static String csvAggregate = "Aggregate.csv";
+    public static String csvAggregateCustomers = "AggregateCustomers.csv";
+    public static String csvAggregateNonCustomers = "AggregateNonCustomers.csv";
     private static String [] headers  = {"Company Index", "Company Name", "Country 1", "Country 2", "Country 3",
                                          "Is Customer", "Joined Date", "downloads", "whitepapers", "tutorials",
                                          "workshops", "casestudies", "productpages", "other", "totalActivities","seniorTitleCount",
@@ -237,8 +239,16 @@ public class Aggregator {
             CSVWriter writerAggregate = new CSVWriter(new FileWriter(csvPath + csvAggregate),
                     CSV_SEPERATOR, CSVWriter.NO_QUOTE_CHARACTER);
 
+            CSVWriter writerAggregateCustomers = new CSVWriter(new FileWriter(csvPath + csvAggregateCustomers),
+                    CSV_SEPERATOR, CSVWriter.NO_QUOTE_CHARACTER);
+
+            CSVWriter writerAggregateNonCustomers = new CSVWriter(new FileWriter(csvPath + csvAggregateNonCustomers),
+                    CSV_SEPERATOR, CSVWriter.NO_QUOTE_CHARACTER);
+
             //Write headers to CSV
             writerAggregate.writeNext(headers);
+            writerAggregateCustomers.writeNext(headers);
+            writerAggregateNonCustomers.writeNext(headers);
 
             for (String company : csvMap.keySet()) {
                 Customer columnValues = csvMap.get(company);
@@ -247,65 +257,63 @@ public class Aggregator {
 
                     String[] outputLine = new String[headers.length];
 
-                        outputLine[0] = company;
-                        outputLine[1] = columnValues.getCompanyName();
-                        String [] countries = columnValues.getTopCountries(3);
+                    outputLine[0] = company;
+                    outputLine[1] = columnValues.getCompanyName();
+                    String [] countries = columnValues.getTopCountries(3);
 
-                        for (int i =0; i < countries.length; i++)
-                        {
-                            outputLine[2 + i] = countries[i];
-                        }
+                     for (int i =0; i < countries.length; i++) {
+                        outputLine[2 + i] = countries[i];
+                     }
 
-                        outputLine[5] = Customer.booleanToString(columnValues.getIsCustomer());
-                        outputLine[6] = columnValues.getJoinedDate();
-                        outputLine[7] = String.valueOf(columnValues.getDownloadActivityCount());
-                        outputLine[8] = String.valueOf(columnValues.getWhitePaperActivityCount());
-                        outputLine[9] = String.valueOf(columnValues.getTutorialActivityCount());
-                        outputLine[10] = String.valueOf(columnValues.getWorkshopActivityCount());
-                        outputLine[11] = String.valueOf(columnValues.getCaseStudiesActivityCount());
-                        outputLine[12] = String.valueOf(columnValues.getProductPagesActivityCount());
-                        outputLine[13] = String.valueOf(columnValues.getOtherActivityCount());
+                    outputLine[5] = Customer.booleanToString(columnValues.getIsCustomer());
+                    outputLine[6] = columnValues.getJoinedDate();
+                    outputLine[7] = String.valueOf(columnValues.getDownloadActivityCount());
+                    outputLine[8] = String.valueOf(columnValues.getWhitePaperActivityCount());
+                    outputLine[9] = String.valueOf(columnValues.getTutorialActivityCount());
+                    outputLine[10] = String.valueOf(columnValues.getWorkshopActivityCount());
+                    outputLine[11] = String.valueOf(columnValues.getCaseStudiesActivityCount());
+                    outputLine[12] = String.valueOf(columnValues.getProductPagesActivityCount());
+                    outputLine[13] = String.valueOf(columnValues.getOtherActivityCount());
 
-                        outputLine[14] = String.valueOf(columnValues.getDownloadActivityCount()
-                                                        + columnValues.getWhitePaperActivityCount()
-                                                        + columnValues.getTutorialActivityCount()
-                                                        + columnValues.getWorkshopActivityCount()
-                                                        + columnValues.getCaseStudiesActivityCount()
-                                                        + columnValues.getProductPagesActivityCount()
-                                                        + columnValues.getOtherActivityCount()
-                                                        );
+                    outputLine[14] = String.valueOf(columnValues.getDownloadActivityCount()
+                                                    + columnValues.getWhitePaperActivityCount()
+                                                    + columnValues.getTutorialActivityCount()
+                                                    + columnValues.getWorkshopActivityCount()
+                                                    + columnValues.getCaseStudiesActivityCount()
+                                                    + columnValues.getProductPagesActivityCount()
+                                                    + columnValues.getOtherActivityCount()
+                                                    );
 
-                        outputLine[15] = String.valueOf(columnValues.getSeniorTitleCount());
-                        outputLine[16] = String.valueOf(columnValues.getJuniorTitleCount());
-                        outputLine[17] = String.valueOf(columnValues.getMedianTimeBetweenTwoActivities());
-                        outputLine[18] = String.valueOf(columnValues.getMaxTimeBetweenTwoActivities());
-
+                    outputLine[15] = String.valueOf(columnValues.getSeniorTitleCount());
+                    outputLine[16] = String.valueOf(columnValues.getJuniorTitleCount());
+                    outputLine[17] = String.valueOf(columnValues.getMedianTimeBetweenTwoActivities());
+                    outputLine[18] = String.valueOf(columnValues.getMaxTimeBetweenTwoActivities());
 
 
 
-                        if (columnValues.getActivityTimeStamps().size() >= Aggregator.ACTIVITY_NUMBER)
-                        {
 
-                            Date hundredthActicity = columnValues.getActivityTimeStamps().get(Aggregator.ACTIVITY_NUMBER - 1);
-                            Date today = new Date();
-                            outputLine[19] = String.valueOf(columnValues.getDateDiff(hundredthActicity, today, Customer.TIME_UNIT));
+                    if (columnValues.getActivityTimeStamps().size() >= Aggregator.ACTIVITY_NUMBER) {
+                        Date hundredthActicity = columnValues.getActivityTimeStamps().get(Aggregator.ACTIVITY_NUMBER - 1);
+                        Date today = new Date();
+                        outputLine[19] = String.valueOf(columnValues.getDateDiff(hundredthActicity, today, Customer.TIME_UNIT));
 
-                        }
-                        else
-                        {
-                            outputLine[19] = "0";
-                        }
+                    }
+                    else {
+                        outputLine[19] = "0";
+                    }
 
-                        writerAggregate.writeNext(outputLine);
+                    writerAggregate.writeNext(outputLine);
+
+                    if (columnValues.getIsCustomer()) {
+                        existingCustomerCount++;
+                        writerAggregateCustomers.writeNext(outputLine);
+                    }
+                    else {
+                        writerAggregateNonCustomers.writeNext(outputLine);
+                    }
                 }
 
                 totalCustomerCount++;
-
-                if (columnValues.getIsCustomer()){
-                    existingCustomerCount++;
-                }
-
-
             }
             writerAggregate.close();
 
