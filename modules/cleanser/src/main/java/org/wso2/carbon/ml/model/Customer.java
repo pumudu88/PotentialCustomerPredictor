@@ -194,6 +194,19 @@ public class Customer {
         return timeUnit.convert( date2.getTime() - date1.getTime() , TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Converts true and false booleans to 1 and 0
+     * @param input
+     * @return
+     */
+    public static String toBooleanToString(final Boolean input) {
+        if (input == null) {
+            return "null";
+        } else {
+            return input.booleanValue() ? "1" : "0";
+        }
+    }
+
 
 
     public String getCompanyIndex() {

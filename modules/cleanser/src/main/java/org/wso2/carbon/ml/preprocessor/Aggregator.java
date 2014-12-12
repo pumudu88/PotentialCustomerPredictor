@@ -256,7 +256,7 @@ public class Aggregator {
                             outputLine[2 + i] = countries[i];
                         }
 
-                        outputLine[5] = String.valueOf(columnValues.getIsCustomer());
+                        outputLine[5] = Customer.toBooleanToString(columnValues.getIsCustomer());
                         outputLine[6] = columnValues.getJoinedDate();
                         outputLine[7] = String.valueOf(columnValues.getDownloadActivityCount());
                         outputLine[8] = String.valueOf(columnValues.getWhitePaperActivityCount());

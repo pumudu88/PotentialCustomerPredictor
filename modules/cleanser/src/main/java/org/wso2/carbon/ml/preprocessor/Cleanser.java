@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.ml.algorithms.CustomMatchingUtility;
 import org.wso2.carbon.ml.algorithms.DoubleMetaphoneUtility;
 import org.wso2.carbon.ml.classifiers.TitleUtility;
+import org.wso2.carbon.ml.model.Customer;
 import org.wso2.carbon.ml.validations.ValidationUtility;
 
 import java.io.FileInputStream;
@@ -295,7 +296,7 @@ public class Cleanser {
                                 isExistingCustomer = true;
                             }
 
-                            outputLine[1] = String.valueOf(isExistingCustomer);
+                            outputLine[1] = Customer.toBooleanToString(isExistingCustomer);
 
                             if(enableIpValidate){
                                 isValidIp = validator.countryByIpAddressValidation(nextLine[ipColumnIndex],
