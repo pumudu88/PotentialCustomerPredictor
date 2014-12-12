@@ -28,7 +28,8 @@ public class Aggregator {
     public static final String ACTIVITY_TIME_STAMP_COLUMN_NAME = "Activity date/time";
     public static final String COUNTRY_COLUMN = "Country";
 
-    public static final String DATE_FORMAT = "MMM dd yyyy hh:mma";
+    public static final String DATE_FORMAT_ACTIVITY = "MMM dd yyyy hh:mma";
+    public static final String DATE_FORMAT_JOINED_DATE = "MM/DD/YYYY";
 
     public static final String KEY_WORD_DOWNLOADS = "downloads";
     public static final String KEY_WORD_WHITE_PAPERS = "whitepapers";
@@ -178,8 +179,8 @@ public class Aggregator {
                         columnValues.setIsCustomer(Boolean.parseBoolean(nextLine[isCustomerIndex]));
                         columnValues.setJoinedDate(nextLine[joinedDateIndex]);
 
-                        SimpleDateFormat activityDateFormat = new SimpleDateFormat(DATE_FORMAT);
-                        SimpleDateFormat joinedDateFormat = new SimpleDateFormat("MM/DD/YYYY");
+                        SimpleDateFormat activityDateFormat = new SimpleDateFormat(DATE_FORMAT_ACTIVITY);
+                        SimpleDateFormat joinedDateFormat = new SimpleDateFormat(DATE_FORMAT_JOINED_DATE);
 
                         try{
 
