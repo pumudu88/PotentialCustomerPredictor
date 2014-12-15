@@ -31,6 +31,11 @@ public class TitleUtility {
 
     }
 
+    /**
+     * Return title category of the given title string
+     * @param title
+     * @return
+     */
     public Integer titleClassifier(String title) {
 
         int returnValue = TitleUtility.Junior;
@@ -52,6 +57,10 @@ public class TitleUtility {
 
     }
 
+    /**
+     * Populate company suffixes from given property csv to array lists
+     * @param csvFilePath
+     */
     public void loadCompanySuffixFromCsv(String csvFilePath) {
 
         String[] nextLine;
