@@ -145,6 +145,10 @@ public class CustomMatchingUtility {
 
     }
 
+    /**
+     * return company suffix array list
+     * @return
+     */
     public List<String> getCompanySuffixList() {
         return companySuffixList;
     }
