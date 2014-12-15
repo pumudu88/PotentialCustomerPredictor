@@ -124,6 +124,14 @@ public class ValidationUtility {
     }
 
 
+    /**
+     * Populate key value pairs from csv to hash maps
+     *
+     * @param resourceName
+     * @param map
+     * @param keyCsvIndex
+     * @param valueCsvIndex
+     */
     public void loadDataToMapFromCsv(String resourceName, Map<String, String> map, Integer keyCsvIndex, Integer valueCsvIndex) {
 
         String[] nextLine;
